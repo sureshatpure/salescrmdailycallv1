@@ -443,8 +443,8 @@ class dailyactivity_model extends CI_Model
 						}
 					}
 				catch (Exception $e) {
-					echo"in Rollback condition";
-					$this->db->trans_rollback();
+					//echo"in Rollback condition";
+					//$this->db->trans_rollback();
 					  //log_message('error', sprintf('%s : %s : DB transaction failed. Error no: %s, Error msg:%s, Last query: %s', __CLASS__, __FUNCTION__, $e->getCode(), $e->getMessage(), print_r($this->main_db->last_query(), TRUE)));
 					}
 			$this->db->db_debug = TRUE; 

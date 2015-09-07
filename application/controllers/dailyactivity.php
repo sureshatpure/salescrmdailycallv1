@@ -391,7 +391,7 @@ class dailyactivity extends CI_Controller {
                     $daily_dtl[$key]['hour_s'] = $val['hour_s'];
                     $daily_dtl[$key]['minit'] = $val['minit'];
                     $daily_dtl[$key]['modeofcontact'] = $val['modeofcontact'];
-                    $daily_dtl[$key]['quanttity'] = $val['quantity'];
+                    $daily_dtl[$key]['quantity'] = $val['quantity'];
                     $daily_dtl[$key]['division'] = $val['division'];
                    // $daily_dtl[$key]['date'] = $val['Date'];
                     $daily_dtl[$key]['remarks'] = $val['Remarks'];
