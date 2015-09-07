@@ -327,25 +327,14 @@ class dailyactivity extends CI_Controller {
         $execode = $this->session->userdata['empcode'];
         $exename = $this->session->userdata['identity'];
         $user1 = $this->session->userdata['loginname'];
-        //echo"post values";print_r($_POST);
-        //echo "current_date ".$_POST[0]['currentdate']; die;
         $hrd_currentdate = $_POST[0]['currentdate'];
         $hdn_hdr_id = $_POST[0]['hdn_hdr_id'];
 
         $grid_data = array_slice($_POST, 1, null, true);
-
-        //echo"the count a grid_data ".count($grid_data);
-        //$get_update_id = $this->dailyactivity_model->get_dailyhdr_update_id($hrd_currentdate,$user1);
         $get_update_id = $hdn_hdr_id;
 
-       // $daily_dtl_delete_status = $this->dailyactivity_model->deteled_dailyactivitydtl($get_update_id);
-        
-
-        //      echo"no of rows deleted ".$daily_dtl_delete_status; 
-        //if ($daily_dtl_delete_status > 0) {
             if ($_POST['update'] == 'true') {
 
-                //$daily_hdr_id= $this->dailyactivity_model->GetMaxVal('dailyactivityhdr');
                 $daily_hdr_id = $get_update_id;
                 $daily_hdr = array('id' => $daily_hdr_id,
                     'currentdate' => $hrd_currentdate,
@@ -354,15 +343,10 @@ class dailyactivity extends CI_Controller {
                     'companycode' => 'PPC',
                     'accperiod' => '2015-2016',
                     'user1' => $user1,
-                    //	'timestamp' => $this->input->post('lastname'),
-                    //	'creationuser' => $creationuser,
-                    //	'creationdate' => $createddate,
                     'lastupdateuser' => $lastupdateuser,
                     'lastupdatedate' => $lastupdatedate
                 );
                 $daily_hdr_update_status = $this->dailyactivity_model->update_dailyactivityhdr($daily_hdr, $daily_hdr_id);
-
-                //	echo "return val is  ".$daily_hdr_insert_status;
 
                 foreach ($grid_data as $key => $val) {
                     if ($val['potentialqty'] == "" || $val['potentialqty'] == 'undefined') {
@@ -382,7 +366,7 @@ class dailyactivity extends CI_Controller {
                         $val['leadid'] = 0;
                     }
                     $daily_dtl[$key]['id'] = $daily_hdr_id;
-                   // $daily_dtl[$key]['date'] = $val['currentdate'];
+                   
                     $daily_dtl[$key]['itemgroup'] = $val['itemgroup'];
                     $daily_dtl[$key]['leadid'] = $val['leadid'];
                     $daily_dtl[$key]['custgroup'] = $val['custgroup'];
@@ -393,15 +377,10 @@ class dailyactivity extends CI_Controller {
                     $daily_dtl[$key]['modeofcontact'] = $val['modeofcontact'];
                     $daily_dtl[$key]['quantity'] = $val['quantity'];
                     $daily_dtl[$key]['division'] = $val['division'];
-                   // $daily_dtl[$key]['date'] = $val['Date'];
                     $daily_dtl[$key]['remarks'] = $val['Remarks'];
-                    //$daily_dtl[$key]['creationdate'] =date('Y-m-d:H:i:s');
-                    //$daily_dtl[$key]['creationuser'] = $creationuser;
                     $daily_dtl[$key]['lastupdatedate'] = date('Y-m-d:H:i:s');
                     $daily_dtl[$key]['lastupdateuser'] = $creationuser;
-/*                    $daily_dtl[$key]['description'] = $val['description'];
-                    $daily_dtl[$key]['actionplanned'] = $val['actionplanned'];
-                    $daily_dtl[$key]['detailed_description'] = $val['detailed_description'];*/
+
                 }
 
 
@@ -420,9 +399,6 @@ class dailyactivity extends CI_Controller {
                 }
             }
             
-       /* } else {
-            $message = "Duplicate Record exists in the date " . $hrd_currentdate . " for the executive " . $exename;
-        }*/
         header('Content-Type: application/x-json; charset=utf-8');
         echo $message;
     }
