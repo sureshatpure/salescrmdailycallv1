@@ -337,10 +337,12 @@ class dailyactivity extends CI_Controller {
         //echo"the count a grid_data ".count($grid_data);
         //$get_update_id = $this->dailyactivity_model->get_dailyhdr_update_id($hrd_currentdate,$user1);
         $get_update_id = $hdn_hdr_id;
-        $daily_dtl_delete_status = $this->dailyactivity_model->deteled_dailyactivitydtl($get_update_id);
-        // $daily_dtl_delete_status =$this->dailyactivity_model->deteled_dailyactivitydtl(5);
+
+       // $daily_dtl_delete_status = $this->dailyactivity_model->deteled_dailyactivitydtl($get_update_id);
+        
+
         //      echo"no of rows deleted ".$daily_dtl_delete_status; 
-        if ($daily_dtl_delete_status > 0) {
+        //if ($daily_dtl_delete_status > 0) {
             if ($_POST['update'] == 'true') {
 
                 //$daily_hdr_id= $this->dailyactivity_model->GetMaxVal('dailyactivityhdr');
@@ -350,7 +352,7 @@ class dailyactivity extends CI_Controller {
                     'execode' => $execode,
                     'exename' => $exename,
                     'companycode' => 'PPC',
-                    'accperiod' => '2013-2014',
+                    'accperiod' => '2015-2016',
                     'user1' => $user1,
                     //	'timestamp' => $this->input->post('lastname'),
                     //	'creationuser' => $creationuser,
@@ -389,7 +391,7 @@ class dailyactivity extends CI_Controller {
                     $daily_dtl[$key]['hour_s'] = $val['hour_s'];
                     $daily_dtl[$key]['minit'] = $val['minit'];
                     $daily_dtl[$key]['modeofcontact'] = $val['modeofcontact'];
-                    $daily_dtl[$key]['quantity'] = $val['quantity'];
+                    $daily_dtl[$key]['quanttity'] = $val['quantity'];
                     $daily_dtl[$key]['division'] = $val['division'];
                    // $daily_dtl[$key]['date'] = $val['Date'];
                     $daily_dtl[$key]['remarks'] = $val['Remarks'];
@@ -405,13 +407,22 @@ class dailyactivity extends CI_Controller {
 
                 if ($daily_hdr_update_status) {
 
-                    $daily_dlt_id = $this->dailyactivity_model->save_daily_details($daily_dtl);
+                    $daily_dlt_id = $this->dailyactivity_model->save_daily_details_up($daily_dtl,$get_update_id);
+                }
+                if($daily_dlt_id)
+                {
+                    $message = "true";
+                }
+                else
+                {
+                    $message = "Error in Updating Records"; 
+                    $this->db->db_debug = TRUE; 
                 }
             }
-            $message = "true";
-        } else {
+            
+       /* } else {
             $message = "Duplicate Record exists in the date " . $hrd_currentdate . " for the executive " . $exename;
-        }
+        }*/
         header('Content-Type: application/x-json; charset=utf-8');
         echo $message;
     }
