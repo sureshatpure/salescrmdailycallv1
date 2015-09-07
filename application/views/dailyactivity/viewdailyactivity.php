@@ -1518,7 +1518,7 @@
 
                                 if (subact_value == null || subact_value == 'undefined')
                                 {
-                                    $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "subactivity", "Please Select the Sub Activity");
+                                    $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "subactivity", "Please Select the Activity Type");
                                     valid_subact = 0;
                                     break;
                                 }
@@ -1539,6 +1539,16 @@
                                     valid_subgrp = 1;
                                 }
 
+                                var moc_value = $('#jqxgrid_n').jqxGrid('getcellvalue', k, "modeofcontact");
+                                if (moc_value == null || moc_value == 'undefined') {
+                                    $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "modeofcontact", "Please Select the Mode of contact");
+                                    valid_moc = 0;
+                                    break;
+                                }
+                                else
+                                {
+                                    valid_moc = 1;
+                                }
                                 
                                 var hr_value = $('#jqxgrid_n').jqxGrid('getcellvalue', k, "hour_s");
                                 if (hr_value == null || hr_value == 'undefined') {
@@ -1563,16 +1573,7 @@
                                     valid_mins = 1;
                                 }
 
-                                var moc_value = $('#jqxgrid_n').jqxGrid('getcellvalue', k, "modeofcontact");
-                                if (moc_value == null || moc_value == 'undefined') {
-                                    $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "modeofcontact", "Please Select the Mode of contact");
-                                    valid_moc = 0;
-                                    break;
-                                }
-                                else
-                                {
-                                    valid_moc = 1;
-                                }
+                               
 
                             }
                             //  alert (" date flag after k loop "+valid_dtflag);
