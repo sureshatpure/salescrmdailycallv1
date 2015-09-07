@@ -421,6 +421,34 @@ class dailyactivity_model extends CI_Model
 				}
 				return $this->db->insert_batch('dailyactivitydtl', $dailydtls);
 			}
+			
+			function save_daily_details_up($dailydtls,$delid)
+			{
+				$this->db->db_debug = FALSE;
+				try {
+						$this->db->trans_start();
+							$this->db->where('id',$delid);
+			              	$this->db->delete('dailyactivitydtl');
+							$this->db->insert_batch('dailyactivitydtl', $dailydtls);
+						$this->db->trans_complete();
+						if ($this->db->trans_status() === FALSE)
+						{
+						   // echo"Error in DB";
+						    return FALSE;
+						}
+						else
+						{
+							//echo"Insert completed";
+							return TRUE;
+						}
+					}
+				catch (Exception $e) {
+					echo"in Rollback condition";
+					$this->db->trans_rollback();
+					  //log_message('error', sprintf('%s : %s : DB transaction failed. Error no: %s, Error msg:%s, Last query: %s', __CLASS__, __FUNCTION__, $e->getCode(), $e->getMessage(), print_r($this->main_db->last_query(), TRUE)));
+					}
+			$this->db->db_debug = TRUE; 
+			}
 
 	
 			function check_dailyhdr_duplicates($hrd_currentdate,$user1)
