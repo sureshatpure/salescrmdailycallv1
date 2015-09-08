@@ -866,7 +866,10 @@
 
                                                             ]
                                                         });
-
+                                                
+                                            var x = ($(window).width() - $("#customWindow").jqxWindow('width')) / 2 + $(window).scrollLeft();
+                                            var y = ($(window).height() - $("#customWindow").jqxWindow('height')) / 2 + $(window).scrollTop();
+                                            $("#customWindow").jqxWindow({ position: { x: x, y: y} });
                                                 $('#customWindow').jqxWindow('open');
                                                 $('#customWindow').jqxWindow({width: "100%"});
 
@@ -1807,6 +1810,9 @@
 
                             if (actionmode == 'update')
                             {
+                                var x = ($(window).width() - $("#customWindow").jqxWindow('width')) / 2 + $(window).scrollLeft();
+                                var y = ($(window).height() - $("#customWindow").jqxWindow('height')) / 2 + $(window).scrollTop();
+                                $("#customWindow").jqxWindow({ position: { x: x, y: y} });
                                 $('#customWindow').jqxWindow('show');
                                 $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "itemgroup", prodName);
                                 gl_customername = $("#jqxgrid_n").jqxGrid('getcellvalue', jqxgrid_n_row_index, 'custgroup');
