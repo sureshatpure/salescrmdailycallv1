@@ -1159,6 +1159,10 @@
                                 {
                                    // $('#addWindow').hide();
                                     $('#win_selectItemMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'select product'});
+
+                                    var x = ($(window).width() - $("#win_selectItemMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
+                                    var y = ($(window).height() - $("#win_selectItemMaster").jqxWindow('height')) / 2 + $(window).scrollTop();
+                                    $("#win_selectItemMaster").jqxWindow({ position: { x: x, y: y} });
                                     $('#win_selectItemMaster').jqxWindow('open');
                                     $('#win_selectItemMaster').jqxWindow({ zIndex: 99999}); 
                                     //$('#win_selectItemMaster').jqxWindow('bringToFront');
@@ -1190,20 +1194,21 @@
                                // $('#addWindow').hide();
                                 $('#win_selectCustMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'Select Customer'});
                                 $('#win_selectCustMaster').jqxWindow('open');
-                                $('#win_selectCustMaster').jqxWindow({ position: { x: 300, y: 100 }}); 
+
+                                var x = ($(window).width() - $("#win_selectCustMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
+                                var y = ($(window).height() - $("#win_selectCustMaster").jqxWindow('height')) / 2 + $(window).scrollTop();
+                                $("#win_selectCustMaster").jqxWindow({ position: { x: x, y: y} });
                                 $('#win_selectCustMaster').jqxWindow({ zIndex: 99999}); 
                                 $('#addWindow').mouseup(function () 
                                     {
-                                       // alert("columnname customer "+columnname);
+                                       
                                         if ($('#win_selectCustMaster').jqxWindow('isOpen')) 
                                         {
-                                           // alert("customer true");
                                             $('#win_selectCustMaster').jqxWindow('bringToFront');
                                         }
                                         else
                                         {
 
-                                            //alert("customer false");
                                             $('#win_selectCustMaster').jqxWindow('bringToFront');
                                         }
                                     
@@ -1671,11 +1676,15 @@
                             {
                               //  $('#customWindow').hide();
                                 $('#win_selectItemMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'select product'});
+
+                                var x = ($(window).width() - $("#win_selectItemMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
+                                var y = ($(window).height() - $("#win_selectItemMaster").jqxWindow('height')) / 2 + $(window).scrollTop();
+                                $("#win_selectItemMaster").jqxWindow({ position: { x: x, y: y} });
                                 $('#win_selectItemMaster').jqxWindow('open');
                                 $('#win_selectItemMaster').jqxWindow({ zIndex: 99999}); 
                                 $('#customWindow').mouseup(function () 
                                     {
-                                       // alert("columnname item "+columnname);
+                                       
                                         if ($('#win_selectItemMaster').jqxWindow('isOpen')) 
                                         {
                                            // alert("item true");
@@ -1694,23 +1703,25 @@
 
                             if (columnname == 'custgroup')
                             {
-                                //$('#customWindow').hide();
+                                
                                 $('#win_selectCustMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'Select Customer'});
                                 $('#win_selectCustMaster').jqxWindow('open');
-                                $('#win_selectCustMaster').jqxWindow({ position: { x: 300, y: 100 }}); 
+                                var x = ($(window).width() - $("#win_selectCustMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
+                                var y = ($(window).height() - $("#win_selectCustMaster").jqxWindow('height')) / 2 + $(window).scrollTop();
+                                $("#win_selectCustMaster").jqxWindow({ position: { x: x, y: y} });
                                 $('#win_selectCustMaster').jqxWindow({ zIndex: 99999}); 
                                 $('#customWindow').mouseup(function () 
                                     {
-                                       // alert("columnname customer "+columnname);
+                                       
                                         if ($('#win_selectCustMaster').jqxWindow('isOpen')) 
                                         {
-                                           // alert("customer true");
+                                           
                                             $('#win_selectCustMaster').jqxWindow('bringToFront');
                                         }
                                         else
                                         {
 
-                                            //alert("customer false");
+                                            
                                             $('#win_selectCustMaster').jqxWindow('bringToFront');
                                         }
                                     
@@ -1777,16 +1788,10 @@
                         //  return value from item master start
                         $("#jqxgrid_selectItemMaster").on('cellselect', function (event) {
 
-
-
-                            //alert("potential quantity "+potential_quantity);
-                            //     alert("Action Mode "+actionmode);
-
                             var rowindex = $("#jqxgrid_selectItemMaster").jqxGrid('getselectedrowindex', event.args.rowindex);
                             var prodName = $("#jqxgrid_selectItemMaster").jqxGrid('getcellvalue', event.args.rowindex, 'itemgroup');
 
                              //var leadid = $("#jqxgrid_selectItemMaster").jqxGrid('getcellvalue', event.args.rowindex, 'leaid');
-                            // alert("leadid in prod"+leadid);
                             if (actionmode == 'add')
                             {
                                 $('#addWindow').jqxWindow('show');
@@ -1794,9 +1799,6 @@
                                 $("#jqxgrid_add").jqxGrid('setcellvalue', jqxgrid_add_row_index, "itemgroup", prodName);
                                 gl_customername = $("#jqxgrid_add").jqxGrid('getcellvalue', jqxgrid_add_row_index, 'custgroup');
                                 gl_productname = $("#jqxgrid_add").jqxGrid('getcellvalue', jqxgrid_add_row_index, 'itemgroup');
-                                // alert("gl_customername add "+gl_customername);
-                                // alert("gl_productname add "+gl_productname);
-
 
                                 $("#jqxgrid_add").jqxGrid('setcellvalue', jqxgrid_add_row_index, "Potential_Quantity", potential_quantity);
 
@@ -1809,8 +1811,6 @@
                                 $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "itemgroup", prodName);
                                 gl_customername = $("#jqxgrid_n").jqxGrid('getcellvalue', jqxgrid_n_row_index, 'custgroup');
                                 gl_productname = $("#jqxgrid_n").jqxGrid('getcellvalue', jqxgrid_n_row_index, 'itemgroup');
-                                //  alert("gl_customername upd "+gl_customername);
-                                // alert("gl_productname upd "+gl_productname);
 
                             }
 
@@ -1918,7 +1918,6 @@
 
                         //  return value from Customer Master start
                         $("#jqxgrid_selectCustomMaster").on('cellselect', function (event) {
-                            // alert("Action Mode "+actionmode);
                             var rowindex = $("#jqxgrid_selectCustomMaster").jqxGrid('getselectedrowindex', event.args.rowindex);
 
                             var custid = $("#jqxgrid_selectCustomMaster").jqxGrid('getcellvalue', event.args.rowindex, 'customergroup');
@@ -2179,7 +2178,7 @@
 
                                 <!-- add popup end -->
                                 <!-- Select itemmaster popup start -->
-                                <div id="win_selectItemMaster" style="width: 50%" >
+                                <div id="win_selectItemMaster" style="position: fixed; left: 50%; top: 50%;">
                                     <div style="margin: 10px">
                                         <div id="jqxgrid_selectItemMaster" style="width: 400px;"></div>
                                     </div>
@@ -2187,7 +2186,8 @@
                                 <!-- Select Itemmaster popup end -->
 
                                 <!-- Select customer master popup start -->
-                                <div id="win_selectCustMaster" style="width: 50%" >
+
+                                <div id="win_selectCustMaster" style="position: fixed; left: 50%; top: 50%;">
                                     <div style="margin: 10px">
                                         <div id="jqxgrid_selectCustomMaster" style="width: 400px;"></div>
                                     </div>
