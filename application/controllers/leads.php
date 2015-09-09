@@ -794,7 +794,8 @@ class Leads extends CI_Controller {
                       $isExecutive = $this->Leads_model->check_executive_user($duser_dc);
                       if($isExecutive['0']['noofrows']>0)
                       {
-                        $check_duplicates = $this->Leads_model->check_dailyhdr_duplicates($date_v, $user1);
+                        
+                        $check_duplicates = $this->Leads_model->check_dailyhdr_duplicates($date_v, $duser_dc);
                         if($check_duplicates['0']['noofrows']>0)
                         {
                          // get the header id and do set update flag=1
