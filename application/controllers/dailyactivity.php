@@ -253,7 +253,8 @@ class dailyactivity extends CI_Controller {
             $message = "true";
         } else {
             // echo "duplicate exists";	
-            $message = "Duplicate Record exists in the date " . $hrd_currentdate . " for the executive " . $exename;
+            $message = "Entry already exists for this date -" . $hrd_currentdate;
+
         }
         header('Content-Type: application/x-json; charset=utf-8');
         echo $message;
@@ -384,7 +385,7 @@ class dailyactivity extends CI_Controller {
         else{
             
              // echo "duplicate exists";    
-            $message = "Duplicate Record exists in the date " . $hrd_currentdate . " for the executive " . $exename;
+            $message = "Entry already exists for this date -" . $hrd_currentdate;
         }
         header('Content-Type: application/x-json; charset=utf-8');
         echo $message;
