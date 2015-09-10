@@ -845,11 +845,7 @@
                                                                     },
                                                                 
                                                                    
-                                                                /*{text: 'Mode of Contact', datafield: 'modeofcontact', width: 100, cellsalign: 'left', columntype: 'dropdownlist',
-                                                                    createeditor: function (row, cellvalue, editor) {
-                                                                        editor.jqxDropDownList({source: ["E-mail", "Phone", "Visit"]});
-                                                                    }
-                                                                },*/
+
                                                                 {text: 'Mode of Contact', datafield: 'modeofcontact', width: 100, cellsalign: 'left', cellbeginedit:Resultsupdate.initResultsEditorcon, createeditor: Resultsupdate.resultsEditorcon, cellsrenderer: Resultsupdate.renderUnitsst
                                                                 },
                                                                 {text: 'Time Spent (Hrs)', datafield: 'hour_s', width: 75, cellsalign: 'left', columntype: 'dropdownlist',

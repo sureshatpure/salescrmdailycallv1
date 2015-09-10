@@ -1331,7 +1331,7 @@ class Leads extends CI_Controller {
             if ($reffer_page == "dailycall") {
                 redirect($url . 'dailycall');
             } else {
-	 	      //     redirect('leads');
+	 	           redirect('leads');
             }
         }
     }

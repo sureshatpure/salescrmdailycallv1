@@ -348,6 +348,10 @@ class dailyactivity_model extends CI_Model
 					{
 					$row["leadid"] = "No Leads";	
 					}
+					else
+					{
+						$row["leadid"] = $activitydetails[$i]["leadid"];
+					}
 					
 				//	$row["result_type"] = $activitydetails[$i]["result_type"];
 					$row["complaints"] = $activitydetails[$i]["complaints"];
