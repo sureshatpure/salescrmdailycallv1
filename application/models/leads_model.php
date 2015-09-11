@@ -3115,7 +3115,7 @@ SELECT
             {
               
 
-                $sql ="SELECT designation from vw_web_user_login WHERE designation='Executive' AND upper(duser)='".strtoupper($user1)."'";
+                $sql ="SELECT designation from vw_web_user_login_desg WHERE designation='Executive' AND upper(duser)='".strtoupper($user1)."'";
                 $result = $this->db->query($sql);
                 $result->num_rows();
                 $isExecutive = $result->result_array();
