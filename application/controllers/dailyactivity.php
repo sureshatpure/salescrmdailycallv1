@@ -391,6 +391,16 @@ class dailyactivity extends CI_Controller {
         echo $message;
       }  
 
+      function tutortial1()
+      {
+        $this->load->view('dailyactivity/tutorial1');
+      }
+
+       function leadreassign()
+      {
+        $this->load->view('dailyactivity/tutorial2');
+      }
+
    
 }
 

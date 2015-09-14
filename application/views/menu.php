@@ -8,7 +8,6 @@
                     <div id='jqxMenu' style='visibility: hidden; margin-left: 5px;'>
                         <ul>
                             <li><a href="<?= base_url() ?>">Home</a></li>
-                            <li>Master</li> 
                             <li>Transactions
                                 <ul style='width: 120px;'>
                                     <li>Marketing
@@ -35,6 +34,17 @@
                                         <ul style='width: 200px;'>
                                             <li><a href="<?= base_url() ?>dashboard">Branches OverAll</a></li>
                                             <li><a href="<?= base_url() ?>dashboard/ownbranch">Branches On Their Own</a></li>
+                                        </ul>
+
+                                    </li>
+                                </ul>
+                            </li>
+                             <li>Video Tutorials
+                                <ul style='width: 150px;'>
+                                    <li>DailyActivity
+                                        <ul style='width: 200px;'>
+                                            <li><a href="<?= base_url() ?>dailyactivity/tutortial1">UserManual</a></li>
+                                            
                                         </ul>
 
                                     </li>
