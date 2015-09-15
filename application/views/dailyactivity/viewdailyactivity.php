@@ -39,7 +39,6 @@
                         color: #b90f0f;
                         font-style: italic;
                     }
-
                 </style>
 
                 <script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxcore.js"></script>
@@ -89,13 +88,17 @@
                         })
 
                         // code start for view formdetail window
-
+                        $('#customWindowview').jqxWindow({theme: 'energyblue', showCollapseButton: true, autoOpen: false, width: 1013, height: 400, resizable: true, title: 'View Daily Call Activity',
+                            initContent: function () {
+                                $('#jqxgrid_view').jqxGrid({disabled: false});
+                            }
+                        })
                         // code end for view formdetail window
                         // code start for add window
-                        $('#addWindow').jqxWindow({theme: 'energyblue', autoOpen: false, showCollapseButton: true, height: 400, resizable: true, title: 'Add Daily Call Activity&nbsp;&nbsp; <input id="addrowbutton"  class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" type="button" value="Add New Row" />&nbsp;&nbsp;<input id="deleterowbutton"  class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" type="button" value="Delete Selected Row" />&nbsp;&nbsp;<input id="save"  class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" type="button" value="Save Data" />',
+                        $('#addWindow').jqxWindow({theme: 'energyblue', autoOpen: false, showCollapseButton: true, height: 400, width: 1024, resizable: true, title: 'Add Daily Call Activity&nbsp;&nbsp; <input id="addrowbutton"  class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" type="button" value="Add New Row" />&nbsp;&nbsp;<input id="deleterowbutton"  class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" type="button" value="Delete Selected Row" />&nbsp;&nbsp;<input id="save"  class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" type="button" value="Save Data" />',
                             initContent: function () {
-                                $('#jqxgrid_add').jqxGrid({disabled: false, width: 790, theme: 'energyblue'});
-                            },position: 'top, left'
+                                $('#jqxgrid_add').jqxGrid({disabled: false, width: 1024, theme: 'energyblue'});
+                            }
                         });
                         // code end for add window
                     }
@@ -106,32 +109,41 @@
                         // Create a jqxMenu
                         $("#jqxMenu").jqxMenu({width: '670', height: '30px', theme: 'black'});
                         $("#jqxMenu").css('visibility', 'visible');
-                        $('#customWindow').hide();
 
                         var dhdr_headerid;
                         var header_date;
                         var hide_update_button;
                         var potential_quantity;
-                        var noofleads;
-                        var resulttype;
-                        var lead_salestype;
-                        var lead_email_id;
                         var gl_customername;
                         var gl_productname;
-                        //var leadlistdataAdapter;
-                        var listdataAdapter;
-                        var g_noofleads;
 
 
                         var permission = <?php echo $grpperm; ?>;
                         var group_len = permission.length;
-                        hide_update_button = 1;
+                        //    alert("group len "+permission.length);
+                        if (permission.length == 0)
+                        {
+                            hide_update_button = 1;
+                        }
+                        for (i = 0; i < permission.length; i++)
+                        {
+                            // alert(permission[i].groupname);
+                            if (permission[i].groupname == 'Edit')
+                            {
+                                hide_update_button = 0;
+                                break;
+                            }
+                            else
+                            {
+                                hide_update_button = 1;
+                            }
+                        }
+                        //  alert("accesright "+hide_update_button);
 
                         var currentdate;
-                        
-                        $('#win_selectItemMaster').jqxWindow({ autoOpen:false}); 
-                        $('#win_selectCustMaster').jqxWindow({ autoOpen:false}); 
-                        $('#win_selectCustMaster').jqxWindow('bringToFront');
+                        //$('#jqxgrid_selectItemMaster').hide();
+                        $('#win_selectItemMaster').hide();
+                        $('#win_selectCustMaster').hide();
                         $("#update_add_row").jqxButton({theme: 'black', width: '150', height: '25'});
                         $("#jqxgrid_add").jqxGrid({theme: 'energyblue'});
                         _createElements(); // to open custom popup window when edit is clicked
@@ -155,7 +167,7 @@
                                     datafields:
                                             [
                                                 {name: 'id'},
-                                                {name: 'currentdate', type: 'datetime'},
+                                                {name: 'currentdate', type: 'date'},
                                                 {name: 'execode', type: 'string'},
                                                 {name: 'exename', type: 'string'},
                                                 {name: 'branch', type: 'string'},
@@ -177,517 +189,6 @@
                             $("#customgroup").addClass('jqx-input-' + theme);
 
                         }
-                        /* change column type dynamic start*/
-                        var  Results ={
-
-                                     
-                               initResultsEditor: function(row){
-
-                                  var data = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                                  //alert("item group "+data.itemgroup);
-                                  if(data.itemgroup==undefined)
-                                  {
-                                  //  alert("yes");
-                                    data.result_type='Value';
-                                  }
-                                  
-                                  if(data.result_type === 'Value')
-                                    {
-                                        this.columntype = 'textbox';
-                                    } 
-
-                                   else if(data.result_type === 'Select') 
-                                   {
-                                    this.columntype = 'dropdownlist';
-                                   }
-                               },
-                               initResultsEditorat: function(row){
-                                  var data = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Value')
-                                    {
-                                        this.columntype = 'dropdownlist';
-
-                                    } 
-
-                                   else if(data.result_type === 'Select') 
-                                   {
-                                    this.columntype = 'dropdownlist';
-                                   // return false;
-                                   }
-                               },
-                               initResultsEditorst: function(row){
-                                  var data = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Value')
-                                    {
-                                        
-                                          this.columntype ='dropdownlist';
-
-                                    } 
-
-                                   else if(data.result_type ==='Select') 
-                                   {
-                                    this.columntype='textbox';
-                                    return false;
-
-                                   }
-                               },
-                               initResultsEditorcon: function(row){
-                                  var data = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Value')
-                                    {
-                                        
-                                          this.columntype ='dropdownlist';
-                                    } 
-
-                                   else if(data.result_type ==='Select') 
-                                   {
-                                    this.columntype='textbox';
-                                    return false;
-                                   }
-                               },
-                               resultsEditor: function(row, cellvalue, editor){
-                                  var data = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                                  switch(data.result_type){
-                                     case 'Value':
-                                       editor.jqxInput({ placeHolder: "No Leads" });
-                                     break;
-                                     case 'Select':
-
-                                            var cust_grp = $('#jqxgrid_add').jqxGrid('getcellvalue', row, "custgroup");
-                                            var prod_grp = $('#jqxgrid_add').jqxGrid('getcellvalue', row, "itemgroup");
-                                      
-                                            var list = {
-                                                datatype: "json",
-                                                datafields:
-                                                        [
-                                                            {name: 'id'},
-                                                            {name: 'leadid'}
-                                                        ],
-                                                id: 'id',
-                                                root: "leadid",
-                                                url: base_url + "dailyactivity/getleadids/"+ escape(cust_grp) + "/" + escape(prod_grp),
-                                                cache: false,
-                                                async: false
-                                               
-                                            };
-
-                                            listdataAdapter = new $.jqx.dataAdapter(list, {
-                                                autoBind: true,
-                                                buildSelect: function (suboptions)
-                                                {
-                                                    
-                                                     console.log(suboptions);
-                                                    var data = new Array();
-                                                    $.each(suboptions, function (id, value)
-                                                    {
-                                                        var list = records[i];
-                                                        list.id = list.id;
-                                                        list.leadid = list.leadid;
-                                                        data.push(list);
-                                                    });
-                                                    return data;
-                                                }
-                                            });
-                                    
-                                    
-                                        editor.jqxDropDownList(
-                                            {
-                                                source: listdataAdapter.records, displayMember: "id",autoDropDownHeight: true, valueMember: "leadid",promptText:"No Leads",selectedIndex:1,placeHolder: 'Select Leadid',renderer: function (index, label, value) 
-                                                    {
-                                                    //alert("value "+value);
-                                                    var hrefUrl = base_url+'leads/viewleaddetails/' + value;
-                                                    var option = '<div value="' + value + '"><a href="' + hrefUrl + '" target="_blank">' + value + '</a></div>';
-                                                           return option;
-                                                        
-                                                    }
-                                            });
-                                             
-                                     break;
-                                     case 'Cascaded':
-                                     break;
-                                     default:
-                                        alert('Unbound result type.... I dont know how to handle this!!!');
-                                     break;
-                                  }
-                    
-                               },
-                               resultsEditorst: function(row, cellvalue, editor){
-                                   var data = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                                 //  var data.leadid = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                  
-                                 var leadid =data.leadid;
-                                  switch(data.result_type){
-                                     case 'Value':
-                                       editor.jqxDropDownList(
-                                        {source: ["Tanker", "Repacked", "Container", "Textile", "Leather", "Paper", "Exxon Speciality", "Lubricant", "Polymer", "Pure Speciality", "Others"]
-                                        });
-                                     break;
-                                     case 'Select':
-
-                                        } // end of switch
-                                            
-                               },
-                               resultsEditorcon: function(row, cellvalue, editor){
-                                   var data = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                                 //  var data.leadid = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                  
-                                 var leadid =data.leadid;
-                                  switch(data.result_type){
-                                     case 'Value':
-                                       editor.jqxDropDownList(
-                                        {source: ["E-mail", "Phone", "Visit"],autoDropDownHeight: true
-                                        });
-                                     break;
-                                     case 'Select':
-
-                                        } // end of switch
-                                            
-                               },
-                               resultsEditorat: function(row, cellvalue, editor){
-                                   var data = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                                 //  var data.leadid = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                         
-                                  switch(data.result_type){
-                                     case 'Value':
-                                       editor.jqxDropDownList(
-                                        {source: ["NEW CUSTOEMR", "EXSISTING CUSTOMER", "ORDER FOLLOWUP", "ORDER AND PAYMENT", "TENDER", "PAYMENT FOLLOW UP", "BALANCE SHEET", "TANKER  DIVERTION", "INVOICE", "PROFORM INVOICE", "PAYMENT COLLECTION"]
-                                        });
-                                     break;
-                                     case 'Select':
-                                         editor.jqxDropDownList({source: ["LEADS"],autoDropDownHeight: true,selectedIndex: 0});
-                                 }           
-                               },
-                               renderUnits: function(row, columnfield, value, defaulthtml, columnproperties)
-                               {
-                                  var data = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Value' && data.result !== ''){
-                                    
-                                     defaulthtml = defaulthtml.replace(/>.+<\/div>/ , '>No Leads</div>');
-                                
-                                 }
-                                  return defaulthtml;
-                               },
-
-                               renderUnitsat: function(row, columnfield, value, defaulthtml, columnproperties)
-                               {
-                 
-
-                                  var data = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Select' && data.result !== '')
-                                  {
-                                   /*  alert("data.result_type "+data.result_type);
-                                     alert("columnfield "+columnfield);
-                                     alert("value "+value);
-                                     alert("defaulthtml "+defaulthtml);
-                                     alert("columnproperties "+columnproperties);*/
-                                     //defaulthtml = defaulthtml.replace(/>.+<\/div>/ , '>'+ data.result +' '+ data.units +'</div>');
-                                     defaulthtml = defaulthtml.replace(/>.+<\/div>/ , '>LEADS</div>');
-                    
-
-                                 }
-                               
-                                  return defaulthtml;
-                               },
-                               renderUnitsst: function(row, columnfield, value, defaulthtml, columnproperties){
-                                  var data = $('#jqxgrid_add').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Select'){
-                                     defaulthtml = defaulthtml.replace(/>.+<\/div>/ , '>'+ value +'</div>');
-
-                                 }
-                                
-                                  return defaulthtml;
-                               }
-                              };
-
-                        /* change column type dynameic end*/
-                            var  Resultsupdate ={
-                               initResultsEditor: function (row, datafield, columntype) {
-                            var rowdata = $("#jqxgrid_n").jqxGrid('getrowdata', row);
-                            var cust_grp = rowdata.custgroup;
-                            var prod_grp = rowdata.itemgroup;
-                           
-                            if(cust_grp!="" && prod_grp!="")
-                            {
-                                //return true;
-                                    var url = "dailyactivity/get_potentialquantity/" + escape(cust_grp) + "/" + escape(prod_grp);
-                                        $.ajax({
-                                            dataType: "html",
-                                            url: url,
-                                            type: "POST",
-                                            async: false,
-                                            cache:false,
-                                            error: function (xhr, status) {
-                                                alert("check " + status + " test");
-                                            },
-                                            success: function (result) {
-                                                var obj = jQuery.parseJSON(result);
-                                                rows = obj.rows;
-
-                                                potential_quantity = rows[0].potential;
-                                                noofleads =rows[0].noofleads;
-                                                g_noofleads=noofleads;
-                                                resulttype =rows[0].result_type;
-                                                if(noofleads>0)
-                                                {
-                                                 this.columntype = 'dropdownlist';  
-                                                 $("#jqxgrid_n").jqxGrid('setcellvalue', row, "potentialqty", potential_quantity); 
-                                                }
-                                                else
-                                                {
-                                                     this.columntype = 'textbox';
-                                                }
-                                                
-                                            }
-                                        });
-
-                                    
-                                    $("#jqxgrid_n").jqxGrid('setcellvalue', row, "noofleads", noofleads);
-                                    $("#jqxgrid_n").jqxGrid('setcellvalue', row, "result_type", resulttype);
-
-
-                                        var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                                          if(data.result_type === 'Value')
-                                            {
-                                                this.columntype = 'textbox';
-                                            } 
-
-                                           else if(data.result_type === 'Select') 
-                                           {
-                                            this.columntype = 'dropdownlist';
-                                           }
-                                
-                            }
-                            else
-                            {
-                                return false;
-                            }
-
-                        },
-                               initResultsEditorat: function(row){
-                                  var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Value')
-                                    {
-                                        this.columntype = 'dropdownlist';
-                                    } 
-
-                                   else if(data.result_type === 'Select') 
-                                   {
-                                    this.columntype = 'dropdownlist';
-                                   }
-                               },
-                               initResultsEditorst: function(row){
-                                  var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Value')
-                                    {
-                                        
-                                          this.columntype ='dropdownlist';
-                                    } 
-
-                                   else if(data.result_type ==='Select') 
-                                   {
-                                    this.columntype='textbox';
-                                   }
-                               },
-                               initResultsEditorcon: function(row){
-                                  var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Value')
-                                    {
-                                        
-                                          this.columntype ='dropdownlist';
-                                    } 
-
-                                   else if(data.result_type ==='Select') 
-                                   {
-                                    this.columntype='textbox';
-                                   }
-                               },
-                               resultsEditor: function(row, cellvalue, editor){
-                                
-                                  var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-
-                                  switch(data.result_type){
-                                     case 'Value':
-                                       editor.jqxInput({ placeHolder: "No Leads" });
-                                     break;
-                                     case 'Select':
-
-                                            var cust_grp = $('#jqxgrid_n').jqxGrid('getcellvalue', row, "custgroup");
-                                            var prod_grp = $('#jqxgrid_n').jqxGrid('getcellvalue', row, "itemgroup");
-                                            var list = {
-                                                datatype: "json",
-                                                datafields:
-                                                        [
-                                                            {name: 'id'},
-                                                            {name: 'leadid'}
-                                                        ],
-                                                id: 'id',
-                                                root: "leadid",
-                                                url: base_url + "dailyactivity/getleadids/"+ escape(cust_grp) + "/" + escape(prod_grp),
-                                                cache: false,
-                                                async: false
-                                            };
-
-                                            listdataAdapter = new $.jqx.dataAdapter(list, {
-                                                autoBind: true,
-                                                buildSelect: function (suboptions)
-                                                {
-                                                    
-                                                     console.log(suboptions);
-                                                    var data = new Array();
-                                                    $.each(suboptions, function (id, value)
-                                                    {
-                                                        var list = records[i];
-                                                        list.id = list.id;
-                                                        list.leadid = list.leadid;
-                                                        data.push(list);
-                                                    });
-                                                    return data;
-                                                }
-                                            });
-                                   
-                                        editor.jqxDropDownList(
-                                            {
-                                                source: listdataAdapter.records, displayMember: "id",autoDropDownHeight: true, valueMember: "leadid",promptText:"No Leads",selectedIndex:1,placeHolder: 'Select Leadid',renderer: function (index, label, value) 
-                                                    {
-                                                    //alert("value "+value);
-                                        var hrefUrl = base_url+'leads/viewleaddetails/' + value;
-                              //  var option = '<option value="'+value+'"><a href="'+hrefUrl+'" target="_blank">'+value+'</a></option>';
-                                var option = '<div value="' + value + '"><a href="' + hrefUrl + '" target="_blank">' + value + '</a></div>';
-                                                           return option;
-                                                        
-                                                    }
-                                            });
-                                             
-                                     break;
-                                     case 'Cascaded':
-                                     break;
-                                     default:
-                                        alert('Unbound result type.... I dont know how to handle this!!!');
-                                     break;
-                                  }
-                    
-                               },
-                               resultsEditorst: function(row, cellvalue, editor){
-                                   var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                                 //  var data.leadid = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                  
-                                 var leadid =data.leadid;
-                                  switch(data.result_type){
-                                     case 'Value':
-                                       editor.jqxDropDownList(
-                                        {source: ["Tanker", "Repacked", "Container", "Textile", "Leather", "Paper", "Exxon Speciality", "Lubricant", "Polymer", "Pure Speciality", "Others"]
-                                        });
-                                     break;
-                                     case 'Select':
-
-                                        } // end of switch
-                                            
-                               },
-                               resultsEditorcon: function(row, cellvalue, editor){
-                                   var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                                 //  var data.leadid = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                  
-                                 var leadid =data.leadid;
-                                  switch(data.result_type){
-                                     case 'Value':
-                                       editor.jqxDropDownList(
-                                        {source: ["E-mail", "Phone", "Visit"],autoDropDownHeight: true});
-                                     break;
-                                     case 'Select':
-
-                                        } // end of switch
-                                            
-                               },
-                               resultsEditorat: function(row, cellvalue, editor){
-                                   var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                                  switch(data.result_type){
-                                     case 'Value':
-                                       editor.jqxDropDownList(
-                                        {source: ["NEW CUSTOEMR", "EXSISTING CUSTOMER", "ORDER FOLLOWUP", "ORDER AND PAYMENT", "TENDER", "PAYMENT FOLLOW UP", "BALANCE SHEET", "TANKER  DIVERTION", "INVOICE", "PROFORM INVOICE", "PAYMENT COLLECTION"]
-                                        });
-                                     break;
-                                     case 'Select':
-                                         editor.jqxDropDownList({source: ["LEADS"],autoDropDownHeight: true,selectedIndex:0});
-                                 }           
-                               },
-                               renderUnits: function(row, columnfield, value, defaulthtml, columnproperties)
-                               {
-                                  var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Value' && data.result !== ''){
-                                    
-                                     defaulthtml = defaulthtml.replace(/>.+<\/div>/ , '>No Leads</div>');
-                                
-                                 }
-                                  return defaulthtml;
-                               },
-                               renderUnitsUpdate: function(row, columnfield, value, defaulthtml, columnproperties,editor)
-                               {
-                                  var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-
-                                  if(data.result_type === 'Value' && data.result !== ''){
-                                    
-                                     defaulthtml = defaulthtml.replace(/>.+<\/div>/ , '>No Leads</div>');
-                                
-                                 }
-                                 else
-                                 {
-                                     
-                                     alert("items "+editor.toSource());
-                                 }
-                                  return defaulthtml;
-                                  /*//alert("g_noofleads in renderUnitsUpdate "+g_noofleads)
-                                  this.columntype='textbox';
-                                  alert("columnproperties "+columnproperties.toSource());
-                                  if(g_noofleads == 0){
-                                     this.columntype='textbox';
-                                     //alert("in renderUnitsUpdate if conditon true");
-                                     defaulthtml = defaulthtml.replace(/>.+<\/div>/ , '>No Leads</div>');
-                                 }
-                                 else
-                                 {
-                                    this.columntype='dropdownlist';
-                                     var hrefUrl = base_url+'leads/viewleaddetails/' + value;
-                                    var defaulthtml = '<option value="'+value+'"><a href="'+hrefUrl+'" target="_blank">'+value+'</a></option>';
-                                                      
-                                    defaulthtml = defaulthtml.replace(/>.+<\/div>/ , '>No Leads</div>');
-                                 }
-                                 alert("returning "+defaulthtml);
-                                 return defaulthtml;*/
-                               },
-
-                               renderUnitsat: function(row, columnfield, value, defaulthtml, columnproperties)
-                               {
-                 
-
-                                  var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Select' && data.result !== '')
-                                  {
-                                   /*  alert("data.result_type "+data.result_type);
-                                     alert("columnfield "+columnfield);
-                                     alert("value "+value);
-                                     alert("defaulthtml "+defaulthtml);
-                                     alert("columnproperties "+columnproperties);*/
-                                     //defaulthtml = defaulthtml.replace(/>.+<\/div>/ , '>'+ data.result +' '+ data.units +'</div>');
-                                     defaulthtml = defaulthtml.replace(/>.+<\/div>/ , '>LEADS</div>');
-                    
-
-                                 }
-                               
-                                  return defaulthtml;
-                               },
-                               renderUnitsst: function(row, columnfield, value, defaulthtml, columnproperties){
-                                  var data = $('#jqxgrid_n').jqxGrid('getrowdata', row);
-                                  if(data.result_type === 'Select'){
-                                     defaulthtml = defaulthtml.replace(/>.+<\/div>/ , '>'+ value +'</div>');
-
-                                 }
-                                
-                                  return defaulthtml;
-                               }
-                              };
-                        /* change column type dynamic update end*/
-                        
-                        
 
 
                         var dataAdapter = new $.jqx.dataAdapter(source);
@@ -713,11 +214,11 @@
                                     autoheight: true,
                                     showtoolbar: true,
                                     pageable: true,
-                                    rendertoolbar: toolbarfunc,
+                                            rendertoolbar: toolbarfunc,
                                     columns: [
                                         {text: 'ID', datafield: 'id', width: 60},
                                         {
-                                            text: 'Visit Date', datafield: 'currentdate', columntype: 'datetimeinput', width: 110, align: 'left', cellsalign: 'left', cellsformat: 'd', formatString: 'd'
+                                            text: 'Date', datafield: 'currentdate', columntype: 'datetimeinput', width: 110, align: 'left', cellsalign: 'left', cellsformat: 'd', formatString: 'd'
                                                     /* , validation: function (cell, value) {
                                                      if (value == "")
                                                      return true;
@@ -733,7 +234,7 @@
                                         {text: 'User Name', datafield: 'exename', width: 150, cellsalign: 'left'},
                                         {text: 'Branch', datafield: 'branch', width: 150, cellsalign: 'left'},
                                         {text: 'Created Date', datafield: 'creationdate', columntype: 'datetimeinput', width: 110, align: 'left', cellsalign: 'left', cellsformat: 'd', formatString: 'd'},
-                                        {text: 'Update', cellsalign: 'center', datafield: 'Update', filterable: false, width: 100, columntype: 'button', cellsrenderer: function () {
+                                        {text: 'Update', cellsalign: 'center', datafield: 'Update', filterable: false, width: 100, hidden: hide_update_button, columntype: 'button', cellsrenderer: function () {
                                                 return "Update";
                                             }, buttonclick: function (row)
                                             { // popup function start
@@ -782,6 +283,12 @@
                                                         };
 
                                                 var dataAdapter = new $.jqx.dataAdapter(source);
+
+
+                                                /*  $("#update_header_date").jqxDateTimeInput({ width: '250px', height: '25px', theme: 'summer',formatString:'d',readonly: true});
+                                                 $("#update_header_date").jqxDateTimeInput('setDate',new Date(header_date));
+                                                 $("#update_header_date").jqxDateTimeInput('destroy'); */
+                                                //$("#input").jqxInput({  height: 25, width: 200, minLength: 1, source: countries });
                                                 header_date = convert(header_date);
 
                                                 $('#update_header_date').jqxInput({width: '100px', height: '25px', disabled: true});
@@ -797,56 +304,41 @@
                                                             columnsresize: true,
                                                             selectionmode: 'rowselect',
                                                             editable: true,
-                                                            editmode: 'click',
                                                             sortable: true,
                                                             pageable: true,
                                                             columnsresize: true,
-                                                            sortable: true,
-                                                            showfilterrow: false,
+                                                                    sortable: true,
+                                                                    showfilterrow: true,
                                                             filterable: true,
                                                             columns: [
                                                                 {text: 'UID', datafield: 'id', width: 150, cellsalign: 'left', hidden: true},
                                                                 {text: 'Customer Group', datafield: 'custgroup', width: 150, editable: false},
                                                                 {text: 'Product Group', datafield: 'itemgroup', width: 150, cellsalign: 'left', editable: false},
-                                                                {text: 'Lead id', datafield: 'leadid', displayfield: 'leadid', width: 127, cellsalign: 'center', cellbeginedit: Resultsupdate.initResultsEditor, initeditor: Resultsupdate.resultsEditor, cellsrenderer: Resultsupdate.renderUnits,promptText:'Select Leadid',cellvaluechanging: function (row, datafield, columntype, oldvalue, newvalue) 
-                                                                        {
-                                                                           // alert("oldvalue "+oldvalue); alert("newvalue "+newvalue);
-                                                                              if (newvalue == 0) {
-                                                                               return oldvalue;
-                                                                          }
-                                                                        }
-                                                                },
-                                                                {text: 'noofleads', datafield: 'noofleads',hidden:true, width: 20, cellsalign: 'left', editable: false},
-                                                                {text: 'result_type', datafield: 'result_type',hidden:true, width: 75, cellsalign: 'left', editable: false},
-
-                                                                {text: 'Activity Type', datafield: 'subactivity', width: 110, cellsalign: 'left', cellbeginedit:Resultsupdate.initResultsEditorat, initeditor: Resultsupdate.resultsEditorat, cellsrenderer: Resultsupdate.renderUnitsat
-                                                                },
-                                                                
                                                                 {text: 'Potential', datafield: 'potentialqty', width: 75, cellsalign: 'left', editable: false},
+                                                                {text: 'Required Quantity', datafield: 'quantity', width: 75, cellsalign: 'left'},
+                                                                {text: 'Type', datafield: 'division', width: 150, cellsalign: 'left', columntype: 'dropdownlist',
+                                                                    createeditor: function (row, cellvalue, editor) {
+                                                                        editor.jqxDropDownList({source: ["Tanker", "Repacked", "Container", "Textile", "Leather", "Paper", "Exxon Speciality", "Lubricant", "Polymer", "Pure Speciality", "Others"]});
+                                                                    }
 
-                                                                {text: 'Required Quantity', datafield: 'quantity', width: 75, cellsalign: 'left',
-                                                                        cellbeginedit: function (row, datafield, columntype) {
-                                                                                    var rowdata = $("#jqxgrid_n").jqxGrid('getrowdata', row);
-                                                                                    var leadid = rowdata.leadid;
-                                                                                   // alert("leadid in quantity cell rendering "+leadid);
-                                                                                    if(leadid==undefined || leadid==0)
-                                                                                    {
-                                                                                        return true;
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        return false;
-                                                                                    }
-
-                                                                                }
-                                                                    },
-                                                                    {text: 'Sales Type', datafield: 'division', width: 110, cellsalign: 'left',readonly:true,cellbeginedit:Resultsupdate.initResultsEditorst, initeditor: Resultsupdate.resultsEditorst, cellsrenderer: Resultsupdate.renderUnitsst
-
-                                                                    },
-                                                                
-                                                                   
-
-                                                                {text: 'Mode of Contact', datafield: 'modeofcontact', width: 100, cellsalign: 'left', cellbeginedit:Resultsupdate.initResultsEditorcon, createeditor: Resultsupdate.resultsEditorcon, cellsrenderer: Resultsupdate.renderUnitsst
+                                                                },
+                                                                {text: 'Type of Customer/Visit', datafield: 'subactivity', columntype: 'dropdownlist', width: 150, cellsalign: 'left',
+                                                                    createeditor: function (row, cellvalue, editor) {
+                                                                        editor.jqxDropDownList({source: ["NEW CUSTOEMR", "EXSISTING CUSTOMER", "ORDER FOLLOWUP", "ORDER AND PAYMENT", "TENDER", "PAYMENT FOLLOW UP", "BALANCE SHEET", "TANKER  DIVERTION", "INVOICE", "PROFORM INVOICE", "PAYMENT COLLECTION"]});
+                                                                    }
+                                                                },
+                                                                {text: 'Visited Date', datafield: 'date', columntype: 'datetimeinput', width: 110, align: 'left', cellsformat: 'd', formatString: 'yyyy-MM-dd HH:mm:ss',
+                                                                    validation: function (cell, value) {
+                                                                        if (value == "") {
+                                                                            return {result: false, message: "Date is required!"};
+                                                                        }
+                                                                        return true;
+                                                                    }
+                                                                },
+                                                                {text: 'Mode of Contact', datafield: 'modeofcontact', width: 100, cellsalign: 'left', columntype: 'dropdownlist',
+                                                                    createeditor: function (row, cellvalue, editor) {
+                                                                        editor.jqxDropDownList({source: ["E-mail", "Phone", "Visit"]});
+                                                                    }
                                                                 },
                                                                 {text: 'Time Spent (Hrs)', datafield: 'hour_s', width: 75, cellsalign: 'left', columntype: 'dropdownlist',
                                                                     createeditor: function (row, cellvalue, editor) {
@@ -858,14 +350,13 @@
                                                                         editor.jqxDropDownList({source: ["0 mins", "5 mins", "10 mins", " 15 mins", "20 mins", "25 mins", "30 mins", " 35 mins", "40 mins", "45 mins", " 50 mins", "55 mins"]});
                                                                     }
                                                                 },
-                                                            {text: 'Notes / Remarks', datafield: 'remarks', width: 150, cellsalign: 'left'},
-
+                                                                {text: 'Notes / Remarks', datafield: 'remarks', width: 150, cellsalign: 'left'},
+                                                                {text: 'Description', datafield: 'description', width: 150, cellsalign: 'left'},
+                                                                {text: 'Action Planned', datafield: 'actionplanned', width: 150, cellsalign: 'left'},
+                                                                {text: 'Detailed Description', datafield: 'detailed_description', width: 150, cellsalign: 'left'},
                                                             ]
                                                         });
-                                                
-                                            var x = ($(window).width() - $("#customWindow").jqxWindow('width')) / 2 + $(window).scrollLeft();
-                                            var y = ($(window).height() - $("#customWindow").jqxWindow('height')) / 2 + $(window).scrollTop();
-                                            $("#customWindow").jqxWindow({ position: { x: x, y: y} });
+
                                                 $('#customWindow').jqxWindow('open');
                                                 $('#customWindow').jqxWindow({width: "100%"});
 
@@ -875,8 +366,6 @@
                                     ]
 
                                 });
-                                  
-                                
 
                         // toolbar functions start
                         var toolbarfunc = function (toolbar)
@@ -885,17 +374,17 @@
                             var theme = 'energyblue';
                             //  alert("theme "+theme);
 
-                            var container = $("<div style='margin-top: 6px;' id='jqxWidget'></div>");
+                            var container = $("<div style='width:200px; margin-top: 6px;' id='jqxWidget'></div>");
                             var span = $("<span style='float: left; margin-top: 5px; margin-right: 4px;'></span>");
-                            var startdiv = $("<div>");
-                            var addlog = $("<a role='button' class='jqx-link jqx-link-energyblue' style='margin-left: 25px;' target='' href='#' id='jqxButtonadd'><input type='button' class='jqx-wrapper jqx-reset jqx-reset-energyblue jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-pressed jqx-fill-state-pressed-energyblue' style='width: 65px; height: 22px;' value='Add'  role='button' aria-disabled='false'></a>");
-                             /*var view = $("<a role='button' class='jqx-link jqx-link-energyblue' style='margin-left: 25px;' target='' href='#' id='jqxButtonview'><input type='button' class='jqx-wrapper jqx-reset jqx-reset-energyblue jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-pressed jqx-fill-state-pressed-energyblue' style='width: 65px; height: 22px;' value='View'  role='button' aria-disabled='false'></a>");
-                           var update = $("<a role='button' class='jqx-link jqx-link-energyblue' style='margin-left: 25px;' target='' href='#' id='jqxButtonupdate'><input type='button' class='jqx-wrapper jqx-reset jqx-reset-energyblue jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-pressed jqx-fill-state-pressed-energyblue' style='width: 65px; height: 22px;' value='Update' id='jqxWidget09c6ffa4' role='button' aria-disabled='false'></a>");*/
+                            var startdiv = $("<div style='width:800px;'>");
+                            var addlog = $("<a role='button' class='jqx-link jqx-link-energyblue' style='margin-left: 25px;' target='' href='#' id='jqxButtonadd'><input type='button' class='jqx-wrapper jqx-reset jqx-reset-energyblue jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-pressed jqx-fill-state-pressed-energyblue' style='width: 65px; height: 22px;' value='Add' id='jqxWidget09c6ffa4' role='button' aria-disabled='false'></a>");
+                            var view = $("<a role='button' class='jqx-link jqx-link-energyblue' style='margin-left: 25px;' target='' href='#' id='jqxButtonview'><input type='button' class='jqx-wrapper jqx-reset jqx-reset-energyblue jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-pressed jqx-fill-state-pressed-energyblue' style='width: 65px; height: 22px;' value='View' id='jqxWidget09c6ffa4' role='button' aria-disabled='false'></a>");
+                            /*var update = $("<a role='button' class='jqx-link jqx-link-energyblue' style='margin-left: 25px;' target='' href='#' id='jqxButtonupdate'><input type='button' class='jqx-wrapper jqx-reset jqx-reset-energyblue jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-pressed jqx-fill-state-pressed-energyblue' style='width: 65px; height: 22px;' value='Update' id='jqxWidget09c6ffa4' role='button' aria-disabled='false'></a>");*/
 
                             var enddiv = $("</div>");
                             toolbar.append(container);
                             container.append(addlog);
-                           // container.append(view);
+                            container.append(view);
 
 
 
@@ -906,11 +395,9 @@
                                 //$('#jqxgrid_add').jqxGrid('clear');	
                                 actionmode = "add";
                                 $('#addWindow').jqxWindow('open');
-                                //$('#addWindow').jqxWindow({width:1024});
-                              $('#addWindow').jqxWindow({ width: 1024, height: 'auto' });
+                                $('#addWindow').jqxWindow({width: "100%"});
                             });
-
-                           /* view.on('click', function (event)
+                            view.on('click', function (event)
                             {
                                 actionmode = "view";
                                 var rowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
@@ -947,6 +434,7 @@
                                         }
 
                                     });
+
                                     var source =
                                             {
                                                 datatype: "json",
@@ -957,11 +445,107 @@
                                     header_date = $("#jqxgrid").jqxGrid('getcellvalue', rowindex, 'currentdate');
                                     username = $("#jqxgrid").jqxGrid('getcellvalue', rowindex, 'exename');
                                     branch = $("#jqxgrid").jqxGrid('getcellvalue', rowindex, 'branch');
+
+
+                                    $('#username_vw').val(username);
+                                    $('#branch_vw').val(branch);
+
+                                    $("#username_vw").jqxInput({placeHolder: "User Name", height: 25, width: 200, minLength: 1, theme: theme, disabled: true});
+                                    $("#branch_vw").jqxInput({placeHolder: "Branch Name", height: 25, width: 150, minLength: 1, theme: theme, disabled: true});
                                     header_date = convert(header_date);
+                                    $('#view_header_date').jqxInput({width: '100px', height: '25px', disabled: true});
+                                    $('#view_header_date').val(header_date);
+                                    var dataAdapter = new $.jqx.dataAdapter(source);
+                                    $("#jqxgrid_view").jqxGrid(
+                                            {
+                                                width: '100%',
+                                                height: 300,
+                                                source: dataAdapter,
+                                                theme: 'energyblue',
+                                                columnsresize: true,
+                                                selectionmode: 'rowselect',
+                                                editable: false,
+                                                sortable: true,
+                                                pageable: true,
+                                                columnsresize: true,
+                                                        sortable: true,
+                                                        showfilterrow: true,
+                                                filterable: true,
+                                                columns: [
+                                                    {text: 'UID', datafield: 'id', width: 150, cellsalign: 'left', hidden: true},
+                                                    {text: 'Customer Group', datafield: 'custgroup', width: 200, editable: false},
+                                                    {text: 'Product Group', datafield: 'itemgroup', width: 150, cellsalign: 'left', editable: false},
+                                                    {text: 'Potential', datafield: 'potentialqty', width: 75, cellsalign: 'left'},
+                                                    {text: 'Required Quantity', datafield: 'quantity', width: 75, cellsalign: 'left'},
+                                                    {text: 'Sales Type', datafield: 'division', width: 100, cellsalign: 'left', columntype: 'dropdownlist',
+                                                        createeditor: function (row, cellvalue, editor) {
+                                                            editor.jqxDropDownList({source: ["Tanker", "Repacked", "Container", "Textile", "Leather", "Paper", "Exxon Speciality", "Lubricant", "Polymer", "Pure Speciality", "Others"]});
+                                                        }
+
+                                                    },
+                                                    {text: 'Type of Customer/Visit', datafield: 'subactivity', columntype: 'dropdownlist', width: 150, cellsalign: 'left',
+                                                        createeditor: function (row, cellvalue, editor) {
+                                                            editor.jqxDropDownList({source: ["NEW CUSTOEMR", "EXSISTING CUSTOMER", "ORDER FOLLOWUP", "ORDER AND PAYMENT", "TENDER", "PAYMENT FOLLOW UP", "BALANCE SHEET", "TANKER  DIVERTION", "INVOICE", "PROFORM INVOICE", "PAYMENT COLLECTION"]});
+                                                        }
+                                                    },
+                                                    {text: 'Visited Date', datafield: 'date', columntype: 'datetimeinput', width: 110, align: 'left', cellsformat: 'd', formatString: 'yyyy-MM-dd HH:mm:ss',
+                                                        validation: function (cell, value) {
+                                                            if (value == "") {
+                                                                return {result: false, message: "Date is required!"};
+                                                            }
+                                                            return true;
+                                                        }
+                                                    },
+                                                    {text: 'Mode of Contact', datafield: 'modeofcontact', width: 80, cellsalign: 'left', columntype: 'dropdownlist',
+                                                        createeditor: function (row, cellvalue, editor) {
+                                                            editor.jqxDropDownList({source: ["E-mail", "Phone", "Visit"]});
+                                                        }
+                                                    },
+                                                    {text: 'Time Spent (Hrs)', datafield: 'hour_s', width: 75, cellsalign: 'left', columntype: 'dropdownlist',
+                                                        createeditor: function (row, cellvalue, editor) {
+                                                            editor.jqxDropDownList({source: ["00 Hr", "01 Hrs", "02 Hrs", "03 Hrs", "04 Hrs", "05 Hrs", "06 Hrs", "07 Hrs", "08 Hrs", "09 Hrs", "10 Hrs"]});
+                                                        }
+                                                    },
+                                                    {text: 'Time Spent (Mins)', datafield: 'minit', width: 75, cellsalign: 'left', columntype: 'dropdownlist',
+                                                        createeditor: function (row, cellvalue, editor) {
+                                                            editor.jqxDropDownList({source: ["0 mins", "5 mins", "10 mins", " 15 mins", "20 mins", "25 mins", "30 mins", " 35 mins", "40 mins", "45 mins", " 50 mins", "55 mins"]});
+                                                        }
+                                                    },
+                                                    {text: 'Notes / Remarks', datafield: 'remarks', width: 150, cellsalign: 'left'},
+                                                    {text: 'Description', datafield: 'description', width: 150, cellsalign: 'left'},
+                                                    {text: 'Action Planned', datafield: 'actionplanned', width: 150, cellsalign: 'left'},
+                                                    {text: 'Detailed Description', datafield: 'detailed_description', width: 150, cellsalign: 'left'},
+                                                ]
+                                            });
+
+
+                                    $('#customWindowview').jqxWindow('open');
+                                    $('#customWindowview').jqxWindow({width: "100%"});
                                 }
 
-                            });*/
-                           
+                            });
+                            // End of View Click button
+                            /* Update button click start*/
+                            /*   update.on('click', function (event) 
+                             {
+                             var rowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+                             var leadid = $("#jqxgrid").jqxGrid('getcellvalue',rowindex,'id');
+                             alert("Update button pressed");
+                             alert("header id "+leadid);
+                             if (leadid==null)
+                             {
+                             alert("Please Select a row");   
+                             //  $('#jqxButton').attr('href','http://google.com');
+                             return false;
+                             
+                             }
+                             else
+                             {
+                             // $('#jqxButtonUpdate').attr('href',baseurl+'leads/editstatus/'+leadid);    
+                             }
+                             
+                             });*/
+                            /* Update button click end*/
                         };
 
                         $("#jqxgrid").jqxGrid({rendertoolbar: toolbarfunc});
@@ -998,9 +582,9 @@
                             row["customgroup"] = '';
                             row["balqnty"] = '';
                             row["created_date"] = '';
-                            row["leadid"] = parseInt(0);
-                            row["noofleads"] = '0';
-                            row["result_type"] = '';
+                            row["description"] = '';
+                            row["actionplanned"] = '';
+                            row["detailed_description"] = '';
                             return row;
 
                         }
@@ -1015,9 +599,6 @@
                                     datatype: "local",
                                     cache: false,
                                     datafields: [
-                                        {name: 'leadid',type:'number',datafield:'leadid'},
-                                        ],
-                                    /*datafields: [
                                         {name: 'id'},
                                         {name: 'CustGroup', type: 'string'},
                                         {name: 'ItemGroup', type: 'string'},
@@ -1032,15 +613,14 @@
                                         {name: 'Notes/ Remarks', type: 'string'},
                                         {name: 'Follow up Updation', type: 'string'},
                                         {name: 'Complaints', type: 'string'},
-                                        {name: 'lmsupdate', type: 'string' },
-                                       ],*/
+                                        {name: 'Description', type: 'string'},
+                                        {name: 'Action Planned', type: 'string'},
+                                        {name: 'Detailed Description', type: 'string'},
+                                    ],
                                     id: 'id',
-                                    cache: false,
                                     //  url: 'crud/showdata',
                                     localdata: dataadd,
                                     addrow: function (rowid, rowdata, position, commit) {
-                                        //alert("addrow leadid"+rowdata.leadid);
-                                        //alert("rowdata"+rowdata.toSource());
                                         commit(true);
                                     },
                                     deleterow: function (rowid, commit) {
@@ -1050,9 +630,9 @@
                         var jqxgrid_add_row_index;
                         var jqxgrid_n_row_index;
                         var dataAdapterAdd = new $.jqx.dataAdapter(addgridsource);
-                        
                         $("#jqxgrid_add").jqxGrid(
                                 {
+                                    width: 1093,
                                     height: 200,
                                     selectionmode: 'rowselect',
                                     source: dataAdapterAdd,
@@ -1062,63 +642,32 @@
                                     columns: [
                                         {text: 'UID', datafield: 'uid', width: 150, cellsalign: 'left', hidden: true},
                                         {text: 'Customer Group', datafield: 'custgroup', width: 100, editable: false},
-                                        {text: 'Product Group', datafield: 'itemgroup', width: 150, cellsalign: 'left', editable: false},   
-                                        {text: 'Lead id', datafield: 'leadid', displayfield: 'leadid', width: 127, cellsalign: 'center', cellbeginedit:Results.initResultsEditor, initeditor: Results.resultsEditor, cellsrenderer: Results.renderUnits,promptText:'Select Leadid',
-                                                        cellvaluechanging: function (row, datafield, columntype, oldvalue, newvalue) 
-                                                        {
-                                                            //alert("oldvalue "+oldvalue); alert("newvalue "+newvalue);
-                                                              if (newvalue == 0) {
-                                                               return oldvalue;
-                                                          } 
-
-                                                        }
-
-                                          
-                                        },
-                                            
-
-                                        {text: 'noofleads', datafield: 'noofleads', hidden:true, width: 20, cellsalign: 'left', editable: false},
-                                        {text: 'result_type', datafield: 'result_type',hidden:true, width: 75, cellsalign: 'left', editable: false},
-                                        {text: 'Activity Type', datafield: 'Sub_Activity', width: 110, cellsalign: 'left', cellbeginedit:Results.initResultsEditorat, initeditor: Results.resultsEditorat, cellsrenderer: Results.renderUnitsat
-                                        },
+                                        {text: 'Product Group', datafield: 'itemgroup', width: 150, cellsalign: 'left', editable: false},
                                         {text: 'Potential', datafield: 'Potential_Quantity', width: 75, cellsalign: 'left', editable: false},
-                                        {text: 'Required Quantity', datafield: 'Quantity_Requirement', width: 75, cellsalign: 'left',
-                                            cellbeginedit: function (row, datafield, columntype) {
-                                                        var rowdata = $("#jqxgrid_add").jqxGrid('getrowdata', row);
-                                                        var leadid = rowdata.leadid;
-                                                       // alert("leadid in quantity cell rendering "+leadid);
-                                                        if(leadid==undefined || leadid==0)
-                                                        {
-                                                            return true;
-                                                        }
-                                                        else
-                                                        {
-                                                            return false;
-                                                        }
+                                        {text: 'Required Quantity', datafield: 'Quantity_Requirement', width: 75, cellsalign: 'left'},
+                                        {text: 'Sales Type', datafield: 'division', width: 150, cellsalign: 'left', columntype: 'dropdownlist',
+                                            createeditor: function (row, cellvalue, editor) {
+                                                editor.jqxDropDownList({source: ["Tanker", "Repacked", "Container", "Textile", "Leather", "Paper", "Exxon Speciality", "Lubricant", "Polymer", "Pure Speciality", "Others"]});
+                                            }
 
-                                                    }
                                         },
-                                        {text: 'Sales Type', datafield: 'division', width: 110, cellsalign: 'left',readonly:true,cellbeginedit:Results.initResultsEditorst, initeditor: Results.resultsEditorst, cellsrenderer: Results.renderUnitsst
-                                        /*,cellvaluechanging: function (row, datafield, columntype, oldvalue, newvalue) 
-                                                        {
-                                                           // alert("oldvalue "+oldvalue); alert("newvalue "+newvalue);
-                                                              alert("row "+row);
-                                                              alert("datafield "+datafield);
-                                                              alert("columntype "+columntype);
-                                                              alert("oldvalue "+oldvalue);
-                                                              alert("newvalue "+newvalue);
-                                                       
-                                                        }
-                                        */
+                                        {text: 'Type of Customer/Visit', datafield: 'Sub_Activity', columntype: 'dropdownlist', width: 150, cellsalign: 'left',
+                                            createeditor: function (row, cellvalue, editor) {
+                                                editor.jqxDropDownList({source: ["NEW CUSTOEMR", "EXSISTING CUSTOMER", "ORDER FOLLOWUP", "ORDER AND PAYMENT", "TENDER", "PAYMENT FOLLOW UP", "BALENCE SHEET", "TANKER  DIVERTION", "INVOICE", "PROFORM INVOICE", "PAYMENT COLLECTION"]});
+                                            }
                                         },
-                                        
-                                        
-                                        /*{text: 'Mode of Contact', datafield: 'Mode_Of_Contact', width: 100, cellsalign: 'left', columntype: 'dropdownlist',
+                                        {text: 'Visited Date', datafield: 'Date', columntype: 'datetimeinput', width: 110, align: 'left', cellsformat: 'd', formatString: 'd',
+                                            validation: function (cell, value) {
+                                                if (value == "") {
+                                                    return {result: false, message: "Date is required!"};
+                                                }
+                                                return true;
+                                            }
+                                        },
+                                        {text: 'Mode of Contact', datafield: 'Mode_Of_Contact', width: 100, cellsalign: 'left', columntype: 'dropdownlist',
                                             createeditor: function (row, cellvalue, editor) {
                                                 editor.jqxDropDownList({source: ["E-mail", "Phone", "Visit"]});
                                             }
-                                        },*/
-                                        {text: 'Mode of Contact', datafield: 'Mode_Of_Contact', width: 100, cellsalign: 'left', cellbeginedit:Results.initResultsEditorcon, initeditor: Results.resultsEditorcon, cellsrenderer: Results.renderUnitsst
                                         },
                                         {text: 'Time Spent (Hrs)', datafield: 'hour', width: 75, cellsalign: 'left', columntype: 'dropdownlist',
                                             createeditor: function (row, cellvalue, editor) {
@@ -1131,11 +680,12 @@
                                             }
                                         },
                                         {text: 'Notes / Remarks', datafield: 'Notes_Remarks', width: 150, cellsalign: 'left'},
-
+                                        {text: 'Description', datafield: 'description', width: 150, cellsalign: 'left'},
+                                        {text: 'Action Planned', datafield: 'actionplanned', width: 150, cellsalign: 'left'},
+                                        {text: 'Detailed Description', datafield: 'detailed_description', width: 150, cellsalign: 'left'},
                                     ]
 
                                 });
-                                
                         $("#jqxgrid_add").on("celldoubleclick", function (event)
                         {
                             var column = event.args.column;
@@ -1144,7 +694,6 @@
                             jqxgrid_n_row_index = rowindex;
                             var columnindex = event.args.columnindex;
                             var columnname = column.datafield;
-                            
                             if (columnname == 'itemgroup')
                             {
 
@@ -1156,101 +705,21 @@
                                 }
                                 else
                                 {
-                                   // $('#addWindow').hide();
+                                    $('#addWindow').hide();
                                     $('#win_selectItemMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'select product'});
-
-                                    var x = ($(window).width() - $("#win_selectItemMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
-                                    var y = ($(window).height() - $("#win_selectItemMaster").jqxWindow('height')) / 2 + $(window).scrollTop();
-                                    $("#win_selectItemMaster").jqxWindow({ position: { x: x, y: y} });
                                     $('#win_selectItemMaster').jqxWindow('open');
-                                    $('#win_selectItemMaster').jqxWindow({ zIndex: 99999}); 
-                                    //$('#win_selectItemMaster').jqxWindow('bringToFront');
-                                    $('#addWindow').mouseup(function () 
-                                    {
-                                       // alert("columnname item "+columnname);
-                                        if ($('#win_selectItemMaster').jqxWindow('isOpen')) 
-                                        {
-                                           // alert("item true");
-                                            $('#win_selectItemMaster').jqxWindow('bringToFront');
-                                        }
-                                        else
-                                        {
-
-                                           // alert("item false");
-                                            $('#win_selectItemMaster').jqxWindow('bringToFront');
-                                        }
-                                    
-
-                                    });
-                                    
-                                    
                                 }
 
                             }
 
                             if (columnname == 'custgroup')
                             {
-                               // $('#addWindow').hide();
+                                $('#addWindow').hide();
                                 $('#win_selectCustMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'Select Customer'});
                                 $('#win_selectCustMaster').jqxWindow('open');
-
-                                var x = ($(window).width() - $("#win_selectCustMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
-                                var y = ($(window).height() - $("#win_selectCustMaster").jqxWindow('height')) / 2 + $(window).scrollTop();
-                                $("#win_selectCustMaster").jqxWindow({ position: { x: x, y: y} });
-                                $('#win_selectCustMaster').jqxWindow({ zIndex: 99999}); 
-                                $('#addWindow').mouseup(function () 
-                                    {
-                                       
-                                        if ($('#win_selectCustMaster').jqxWindow('isOpen')) 
-                                        {
-                                            $('#win_selectCustMaster').jqxWindow('bringToFront');
-                                        }
-                                        else
-                                        {
-
-                                            $('#win_selectCustMaster').jqxWindow('bringToFront');
-                                        }
-                                    
-
-                                    });
-
                             }
                         });
-                   
-                            var todayDate = new Date();
-
-                            var max_date=   todayDate.toISOString().substring(0, 10); //todayDate 2015-08-18
-                            var min_date =  todayDate.setDate(todayDate.getDate() - 8);
-                            //alert("max date"+max_date);
-                           // alert("min date before "+min_date);
-                            min_date =convert(min_date);
-                          //  alert("min date after "+min_date);
-                            min_date=convertmindate(min_date);
-                           // alert("min date after 1 "+min_date);
-                        //if (value > todayDate.toISOString().substring(0, 10))
-                        $("#addcurrentdate").jqxDateTimeInput({width: '250px', height: '25px', theme: 'summer', formatString: 'dd/MM/yyyy',
-                             min: new Date(min_date) ,maxDate: new Date(), readonly:true});
-                        $("#addcurrentdate").on('change', function (event)
-                        {
-                            
-                            var jsDate = event.args.date; 
-                             jsDate = convert(jsDate);
-                            $.ajax({
-                                dataType: 'json',
-                                type: "POST",
-                                url: 'dailyactivity/checkentrydate/'+jsDate,
-                                cache: true,
-                                data: data,
-                                success: function (response) {
-                                   // alert("Record Added sucessfully ");
-                                    //$('#addWindow').hide();
-                                    //window.location.href = base_url + "dailyactivity";
-                                },
-                                error: function (result) {
-                                    alert(result.responseText);
-                                }
-                            });
-                        });
+                        $("#addcurrentdate").jqxDateTimeInput({width: '250px', height: '25px', theme: 'summer', formatString: 'd'});
 
                         $("#addrowbutton").bind('click', function () {
                             var commit = $("#jqxgrid_add").jqxGrid('addrow', null, {});
@@ -1306,8 +775,7 @@
                             var valid_moc = 0;
                             var valid_subact = 0;
                             var valid_subgrp = 0;
-                            var entrydate = $('#addcurrentdate').val();
-                            entrydate = convertdmy_ymd(entrydate);
+
                             for (var k = 0; k < rowscount; k++)
                             {
                                 var cg_value = $('#jqxgrid_add').jqxGrid('getcellvalue', k, "custgroup");
@@ -1321,14 +789,37 @@
                                 {
                                     valid_custgrp = 1;
                                 }
+                                /*var itmgrp_value = $('#jqxgrid_add').jqxGrid('getcellvalue', k, "itemgroup");
+                                 if (itmgrp_value ==null || itmgrp_value == 'undefined' ) 
+                                 {
+                                 $("#jqxgrid_add").jqxGrid('showvalidationpopup', k, "itemgroup", "Please Select the Item Group");
+                                 valid_itemgrp =0;
+                                 break;
+                                 }
+                                 else
+                                 {
+                                 valid_itemgrp =1;  
+                                 }*/
+
+                                /*var pq_value = $('#jqxgrid_add').jqxGrid('getcellvalue', k, "Potential_Quantity");
+                                 if (pq_value ==null || pq_value == 'undefined' ) 
+                                 {
+                                 $("#jqxgrid_add").jqxGrid('showvalidationpopup', k, "Potential_Quantity", "Please Enter the Potential Quantity");
+                                 valid_pgflag =0;
+                                 break;
+                                 }
+                                 else
+                                 {
+                                 valid_pgflag =1;  
+                                 }*/
+
 
                                 var subact_value = $('#jqxgrid_add').jqxGrid('getcellvalue', k, "Sub_Activity");
-                              //  alert("subact_value" +subact_value);
                                 if (subact_value == null || subact_value == 'undefined')
                                 {
-                                    $("#jqxgrid_add").jqxGrid('showvalidationpopup', k, "Sub_Activity", "Please Select the Activity Type");
+                                    $("#jqxgrid_add").jqxGrid('showvalidationpopup', k, "Sub_Activity", "Please Select the Sub Activity");
                                     valid_subact = 0;
-                                    break;  
+                                    break;
                                 }
                                 else
                                 {
@@ -1338,7 +829,7 @@
                                 var sub_grp = $('#jqxgrid_add').jqxGrid('getcellvalue', k, "division");
                                 if (sub_grp == null || sub_grp == 'undefined')
                                 {
-                                    $("#jqxgrid_add").jqxGrid('showvalidationpopup', k, "division", "Please select the Sales Type");
+                                    $("#jqxgrid_add").jqxGrid('showvalidationpopup', k, "division", "Please select the Sub Group");
                                     valid_subgrp = 0;
                                     break;
                                 }
@@ -1347,18 +838,18 @@
                                     valid_subgrp = 1;
                                 }
 
-                                var hr_moc = $('#jqxgrid_add').jqxGrid('getcellvalue', k, "Mode_Of_Contact");
-                                if (hr_moc == null || hr_moc == 'undefined') {
-                                    $("#jqxgrid_add").jqxGrid('showvalidationpopup', k, "Mode_Of_Contact", "Please Select Mode of Contact");
-                                    valid_moc = 0;
+
+
+                                var dt_value = $('#jqxgrid_add').jqxGrid('getcellvalue', k, "Date");
+                                if (dt_value == null || dt_value == 'undefined') {
+                                    $("#jqxgrid_add").jqxGrid('showvalidationpopup', k, "Date", "Please Select a Date");
+                                    valid_dtflag = 0;
                                     break;
                                 }
                                 else
                                 {
-                                    valid_moc = 1;
+                                    valid_dtflag = 1;
                                 }
-
-                                
                                 var hr_value = $('#jqxgrid_add').jqxGrid('getcellvalue', k, "hour");
                                 if (hr_value == null || hr_value == 'undefined') {
                                     $("#jqxgrid_add").jqxGrid('showvalidationpopup', k, "hour", "Please Select the Hours");
@@ -1409,7 +900,10 @@
                              {
                              return false;
                              }*/
-                            
+                            if (valid_dtflag == 0)
+                            {
+                                return false;
+                            }
 
                             if (valid_hrs == 0)
                             {
@@ -1437,7 +931,7 @@
 
 
                             var currentdate = $('#addcurrentdate').val();
-                            currentdate = convertdmy_ymd(currentdate);
+                            currentdate = convert(currentdate);
                             var griddata;
                             var data = {};
                             var rows = $('#jqxgrid_add').jqxGrid('getrows');
@@ -1456,9 +950,14 @@
                                 rowval["modeofcontact"] = griddata.Mode_Of_Contact;
                                 rowval["quantity"] = griddata.Quantity_Requirement;
                                 rowval["division"] = griddata.division;
-                                rowval["leadid"] = griddata.leadid;
-                               
+                                var dt_req = griddata.Date;
+                                dt_req = convert(dt_req);
+                                //alert("dt_req   "+dt_req);
+                                rowval["Date"] = dt_req;
                                 rowval["Remarks"] = griddata.Notes_Remarks;
+                                rowval["description"] = griddata.description;
+                                rowval["actionplanned"] = griddata.actionplanned;
+                                rowval["detailed_description"] = griddata.detailed_description;
                                 data[i] = rowval;
                             }
 
@@ -1522,7 +1021,7 @@
 
                                 if (subact_value == null || subact_value == 'undefined')
                                 {
-                                    $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "subactivity", "Please Select the Activity Type");
+                                    $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "subactivity", "Please Select the Sub Activity");
                                     valid_subact = 0;
                                     break;
                                 }
@@ -1534,7 +1033,7 @@
                                 var sub_grp = $('#jqxgrid_n').jqxGrid('getcellvalue', k, "division");
                                 if (sub_grp == null || sub_grp == 'undefined')
                                 {
-                                    $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "division", "Please select the Sale Type");
+                                    $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "division", "Please select the division");
                                     valid_subgrp = 0;
                                     break;
                                 }
@@ -1543,17 +1042,17 @@
                                     valid_subgrp = 1;
                                 }
 
-                                var moc_value = $('#jqxgrid_n').jqxGrid('getcellvalue', k, "modeofcontact");
-                                if (moc_value == null || moc_value == 'undefined') {
-                                    $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "modeofcontact", "Please Select the Mode of contact");
-                                    valid_moc = 0;
+                                var dt_value = $('#jqxgrid_n').jqxGrid('getcellvalue', k, "date");
+                                if (dt_value == null || dt_value == 'undefined') {
+                                    $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "date", "Please Select a Date");
+                                    valid_dtflag = 0;
                                     break;
                                 }
                                 else
                                 {
-                                    valid_moc = 1;
+                                    valid_dtflag = 1;
                                 }
-                                
+
                                 var hr_value = $('#jqxgrid_n').jqxGrid('getcellvalue', k, "hour_s");
                                 if (hr_value == null || hr_value == 'undefined') {
                                     $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "hour_s", "Please Select the Hours");
@@ -1577,7 +1076,16 @@
                                     valid_mins = 1;
                                 }
 
-                               
+                                var moc_value = $('#jqxgrid_n').jqxGrid('getcellvalue', k, "modeofcontact");
+                                if (moc_value == null || moc_value == 'undefined') {
+                                    $("#jqxgrid_n").jqxGrid('showvalidationpopup', k, "modeofcontact", "Please Select the Mode of contact");
+                                    valid_moc = 0;
+                                    break;
+                                }
+                                else
+                                {
+                                    valid_moc = 1;
+                                }
 
                             }
                             //  alert (" date flag after k loop "+valid_dtflag);
@@ -1586,11 +1094,11 @@
                             {
                                 return false;
                             }
-                           
-                            if (valid_moc == 0)
+                            if (valid_dtflag == 0)
                             {
                                 return false;
                             }
+
                             if (valid_hrs == 0)
                             {
                                 return false;
@@ -1599,7 +1107,10 @@
                             {
                                 return false;
                             }
-                            
+                            if (valid_moc == 0)
+                            {
+                                return false;
+                            }
                             if (valid_subact == 0)
                             {
                                 return false;
@@ -1611,8 +1122,6 @@
 
                             var currentdate = $('#update_header_date').val();
                             currentdate = convert(currentdate);
-                            
-
                             var griddata;
                             var data = {};
                             var rows = $('#jqxgrid_n').jqxGrid('getrows');
@@ -1624,7 +1133,6 @@
 
                                 griddata = $('#jqxgrid_n').jqxGrid('getrowdata', i);
                                 rowval["hdn_hdr_id"] = hdr_id;
-                                rowval["leadid"] = griddata.leadid;
                                 rowval["currentdate"] = currentdate;
                                 rowval["custgroup"] = griddata.custgroup;
                                 rowval["itemgroup"] = griddata.itemgroup;
@@ -1636,8 +1144,22 @@
                                 rowval["modeofcontact"] = griddata.modeofcontact;
                                 rowval["quantity"] = griddata.quantity;
                                 rowval["division"] = griddata.division;
-                                
+                                var dt_req = griddata.date;
+                                //     alert("dt_req   "+dt_req);
+                                if (isNaN(dt_req)) {
+                                    //    alert("invalid userDate");
+                                }
+                                else
+                                {
+                                    dt_req = convert(dt_req);
+                                }
+                                //    dt_req =convert(dt_req);
+                                //  alert("dt_req after   "+dt_req);
+                                rowval["Date"] = dt_req;
                                 rowval["Remarks"] = griddata.remarks;
+                                rowval["description"] = griddata.description;
+                                rowval["actionplanned"] = griddata.actionplanned;
+                                rowval["detailed_description"] = griddata.detailed_description;
                                 data[i] = rowval;
                             }
 
@@ -1660,8 +1182,6 @@
                         });
                         // end of Update Click function
 
-
-
                         // view grid double click function start
                         $("#jqxgrid_n").on("celldoubleclick", function (event)
                         {
@@ -1673,65 +1193,33 @@
                             var columnname = column.datafield;
                             if (columnname == 'itemgroup')
                             {
-                              //  $('#customWindow').hide();
+                                $('#customWindow').hide();
                                 $('#win_selectItemMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'select product'});
-
-                                var x = ($(window).width() - $("#win_selectItemMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
-                                var y = ($(window).height() - $("#win_selectItemMaster").jqxWindow('height')) / 2 + $(window).scrollTop();
-                                $("#win_selectItemMaster").jqxWindow({ position: { x: x, y: y} });
                                 $('#win_selectItemMaster').jqxWindow('open');
-                                $('#win_selectItemMaster').jqxWindow({ zIndex: 99999}); 
-                                $('#customWindow').mouseup(function () 
-                                    {
-                                       
-                                        if ($('#win_selectItemMaster').jqxWindow('isOpen')) 
-                                        {
-                                           // alert("item true");
-                                            $('#win_selectItemMaster').jqxWindow('bringToFront');
-                                        }
-                                        else
-                                        {
-
-                                           // alert("item false");
-                                            $('#win_selectItemMaster').jqxWindow('bringToFront');
-                                        }
-                                    
-
-                                    });
                             }
 
                             if (columnname == 'custgroup')
                             {
-                                
+                                $('#customWindow').hide();
                                 $('#win_selectCustMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'Select Customer'});
                                 $('#win_selectCustMaster').jqxWindow('open');
-                                var x = ($(window).width() - $("#win_selectCustMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
-                                var y = ($(window).height() - $("#win_selectCustMaster").jqxWindow('height')) / 2 + $(window).scrollTop();
-                                $("#win_selectCustMaster").jqxWindow({ position: { x: x, y: y} });
-                                $('#win_selectCustMaster').jqxWindow({ zIndex: 99999}); 
-                                $('#customWindow').mouseup(function () 
-                                    {
-                                       
-                                        if ($('#win_selectCustMaster').jqxWindow('isOpen')) 
-                                        {
-                                           
-                                            $('#win_selectCustMaster').jqxWindow('bringToFront');
-                                        }
-                                        else
-                                        {
-
-                                            
-                                            $('#win_selectCustMaster').jqxWindow('bringToFront');
-                                        }
-                                    
-
-                                    });
                             }
                         });
                         // view grid double click function end
 
                         //
-                        
+                        function convert(currentdate)
+                        {
+                            var date = new Date(currentdate), mnth = ("0" + (date.getMonth() + 1)).slice(-2), day = ("0" + date.getDate()).slice(-2);
+                            return [date.getFullYear(), mnth, day].join("-");
+                            //alert([ date.getFullYear(), mnth, day ].join("-"));
+                        }
+                        function convertYdm(currentdate)
+                        {
+                            var date = new Date(currentdate), mnth = ("0" + (date.getMonth() + 1)).slice(-2), day = ("0" + date.getDate()).slice(-2);
+                            return [date.getFullYear(), day, mnth].join("-");
+                            //alert([ date.getFullYear(), mnth, day ].join("-"));
+                        }
 
 
                         // Source for add grid end
@@ -1757,7 +1245,7 @@
                         var item_source =
                                 {
                                     datatype: "json",
-                                    datafields: [{name: 'itemgroup', type: 'string'}],
+                                    datafields: [],
                                     id: 'itemgroup',
                                     localdata: rows
                                 };
@@ -1774,7 +1262,7 @@
                                     pageable: true,
                                     columnsresize: true,
                                     sortable: true,
-                                    showfilterrow: true,
+                                            showfilterrow: true,
                                     filterable: true,
                                     columns: [
                                         {text: 'Product Group', dataField: 'itemgroup', width: 500, height: 600},
@@ -1787,17 +1275,25 @@
                         //  return value from item master start
                         $("#jqxgrid_selectItemMaster").on('cellselect', function (event) {
 
+
+
+                            //alert("potential quantity "+potential_quantity);
+                            //     alert("Action Mode "+actionmode);
+
                             var rowindex = $("#jqxgrid_selectItemMaster").jqxGrid('getselectedrowindex', event.args.rowindex);
                             var prodName = $("#jqxgrid_selectItemMaster").jqxGrid('getcellvalue', event.args.rowindex, 'itemgroup');
 
-                             //var leadid = $("#jqxgrid_selectItemMaster").jqxGrid('getcellvalue', event.args.rowindex, 'leaid');
+
+
                             if (actionmode == 'add')
                             {
                                 $('#addWindow').jqxWindow('show');
-                                $('#addWindow').jqxWindow({ width: 1024, height: 'auto'});
                                 $("#jqxgrid_add").jqxGrid('setcellvalue', jqxgrid_add_row_index, "itemgroup", prodName);
                                 gl_customername = $("#jqxgrid_add").jqxGrid('getcellvalue', jqxgrid_add_row_index, 'custgroup');
                                 gl_productname = $("#jqxgrid_add").jqxGrid('getcellvalue', jqxgrid_add_row_index, 'itemgroup');
+                                // alert("gl_customername add "+gl_customername);
+                                // alert("gl_productname add "+gl_productname);
+
 
                                 $("#jqxgrid_add").jqxGrid('setcellvalue', jqxgrid_add_row_index, "Potential_Quantity", potential_quantity);
 
@@ -1806,13 +1302,12 @@
 
                             if (actionmode == 'update')
                             {
-                                var x = ($(window).width() - $("#customWindow").jqxWindow('width')) / 2 + $(window).scrollLeft();
-                                var y = ($(window).height() - $("#customWindow").jqxWindow('height')) / 2 + $(window).scrollTop();
-                                $("#customWindow").jqxWindow({ position: { x: x, y: y} });
                                 $('#customWindow').jqxWindow('show');
                                 $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "itemgroup", prodName);
                                 gl_customername = $("#jqxgrid_n").jqxGrid('getcellvalue', jqxgrid_n_row_index, 'custgroup');
                                 gl_productname = $("#jqxgrid_n").jqxGrid('getcellvalue', jqxgrid_n_row_index, 'itemgroup');
+                                //  alert("gl_customername upd "+gl_customername);
+                                // alert("gl_productname upd "+gl_productname);
 
                             }
 
@@ -1822,7 +1317,6 @@
                                 url: url,
                                 type: "POST",
                                 async: false,
-                                cache:false,
                                 error: function (xhr, status) {
                                     alert("check " + status + " test");
                                 },
@@ -1831,39 +1325,21 @@
                                     rows = obj.rows;
 
                                     potential_quantity = rows[0].potential;
-                                    noofleads =rows[0].noofleads;
-                                    resulttype =rows[0].result_type;
-                                    
                                 }
                                 //potential_quantity = rows[0].potential;
                             });
-                          
 
                             if (actionmode == 'add')
                             {
-
                                 $("#jqxgrid_add").jqxGrid('setcellvalue', jqxgrid_add_row_index, "Potential_Quantity", potential_quantity);
-                                $("#jqxgrid_add").jqxGrid('setcellvalue', jqxgrid_add_row_index, "noofleads", noofleads);
-                                $("#jqxgrid_add").jqxGrid('setcellvalue', jqxgrid_add_row_index, "result_type", resulttype);
 
                             }
                             if (actionmode == 'update')
                             {
-                                $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "noofleads", noofleads);
-                                if(noofleads>0)
-                                {
-                            
-                                 $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "potentialqty", potential_quantity);
-                                 $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "subactivity", "LEADS");
-                                 
-                                }
-                               
-                                $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "result_type", resulttype);
-
+                                $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "potentialqty", potential_quantity);
 
                             }
                             $('#win_selectItemMaster').jqxWindow('close');
-                            $('#addWindow').jqxWindow('bringToFront');
                             // 
 
                             //   
@@ -1920,6 +1396,7 @@
 
                         //  return value from Customer Master start
                         $("#jqxgrid_selectCustomMaster").on('cellselect', function (event) {
+                            // alert("Action Mode "+actionmode);
                             var rowindex = $("#jqxgrid_selectCustomMaster").jqxGrid('getselectedrowindex', event.args.rowindex);
 
                             var custid = $("#jqxgrid_selectCustomMaster").jqxGrid('getcellvalue', event.args.rowindex, 'customergroup');
@@ -1940,132 +1417,14 @@
 
                             //  
                             $('#win_selectCustMaster').jqxWindow('close');
-                            $('#addWindow').jqxWindow('bringToFront');
                         });
                         //  return value from Customer Master end
 
                         // initialize the popup window and buttons.
 
-                        /* start for getting the selected leadid value from the grid */
-                        $("#jqxgrid_n").on('cellendedit', function (event,value) 
-                            {
-                                var args = event.args;
-                                var rowindex = args.rowindex;
-                                var leadid =args.value;
-                                var lead_poten;
-                                var lead_req;
 
-                                if(args.datafield=='leadid' && leadid!="" && leadid!="No Leads" )
-                                {
 
-                                    var url = "dailyactivity/get_leadpotential/"+leadid;
-                                        $.ajax({
-                                            dataType: "html",
-                                            url: url,
-                                            type: "POST",
-                                            async: false,
-                                            cache:false,
-                                            error: function (xhr, status) {
-                                                alert("check " + status + " test");
-                                            },
-                                            success: function (result) {
-                                                var obj = jQuery.parseJSON(result);
-                                                rows = obj.rows;
 
-                                                lead_poten = rows[0].potential;
-                                                lead_req = rows[0].requirement;
-                                                lead_salestype =rows[0].lead_sale_type;
-                                                lead_email_id =rows[0].email_id;
-                                            }
-                                        });
-                                         $("#jqxgrid_n").jqxGrid('setcellvalue', rowindex, "potentialqty", lead_poten);
-                                         $("#jqxgrid_n").jqxGrid('setcellvalue', rowindex, "quantity", lead_req);
-                                         $("#jqxgrid_n").jqxGrid('setcellvalue', rowindex, "division", lead_salestype);
-                                         $("#jqxgrid_n").jqxGrid('setcellvalue', rowindex, "modeofcontact", lead_email_id);
-                                         
-                                         
-
-                                }
-                                if(args.datafield=='Sub_Activity')
-                                {
-                                    alert("in update cellendedit Sub_Activity");
-                                }
-
-                            });
-                        $("#jqxgrid_add").on('cellendedit', function (event,value) 
-                            {
-                                var args = event.args;
-                                var rowindex = args.rowindex;
-                                var leadid =args.value;
-                                var lead_poten;
-                                var lead_req;
-                                if(args.datafield=='leadid' && leadid!="" )
-                                {
-
-                                    var url = "dailyactivity/get_leadpotential/"+leadid;
-                                        $.ajax({
-                                            dataType: "html",
-                                            url: url,
-                                            type: "POST",
-                                            async: false,
-                                            cache:false,
-                                            error: function (xhr, status) {
-                                                alert("check " + status + " test");
-                                            },
-                                            success: function (result) {
-                                                var obj = jQuery.parseJSON(result);
-                                                rows = obj.rows;
-
-                                                lead_poten = rows[0].potential;
-                                                lead_req = rows[0].requirement;
-                                                lead_salestype =rows[0].lead_sale_type;
-                                                lead_email_id =rows[0].email_id;
-                                            }
-                                        });
-                                         $("#jqxgrid_add").jqxGrid('setcellvalue', rowindex, "Potential_Quantity", lead_poten);
-                                         $("#jqxgrid_add").jqxGrid('setcellvalue', rowindex, "Quantity_Requirement", lead_req);
-                                         $("#jqxgrid_add").jqxGrid('setcellvalue', rowindex, "division", lead_salestype);
-                                         $("#jqxgrid_add").jqxGrid('setcellvalue', rowindex, "Mode_Of_Contact", lead_email_id);
-                                         $("#jqxgrid_add").jqxGrid('setcellvalue', rowindex, "Sub_Activity", "LEADS");
-                                         
-
-    
-                                }
-
-                                if(args.datafield=='itemgroup')
-                                {
-                                    alert("in cellendedit add mode itemgroup");
-                                }
-                            });
-                        /* End for getting the selected leadid value from the grid*/
-
-                        function convert(currentdate)
-                        {
-                            var date = new Date(currentdate), mnth = ("0" + (date.getMonth() + 1)).slice(-2), day = ("0" + date.getDate()).slice(-2);
-                            return [date.getFullYear(), mnth, day].join("-");
-                            //alert([ date.getFullYear(), mnth, day ].join("-"));
-                        }
-                        function convertYdm(currentdate)
-                        {
-                            var date = new Date(currentdate), mnth = ("0" + (date.getMonth() + 1)).slice(-2), day = ("0" + date.getDate()).slice(-2);
-                            return [date.getFullYear(), day, mnth].join("-");
-                            //alert([ date.getFullYear(), mnth, day ].join("-"));
-                        }
-                        function convertdmy_ymd(currentdate)
-                        {
-                           //  alert("currentdate date passed "+currentdate); //25/08/2015
-                            var entrydate = currentdate.split("/"); //lead_date ["25", "08", "2015"] 
-                            
-                            return [entrydate[2], entrydate[1], entrydate[0]].join("-");
-                        }
-                        function convertmindate(currentdate)
-                        {
-                           //  alert("currentdate date passed "+currentdate); //25/08/2015
-                            var entrydate = currentdate.split("-"); //lead_date ["25", "08", "2015"] 
-                            //alert("lead_date "+entrydate.toSource());
-                         //   return [entrydate[2], entrydate[1], entrydate[0]].join("-");
-                         return entrydate;
-                        }
 
                     });
                 </script>
@@ -2146,7 +1505,7 @@
                         </div>
                         <div class="listViewContentDiv" id="listViewContents" style="float: left; width:100%;">
                             <!-- Start your grid content from here --> 	
-                            <div>
+                            <div id='jqxWidget' style="float: left; width:100%;">
                                 <div id="jqxgrid"></div>
                                 <div style="margin-top: 30px;">
                                     <div id="cellbegineditevent"></div>
@@ -2155,13 +1514,13 @@
 
                                 <!--  This part of div contain windows Start      -->
 
-                                <div id="customWindow" style="float: left; width:100%; display:none;">
+                                <div id="customWindow" style="float: left; width:100%;">
                                     <div id="customWindowContent" style="float: left; width:1013px;">
                                         <div style="float: left; width:95%; padding-left: 7px;" >
                                             <label style="float: left;">Entry Date: </label><label style="float: left; padding-left: 40px;">Executive Name </label>&nbsp;<label style="float: left;  padding-left: 107px;">Branch </label>
                                         </div>  
 
-                                        <div style=" float: left; width:66%; padding-left: 7px;">
+                                        <div style=" float: left; width:60%; padding-left: 7px;">
                                             <input id='update_header_date'/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="username"/>&nbsp;&nbsp;&nbsp;<input type="text" id="branch"/>
                                         </div>
                                         <div id="jqxgrid_n" style="posistion:relative; float: left; width:100%;" ></div>
@@ -2173,25 +1532,33 @@
                                 <!-- add popup start -->
                                 <!--  This part of div contain windows for view mode Start      -->
 
-                               
-                                 <!--  This part of div contain windows for view mode End      -->
+                                <div id="customWindowview" style="float: left; width:100%;">
+                                    <div id="customWindowview" style="float: left; width:1012px;">
+                                        <div style="float: left; width:95%; padding-left: 7px;" >
+                                            <label style="float: left;">Entry Date </label>&nbsp;<label style="float: left; padding-left: 40px;">Executive Name </label>&nbsp;<label style="float: left;  padding-left: 107px;">Branch </label>
+                                        </div>  
+                                        <div style=" float: left; width:60%; padding-left: 7px;">
+                                            <input id='view_header_date'/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="username_vw"/>&nbsp;&nbsp;&nbsp;<input type="text" id="branch_vw"/>
+                                        </div>
+                                        <div id="jqxgrid_view" style="posistion:relative; float: left; width:100%;" ></div>
+                                    </div>           
+                                </div>
                                 <!-- add popup start -->
-                                <?php $this->load->view('dailyactivity/jqxgrid_add'); ?>
+<?php $this->load->view('dailyactivity/jqxgrid_add'); ?>
 
                                 <!-- add popup end -->
                                 <!-- Select itemmaster popup start -->
-                                <div id="win_selectItemMaster" style="position: fixed; left: 50%; top: 50%;">
+                                <div id="win_selectItemMaster" style="width: 50%" >
                                     <div style="margin: 10px">
-                                        <div id="jqxgrid_selectItemMaster" style="width: 400px;"></div>
+                                        <div id="jqxgrid_selectItemMaster" style="width: 400px;">testing</div>
                                     </div>
                                 </div>
                                 <!-- Select Itemmaster popup end -->
 
                                 <!-- Select customer master popup start -->
-
-                                <div id="win_selectCustMaster" style="position: fixed; left: 50%; top: 50%;">
+                                <div id="win_selectCustMaster" style="width: 50%" >
                                     <div style="margin: 10px">
-                                        <div id="jqxgrid_selectCustomMaster" style="width: 400px;"></div>
+                                        <div id="jqxgrid_selectCustomMaster" style="width: 400px;">testing</div>
                                     </div>
                                 </div>
                                 <!-- Select customer master popup end -->

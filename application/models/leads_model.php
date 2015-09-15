@@ -158,6 +158,61 @@ class Leads_model extends CI_Model {
         }
         return $options_arr;
     }
+       public function getleadcustomers() {
+      
+        $options = array('#=>'=>'-Please Select Customer-');
+        $options_arr;
+        $options_arr[''] = '-Please Select Customer-';
+
+
+        // Format for passing into form_dropdown function
+
+        /*foreach ($options as $option) {
+            $options_arr[$option['id']] = $option['tempcustname'];
+        }*/
+        //print_r($options_arr); die;
+        return $options_arr;
+    }
+
+
+    public function get_collectors($reporting_user_id) 
+    {
+        if (@$this->session->userdata['reportingto'] == "")
+        {
+             $sql = "SELECT  a.collector FROM (
+                SELECT 
+                CASE WHEN (COALESCE(customermasterhdr.cust_account_id,0)=0) THEN 'NO COLLECTOR' ELSE customermasterhdr.collector END 
+                 AS collector
+                FROM customermasterhdr WHERE length(COALESCE(collector,''))>0
+                ) a GROUP BY  a.collector ORDER BY collector";
+        }
+        else
+        {
+            $sql="SELECT collector FROM customermasterhdr  WHERE cust_account_id is NOT NULL  and cust_account_id >0 AND  mc_code in (
+                SELECT  
+                mc_sub_id
+                FROM vw_web_user_login 
+                 JOIN market_circle_hdr on market_circle_hdr.gc_executive_code= vw_web_user_login.header_user_id AND vw_web_user_login.header_user_id in (".$reporting_user_id.") ) GROUP BY collector";
+        }
+       
+       // echo $sql; die;
+        $result = $this->db->query($sql);
+        //  print_r($result->result_array());
+        $options = $result->result_array();
+        $options_arr;
+       // $options_val=array('#'=>'-Please Select Collector-');
+
+        $options_arr['#'] = '-Please Select Collector-';
+
+        // Format for passing into form_dropdown function
+        foreach ($options as $option) {
+            $options_arr[$option['collector']] = $option['collector'];
+        }
+        //array_unshift($options_arr,$options_val);
+        return $options_arr;
+    }
+
+    
 
     public function get_country() {
         $options = $this->db->select('id, name')->get('country')->result();
@@ -613,6 +668,22 @@ class Leads_model extends CI_Model {
             }
         }
         return;
+    }
+
+    public function get_lead_customersadd($collector) {
+        $sql = "select * from  fn_lead_customer_group('".$collector."') ORDER BY tempcustname";
+        //echo $sql; die;
+        $result = $this->db->query($sql);
+        //  print_r($result->result_array());
+        $options = $result->result_array();
+        $options_arr;
+        $options_arr[''] = '-Please Select Customer-';
+
+        // Format for passing into form_dropdown function
+        foreach ($options as $option) {
+            $options_arr[$option['id']] = $option['tempcustname'];
+        }
+        return $options_arr;
     }
 
     function get_assigned_tobranch() {
@@ -1363,7 +1434,7 @@ class Leads_model extends CI_Model {
             INNER JOIN leadsubstatus ON leadsubstatus.lst_sub_id = leaddetails.ldsubstatus
             INNER JOIN "leadstatus" ON "leadstatus"."leadstatusid" = "leaddetails"."leadstatus"
             INNER JOIN "leadsource" ON "leadsource"."leadsourceid" = "leaddetails"."leadsource"
-            LEFT OUTER JOIN vw_web_user_login ON leaddetails.created_user = vw_web_user_login.header_user_id
+            INNER JOIN vw_web_user_login ON leaddetails.created_user = vw_web_user_login.header_user_id
             LEFT OUTER JOIN "vw_web_user_login" AS assignedfrom ON "leaddetails"."assignleadchk" = "assignedfrom"."header_user_id"
             INNER JOIN "view_tempcustomermaster" ON "leaddetails"."company" = "view_tempcustomermaster"."id"
             INNER JOIN leadproducts ON leadproducts.leadid = leaddetails.leadid
@@ -2025,16 +2096,6 @@ class Leads_model extends CI_Model {
         // print_r($ld_src);
     }
 
-    function GetLeadSourceName($srcid) {
-        $this->db->select('leadsource');
-        $this->db->from('leadsource');
-        $this->db->where('leadsourceid', $srcid);
-        $result = $this->db->get();
-        $ld_src = $result->result_array();
-        return $ld_src[0]['leadsource'];
-        // print_r($ld_src);
-    }
-
     function GetLeadCredit($srcid) {
         $this->db->select('crd_name');
         $this->db->from('lead_credit_assesment');
@@ -2055,16 +2116,6 @@ class Leads_model extends CI_Model {
         // print_r($ld_status);
     }
 
-    public function GetAssigntoDetails($stsid) {
-        $this->db->select('duser,empcode,header_user_id,location_user,aliasloginname');
-        $this->db->from('vw_web_user_login');
-        $this->db->where('header_user_id',$stsid);
-        $result = $this->db->get();
-        $ld_status = $result->result_array();
-        return $ld_status;
-        // print_r($ld_status);
-    }
-
    
     public function GetLeadStatusName($toid) {
         $this->db->select('*');
@@ -2074,16 +2125,6 @@ class Leads_model extends CI_Model {
         $ld_status = $result->result_array();
         //print_r($ld_status); die;
         return $ld_status[0]['leadstatus'];
-         
-    }
-    public function GetSalesName($name) {
-        $this->db->select('n_value_displayname');
-        $this->db->from('lead_sale_type');
-        $this->db->where('n_value', $name);
-        $result = $this->db->get();
-        $ld_status = $result->result_array();
-        //print_r($ld_status); die;
-        return $ld_status[0]['n_value_displayname'];
          
     }
 
@@ -2168,24 +2209,6 @@ class Leads_model extends CI_Model {
         $productdetails = $result->result_array();
 
         return $productdetails[0];
-    }
-
-     public function get_leadpotentials($lead_id,$sales_type_flag) {
-        $sql = "SELECT lead_prod_potential_types.potential,leadproducts.quantity as requirement,
-        leaddetails.leadid,lead_prod_potential_types.product_type_id as id,
-        lead_sale_type.n_value_displayname as lead_sale_type, leadsource.leadsource as lead_source_name,
-        leaddetails.email_id
-        FROM leaddetails 
-        INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
-        INNER JOIN leadsource ON leaddetails.leadsource = leadsource.leadsourceid
-        INNER JOIN lead_prod_potential_types ON lead_prod_potential_types.leadid=leaddetails.leadid 
-        INNER JOIN lead_sale_type ON lead_sale_type.n_value_id = lead_prod_potential_types.product_type_id 
-        WHERE  leaddetails.leadid=".$lead_id." AND lead_sale_type.saletype_flag='".$sales_type_flag."'  ORDER BY lead_prod_potential_types.potential desc LIMIT 1";
-       // echo $sql;
-        $result = $this->db->query($sql);
-        $potendetails = $result->result_array();
-       // print_r($potendetails[0]);
-        return $potendetails[0];
     }
 
     public function CheckNewCustomer($tem_cust_id) {
@@ -3049,94 +3072,6 @@ SELECT
                     $accnt_yr = $result->result_array();
              
                 return $accnt_yr[0]['jc_code'];
-            }
-
-            function GetMaxValdc($table)
-            {
-                $sql ="select max(id) from ".$table;
-                $result = $this->db->query($sql);
-                //print_r($result->result_array());
-                $daily_hdr_id = $result->result_array();
-            //  print_r($daily_hdr_id);
-                //echo"max id is ".$daily_hdr_id[0]['max'];
-                return $daily_hdr_id[0]['max'];
-
-            }
-
-             function save_lead_dailydtl($dc_detail) {
-                $this->db->insert('dailyactivitydtl', $dc_detail);
-                return $this->db->insert_id();
-            }
-
-            function save_daily_hdr($dc_hdrdetails) {
-                
-            if($this->db->insert('dailyactivityhdr', $dc_hdrdetails))
-            {
-               // echo"inserted sucessfully";
-            }
-            else
-            {
-                echo"Error in insert"; die;
-            }
-            //return $this->db->insert_id();
-            return;
-            }
-
-            function check_dailyhdr_duplicates($hrd_currentdate,$user1)
-            {
-              
-
-                $sql ="select exename,id from dailyactivityhdr  where currentdate::Date ='".$hrd_currentdate."' AND user1 ='".$user1."'";
-                $result = $this->db->query($sql);
-                $result->num_rows();
-                $daily_hdr_id = $result->result_array();
-             
-                if($result->num_rows()==0)
-                {
-                    $daily_hdr_id['0']['noofrows']=$result->num_rows();
-                    $daily_hdr_id['0']['exename']="";
-                    $daily_hdr_id['0']['id']=0;    
-                }
-                else
-                {
-                    $daily_hdr_id['0']['noofrows']=$result->num_rows();
-          
-                }
-                
-
-             // echo"<pre>";print_r($daily_hdr_id);echo"</pre>";
-                //echo"max id is ".$daily_hdr_id[0]['max'];
-               // return $daily_hdr_id[0]['id'];
-               return $daily_hdr_id;
-
-            }
-
-            function check_executive_user($user1)
-            {
-              
-
-                $sql ="SELECT designation from vw_web_user_login_desg WHERE designation='Executive' AND upper(duser)='".strtoupper($user1)."'";
-                $result = $this->db->query($sql);
-                $result->num_rows();
-                $isExecutive = $result->result_array();
-             
-                if($result->num_rows()==0)
-                {
-                    $isExecutive['0']['noofrows']=$result->num_rows();
-                   
-                }
-                else
-                {
-                    $isExecutive['0']['noofrows']=$result->num_rows();
-          
-                }
-                
-
-             // echo"<pre>";print_r($daily_hdr_id);echo"</pre>";
-                //echo"max id is ".$daily_hdr_id[0]['max'];
-               // return $daily_hdr_id[0]['id'];
-               return $isExecutive;
-
             }
 
 

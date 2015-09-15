@@ -32,7 +32,17 @@ class dailyactivity extends CI_Controller {
         $this->load->helper('html');
     }
 
-   
+    /* 	
+      public function index()
+      {
+      $leaddata = array();
+      //$leaddata = $this->Leads_model->get_lead_details();
+      $leaddata['leaddetails'] = $this->Leads_model->get_lead_details();
+      //echo"<pre>";print_r($leaddata);echo"</pre>";
+      $this->load->view('leads/viewleads',$leaddata);
+      }
+     */
+
     public function index() {
         //print_r($this->session->userdata); 
 
@@ -47,7 +57,20 @@ class dailyactivity extends CI_Controller {
             $allgroups = $this->admin_auth->groups()->result();
             $usergroups = $this->admin_auth->group($this->session->userdata['user_id']);
             $activitydata = array();
+            /* if ($this->session->userdata['reportingto']=="")
+              {
+              $activitydata['leaddetails'] = $this->Leads_model->get_lead_details_all();
+              $activitydata['data']=$this->Leads_model->get_leaddetails_for_grid();
+              }
+              else
+              {
+              $activitydata['leaddetails'] = $this->Leads_model->get_lead_details($this->session->userdata['reportingto']);
+              $activitydata['data']=$this->Leads_model->get_leaddetails_reporting_to_for_grid($this->session->userdata['reportingto']);
+              }
+              $activitydata['permission'] = $usergroups->_cache_user_in_group[$this->session->userdata['user_id']];
+             */
             $data = array();
+            //	$leaddata['data']=$this->Leads_model->get_leaddetails_for_grid();
             $activitydata['permission'] = $usergroups->_cache_user_in_group[$this->session->userdata['user_id']];
             $i = 0;
             $datagroup = array();
@@ -61,7 +84,10 @@ class dailyactivity extends CI_Controller {
             }
 
             $arr = json_encode($datagroup);
+
             $activitydata['grpperm'] = $arr;
+
+            //  $this->load->view('leads/viewleadsnew',$leaddata);	
 
             if ($this->session->userdata['reportingto'] == "") {
 
@@ -70,6 +96,8 @@ class dailyactivity extends CI_Controller {
                 $activitydata['data'] = $this->dailyactivity_model->getactivity_data($this->session->userdata['user_id']);
             }
 
+
+            //	$this->load->view('dailyactivity/viewdailyactivity');
             $sql = 'SELECT  DISTINCT  itemgroup FROM itemmaster ORDER BY itemgroup asc';
             $activitydata['dataitemmaster'] = $this->dailyactivity_model->get_products($sql);
             $this->load->view('dailyactivity/viewdailyactivity', $activitydata);
@@ -97,21 +125,11 @@ class dailyactivity extends CI_Controller {
     }
 
     function get_data_itemmaster() {
-       
-        $sql = 'SELECT  DISTINCT  itemgroup FROM view_tempitemmaster_grp ORDER BY itemgroup asc';
+
+        $sql = 'SELECT  DISTINCT  itemgroup FROM itemmaster ORDER BY itemgroup asc';
         $activitydata['dataitemmaster'] = $this->dailyactivity_model->get_products($sql);
+        //	$viewdata = '['.$activitydata['dataitemmaster'].']'; 
         $viewdata = $activitydata['dataitemmaster'];
-        header('Content-Type: application/x-json; charset=utf-8');
-        echo $viewdata;
-    }
-     function get_data_customermaster() {
-
-        //$sql='SELECT  distinct on (view_tempcustomermaster.tempcustname) view_tempcustomermaster.id,view_tempcustomermaster.tempcustname FROM     view_tempcustomermaster ORDER BY  tempcustname ASC';
-
-        $sql = "SELECT distinct  replace(customergroup,'''','')   as customergroup FROM customermasterhdr order by customergroup";
-       
-        $activitydata['datacustomermaster'] = $this->dailyactivity_model->get_customers($sql);
-        $viewdata = $activitydata['datacustomermaster'];
         header('Content-Type: application/x-json; charset=utf-8');
         echo $viewdata;
     }
@@ -120,18 +138,25 @@ class dailyactivity extends CI_Controller {
         $item = urldecode($this->uri->segment(4));
         $customer = urldecode($this->uri->segment(3));
         $activitydata['potential_quantity'] = $this->dailyactivity_model->get_potential_item_customer($item, $customer);
+        //print_r($activitydata); die;
+        //header('Content-Type: application/x-json; charset=utf-8');
         $viewdata = $activitydata['potential_quantity'];
         echo $viewdata;
     }
 
-    function get_leadpotential($leadid) {
+    function get_data_customermaster() {
 
-        $activitydata['potential_quantity'] = $this->dailyactivity_model->get_lead_potential($leadid);
-        $viewdata = $activitydata['potential_quantity'];
+        //$sql='SELECT 	distinct on (view_tempcustomermaster.tempcustname) view_tempcustomermaster.id,view_tempcustomermaster.tempcustname FROM 	view_tempcustomermaster ORDER BY  tempcustname ASC';
+
+        $sql = "SELECT distinct  replace(customergroup,'''','')   as customergroup FROM customermasterhdr order by customergroup";
+        //$sql="SELECT distinct   customergroup FROM customermasterhdr order by customergroup";
+        //	echo $sql; die;
+        $activitydata['datacustomermaster'] = $this->dailyactivity_model->get_customers($sql);
+        //	$viewdata = '['.$activitydata['dataitemmaster'].']'; 
+        $viewdata = $activitydata['datacustomermaster'];
+        header('Content-Type: application/x-json; charset=utf-8');
         echo $viewdata;
     }
-
-   
 
     public function index1() {
         if (!$this->admin_auth->logged_in()) {
@@ -143,9 +168,20 @@ class dailyactivity extends CI_Controller {
             $allgroups = $this->admin_auth->groups()->result();
             $usergroups = $this->admin_auth->group($this->session->userdata['user_id']);
             $activitydata = array();
-
+            /* if ($this->session->userdata['reportingto']=="")
+              {
+              $activitydata['leaddetails'] = $this->Leads_model->get_lead_details_all();
+              $activitydata['data']=$this->Leads_model->get_leaddetails_for_grid();
+              }
+              else
+              {
+              $activitydata['leaddetails'] = $this->Leads_model->get_lead_details($this->session->userdata['reportingto']);
+              $activitydata['data']=$this->Leads_model->get_leaddetails_reporting_to_for_grid($this->session->userdata['reportingto']);
+              }
+              $activitydata['permission'] = $usergroups->_cache_user_in_group[$this->session->userdata['user_id']];
+             */
             $data = array();
-            
+            //	$leaddata['data']=$this->Leads_model->get_leaddetails_for_grid();
             $leaddata['permission'] = $usergroups->_cache_user_in_group[$this->session->userdata['user_id']];
             $i = 0;
             $datagroup = array();
@@ -164,7 +200,8 @@ class dailyactivity extends CI_Controller {
             $activitydata['datarow'] = $this->dailyactivity_model->getactivity_data_row();
             $activitydata['datacolumn'] = $this->dailyactivity_model->getactivity_data_column();
 
-            
+            //print_r($activitydata['datacolumn']);
+            //print_r($activitydata['datarow']);
 
             $this->load->view('dailyactivity/viewdailyactivity1', $activitydata);
         } else {
@@ -181,10 +218,12 @@ class dailyactivity extends CI_Controller {
         $execode = $this->session->userdata['empcode'];
         $exename = $this->session->userdata['identity'];
         $user1 = $this->session->userdata['loginname'];
-       
-        //echo "current_date ".$_POST[0]['currentdate'];
+        //echo"post values";print_r($_POST);
+        //echo "current_date ".$_POST[0]['currentdate']; die;
         $hrd_currentdate = $_POST[0]['currentdate'];
         $grid_data = array_slice($_POST, 1, null, true);
+
+        //echo"the count a grid_data ".count($grid_data);
         $check_duplicates = $this->dailyactivity_model->check_dailyhdr_duplicates($hrd_currentdate, $user1);
         //  echo $check_duplicates; die;
         if ($check_duplicates == 0) {
@@ -199,13 +238,14 @@ class dailyactivity extends CI_Controller {
                     'companycode' => 'PPC',
                     'accperiod' => '2013-2014',
                     'user1' => $user1,
+                    //	'timestamp' => $this->input->post('lastname'),
                     'creationuser' => $creationuser,
                     'creationdate' => $createddate,
                     'lastupdateuser' => $lastupdateuser
-                    );
-                
+                        //	'lastupdatedate' => $lastupdatedate
+                );
                 $daily_hdr_insert_status = $this->dailyactivity_model->save_dailyactivityhdr($daily_hdr);
-                
+                //	echo "return val is  ".$daily_hdr_insert_status;
 
                 foreach ($grid_data as $key => $val) {
                     if ($val['potentialqty'] == "" || $val['potentialqty'] == 'undefined') {
@@ -220,14 +260,11 @@ class dailyactivity extends CI_Controller {
                     if ($val['quantity'] == "" || $val['quantity'] == 'undefined') {
                         $val['quantity'] = 0;
                     }
-                    if ($val['leadid'] == "" || $val['leadid'] == 'undefined' || $val['leadid']=='No Leads') {
-                        $val['leadid'] = 0;
-                    }
 
                     $daily_dtl[$key]['id'] = $daily_hdr_id;
+                    $daily_dtl[$key]['date'] = $val['currentdate'];
                     $daily_dtl[$key]['itemgroup'] = $val['itemgroup'];
                     $daily_dtl[$key]['custgroup'] = $val['custgroup'];
-                    $daily_dtl[$key]['leadid'] = $val['leadid'];
                     $daily_dtl[$key]['potentialqty'] = $val['potentialqty'];
                     $daily_dtl[$key]['subactivity'] = $val['subactivity'];
                     $daily_dtl[$key]['hour_s'] = $val['hour_s'];
@@ -235,11 +272,13 @@ class dailyactivity extends CI_Controller {
                     $daily_dtl[$key]['modeofcontact'] = $val['modeofcontact'];
                     $daily_dtl[$key]['quantity'] = $val['quantity'];
                     $daily_dtl[$key]['division'] = $val['division'];
-                   
+                    $daily_dtl[$key]['date'] = $val['Date'];
                     $daily_dtl[$key]['remarks'] = $val['Remarks'];
                     $daily_dtl[$key]['creationdate'] = date('Y-m-d:H:i:s');
                     $daily_dtl[$key]['creationuser'] = $creationuser;
-
+                    $daily_dtl[$key]['description'] = $val['description'];
+                    $daily_dtl[$key]['actionplanned'] = $val['actionplanned'];
+                    $daily_dtl[$key]['detailed_description'] = $val['detailed_description'];
                 }
 
 
@@ -253,8 +292,7 @@ class dailyactivity extends CI_Controller {
             $message = "true";
         } else {
             // echo "duplicate exists";	
-            $message = "Entry already exists for the date " . $hrd_currentdate;
-
+            $message = "Duplicate Record exists in the date " . $hrd_currentdate . " for the executive " . $exename;
         }
         header('Content-Type: application/x-json; charset=utf-8');
         echo $message;
@@ -272,26 +310,40 @@ class dailyactivity extends CI_Controller {
         $execode = $this->session->userdata['empcode'];
         $exename = $this->session->userdata['identity'];
         $user1 = $this->session->userdata['loginname'];
+        //echo"post values";print_r($_POST);
+        //echo "current_date ".$_POST[0]['currentdate']; die;
         $hrd_currentdate = $_POST[0]['currentdate'];
         $hdn_hdr_id = $_POST[0]['hdn_hdr_id'];
 
         $grid_data = array_slice($_POST, 1, null, true);
-        $get_update_id = $hdn_hdr_id;
 
+        //echo"the count a grid_data ".count($grid_data);
+        //$get_update_id = $this->dailyactivity_model->get_dailyhdr_update_id($hrd_currentdate,$user1);
+        $get_update_id = $hdn_hdr_id;
+        $daily_dtl_delete_status = $this->dailyactivity_model->deteled_dailyactivitydtl($get_update_id);
+        // $daily_dtl_delete_status =$this->dailyactivity_model->deteled_dailyactivitydtl(5);
+        //      echo"no of rows deleted ".$daily_dtl_delete_status; 
+        if ($daily_dtl_delete_status > 0) {
             if ($_POST['update'] == 'true') {
 
+                //$daily_hdr_id= $this->dailyactivity_model->GetMaxVal('dailyactivityhdr');
                 $daily_hdr_id = $get_update_id;
                 $daily_hdr = array('id' => $daily_hdr_id,
                     'currentdate' => $hrd_currentdate,
                     'execode' => $execode,
                     'exename' => $exename,
                     'companycode' => 'PPC',
-                    'accperiod' => '2015-2016',
+                    'accperiod' => '2013-2014',
                     'user1' => $user1,
+                    //	'timestamp' => $this->input->post('lastname'),
+                    //	'creationuser' => $creationuser,
+                    //	'creationdate' => $createddate,
                     'lastupdateuser' => $lastupdateuser,
                     'lastupdatedate' => $lastupdatedate
                 );
                 $daily_hdr_update_status = $this->dailyactivity_model->update_dailyactivityhdr($daily_hdr, $daily_hdr_id);
+
+                //	echo "return val is  ".$daily_hdr_insert_status;
 
                 foreach ($grid_data as $key => $val) {
                     if ($val['potentialqty'] == "" || $val['potentialqty'] == 'undefined') {
@@ -307,13 +359,9 @@ class dailyactivity extends CI_Controller {
                     if ($val['quantity'] == "" || $val['quantity'] == 'undefined') {
                         $val['quantity'] = 0;
                     }
-                      if ($val['leadid'] == "" || $val['leadid'] == 'undefined' || $val['leadid']=='No Leads') {
-                        $val['leadid'] = 0;
-                    }
                     $daily_dtl[$key]['id'] = $daily_hdr_id;
-                   
+                    $daily_dtl[$key]['date'] = $val['currentdate'];
                     $daily_dtl[$key]['itemgroup'] = $val['itemgroup'];
-                    $daily_dtl[$key]['leadid'] = $val['leadid'];
                     $daily_dtl[$key]['custgroup'] = $val['custgroup'];
                     $daily_dtl[$key]['potentialqty'] = $val['potentialqty'];
                     $daily_dtl[$key]['subactivity'] = $val['subactivity'];
@@ -322,86 +370,31 @@ class dailyactivity extends CI_Controller {
                     $daily_dtl[$key]['modeofcontact'] = $val['modeofcontact'];
                     $daily_dtl[$key]['quantity'] = $val['quantity'];
                     $daily_dtl[$key]['division'] = $val['division'];
+                    $daily_dtl[$key]['date'] = $val['Date'];
                     $daily_dtl[$key]['remarks'] = $val['Remarks'];
+                    //$daily_dtl[$key]['creationdate'] =date('Y-m-d:H:i:s');
+                    //$daily_dtl[$key]['creationuser'] = $creationuser;
                     $daily_dtl[$key]['lastupdatedate'] = date('Y-m-d:H:i:s');
                     $daily_dtl[$key]['lastupdateuser'] = $creationuser;
-
+                    $daily_dtl[$key]['description'] = $val['description'];
+                    $daily_dtl[$key]['actionplanned'] = $val['actionplanned'];
+                    $daily_dtl[$key]['detailed_description'] = $val['detailed_description'];
                 }
 
 
                 if ($daily_hdr_update_status) {
 
-                    $daily_dlt_id = $this->dailyactivity_model->save_daily_details_up($daily_dtl,$get_update_id);
-                }
-                if($daily_dlt_id)
-                {
-                    $message = "true";
-                }
-                else
-                {
-                    $message = "Error in Updating Records"; 
-                    $this->db->db_debug = TRUE; 
+                    $daily_dlt_id = $this->dailyactivity_model->save_daily_details($daily_dtl);
                 }
             }
-            
-        header('Content-Type: application/x-json; charset=utf-8');
-        echo $message;
-    }
-
-    function getnullleadids()
-    {
-        $data = array();
-        $data = $this->dailyactivity_model->getnull_leadids();
-        print_r($data);
-    }
-
-    function getleadids($customergroup,$prodgroup)
-    {
-        $data = array();
-        $data = $this->dailyactivity_model->get_leadids($customergroup,$prodgroup);
-        print_r($data);
-    }
-    function getactivity($leaid)
-    {
-        $data = array();
-        $data = $this->dailyactivity_model->get_activity($leaid);
-        print_r($data);
-    }
-
-    function testing()
-    {
-     $this->load->view('dailyactivity/test');
-    }
-
-    function checkentrydate($hrd_currentdate){
-     $user1 = $this->session->userdata['loginname'];
-     $exename = $this->session->userdata['identity'];
-     $check_duplicates = $this->dailyactivity_model->check_dailyhdr_duplicates($hrd_currentdate, $user1);
-        //  echo $check_duplicates; die;
-        if ($check_duplicates == 0)
-        {
-                $message = "true";   
-        }
-        else{
-            
-             // echo "duplicate exists";    
-            $message = "Entry already exists for the date " . $hrd_currentdate;
+            $message = "true";
+        } else {
+            $message = "Duplicate Record exists in the date " . $hrd_currentdate . " for the executive " . $exename;
         }
         header('Content-Type: application/x-json; charset=utf-8');
         echo $message;
-      }  
+    }
 
-      function tutortial1()
-      {
-        $this->load->view('dailyactivity/tutorial1');
-      }
-
-       function leadreassign()
-      {
-        $this->load->view('dailyactivity/tutorial2');
-      }
-
-   
 }
 
 ?>
