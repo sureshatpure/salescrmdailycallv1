@@ -18,7 +18,8 @@ $message_content="Welcome to email templating";
             else
             {
                  $sql= 'SELECT 
-						a.mail_alert_id,ld.assignleadchk as executiveid,v.sales_ref_mailid,v."2ND_LVL_MAIL_ID" AS bm_mailid,ld.user_branch,a.leadid,a.appointment_due_date as appointment_date,a.lead_substatus_id,a.substatus_updated_date,a.mail_alert_date,a.status_action_type,
+						a.mail_alert_id,ld.assignleadchk as executiveid,u.aliasloginname AS createdby,
+						v.sales_ref_mailid,v."2ND_LVL_MAIL_ID" AS bm_mailid,ld.user_branch,a.leadid,a.appointment_due_date as appointment_date,a.lead_substatus_id,a.substatus_updated_date,a.mail_alert_date,a.status_action_type,
            					b.content_text as alert_text,
            					m.description as ProductName,m.itemgroup,
            					c.tempcustname,c.stdname,c.customer_name
@@ -27,9 +28,10 @@ $message_content="Welcome to email templating";
 						lead_status_mailalert_content b,
 						leadproducts	p,
 						view_tempitemmaster_grp m,
-            					customermasterhdr c,
-            					leaddetails ld,	
-            					vw_sales_executive_matrix_mail_id v
+    					customermasterhdr c,
+    					leaddetails ld,	
+    					vw_sales_executive_matrix_mail_id v,
+    					vw_web_user_login u
 
 				WHERE 
 							a.lead_substatus_id=7
@@ -41,6 +43,7 @@ $message_content="Welcome to email templating";
               					AND v.user_code = ld.assignleadchk
 							AND mail_alert_date = CURRENT_DATE
 							AND mail_sent_flag=0
+							AND u.header_user_id = ld.created_user
 							AND  mail_alert_id in 
 							(
 								SELECT  max(mail_alert_id)  FROM lead_status_mail_alerts GROUP BY  lead_substatus_id ,leadid 
@@ -74,6 +77,7 @@ $message_content="Welcome to email templating";
 					        '({productname})' => $row["productname"], 
 					        '({itemgroup})' => $row["itemgroup"], 
 					        '({tempcustname})' => $row["tempcustname"], 
+					        '({createdby})' => $row["createdby"], 	
 					        '({view_leaddetails})' => $view_leaddetails, 
 					        '({message_body})' => nl2br( stripslashes( $message_content ) )
 					    );
@@ -85,7 +89,6 @@ $message_content="Welcome to email templating";
 					    $plaintext = str_replace( array( '<p>', '<br />', '<br>', '<h1>', '<h2>', '<h3>', '<h4>' ), PHP_EOL, $plaintext );
 					    $plaintext = str_replace( array( '</p>', '</h1>', '</h2>', '</h3>', '</h4>' ), '', $plaintext );
 					    $plaintext = html_entity_decode( stripslashes( $plaintext ) );
-
 
 					// Replace the % with the actual information
 					   // Send email to BM and executive

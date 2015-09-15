@@ -21,6 +21,8 @@ $message_content="Welcome to email templating";
                  $sql= 'SELECT
 							    A .mail_alert_id,
 							    ld.assignleadchk AS executiveid,
+								ld.created_user as created_user_id,
+								u.aliasloginname as createdby,
 							    v.sales_ref_mailid,
 							    case WHEN pt.potential=0  THEN v."2ND_LVL_MAIL_ID"  ELSE v."2ND_LVL_MAIL_ID"||\',shankar.kg@pure-chemical.com\' END AS bm_mailid,
 							    ld.user_branch,
@@ -44,7 +46,8 @@ $message_content="Welcome to email templating";
 							    customermasterhdr C,
 							    leaddetails ld,
 							    vw_sales_executive_matrix_mail_id v,
-							    lead_prod_potential_types pt 
+							    lead_prod_potential_types pt,
+							    vw_web_user_login u 
 							WHERE
 							    A .lead_substatus_id = 26
 							AND pt.leadid=ld.leadid 
@@ -57,6 +60,7 @@ $message_content="Welcome to email templating";
 							AND v.user_code = ld.assignleadchk
 							AND mail_alert_date = CURRENT_DATE
 							AND mail_sent_flag = 0
+							AND u.header_user_id= ld.created_user
 							AND mail_alert_id IN (
 							    SELECT
 							        MAX (mail_alert_id)
@@ -97,6 +101,7 @@ $message_content="Welcome to email templating";
 					        '({productname})' => $row["productname"], 
 					        '({itemgroup})' => $row["itemgroup"], 
 					        '({tempcustname})' => $row["tempcustname"], 
+					        '({createdby})' => $row["createdby"], 
 					        '({view_leaddetails})' => $view_leaddetails, 
 					        '({message_body})' => nl2br( stripslashes( $message_content ) )
 					    );

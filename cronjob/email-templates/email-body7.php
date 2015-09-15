@@ -26,5 +26,8 @@
    Customer Name : {tempcustname}
 </p>
 <p style="color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 19px; font-size: 14px; margin: 0 0 10px; padding: 0;" align="left">
+   Created By : {createdby}
+</p>
+<p style="color: #222222; font-family: 'Helvetica', 'Arial', sans-serif; font-weight: normal; text-align: left; line-height: 19px; font-size: 14px; margin: 0 0 10px; padding: 0;" align="left">
    Click here to view the lead details : {view_leaddetails}
 </p>

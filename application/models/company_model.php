@@ -115,6 +115,7 @@ function GetLeadId($seq_id)
 //		$sql="SELECT view_tempscustomermaster.tempcustname from view_tempcustomermaster where view_tempcustomermaster.tempcustname = '".$cname."'";
 		//$sql="SELECT view_tempcustomermaster.tempcustname from view_tempcustomermaster where view_tempcustomermaster.tempcustname LIKE upper('%".$cname."%')"; not able to add ATISH CHEMICALS
 $sql="SELECT view_tempcustomermaster.tempcustname from view_tempcustomermaster where view_tempcustomermaster.tempcustname LIKE upper('".$cname."%')";
+//$sql="SELECT view_tempcustomermaster.tempcustname from view_tempcustomermaster where view_tempcustomermaster.tempcustname=upper('".$cname."')";
 		//$sql die;
 
     $query = $this->db->query($sql);

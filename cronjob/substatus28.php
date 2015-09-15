@@ -18,8 +18,7 @@ $message_content="Welcome to email templating";
             }
             else
             {
-                 $sql= 'SELECT a.mail_alert_id,a.exe_mail_flag,a.soc_no,CURRENT_DATE::DATE - substatus_updated_date::DATE as noofdays,ld.assignleadchk as executiveid,v.sales_ref_mailid,v."2ND_LVL_MAIL_ID" AS bm_mailid,ld.user_branch,a.leadid,a.lead_substatus_id,a.substatus_updated_date,a.mail_alert_date,a.status_action_type, b.content_text as alert_text, m.description as ProductName,m.itemgroup, c.tempcustname,c.stdname,c.customer_name FROM lead_status_mail_alerts a , lead_status_mailalert_content b, leadproducts p, view_tempitemmaster_grp m, customermasterhdr c, leaddetails ld, vw_sales_executive_matrix_mail_id v WHERE a.lead_substatus_id=28 AND a.lead_substatus_id = b.substatus_id AND c.id = ld.company AND ld.leadid = a.leadid AND ld.leadid = p.leadid AND p.productid::text = m.id::text AND v.user_code = ld.assignleadchk AND   mail_sent_flag=0 AND mail_alert_id in ( SELECT max(mail_alert_id) FROM lead_status_mail_alerts GROUP BY lead_substatus_id ,leadid ) AND a.leadid not in ( SELECT leadid FROM lead_status_mail_alerts  WHERE lead_substatus_id=29)
-';
+                 $sql= 'SELECT a.mail_alert_id,a.exe_mail_flag,a.soc_no,CURRENT_DATE::DATE - substatus_updated_date::DATE as noofdays,ld.assignleadchk as executiveid,u.aliasloginname AS createdby,v.sales_ref_mailid,v."2ND_LVL_MAIL_ID" AS bm_mailid,ld.user_branch,a.leadid,a.lead_substatus_id,a.substatus_updated_date,a.mail_alert_date,a.status_action_type, b.content_text as alert_text, m.description as ProductName,m.itemgroup, c.tempcustname,c.stdname,c.customer_name FROM lead_status_mail_alerts a , lead_status_mailalert_content b, leadproducts p, view_tempitemmaster_grp m, customermasterhdr c, leaddetails ld, vw_sales_executive_matrix_mail_id v,vw_web_user_login u WHERE a.lead_substatus_id=28 AND a.lead_substatus_id = b.substatus_id AND c.id = ld.company AND ld.leadid = a.leadid AND ld.leadid = p.leadid AND p.productid::text = m.id::text AND v.user_code = ld.assignleadchk AND   mail_sent_flag=0 AND u.header_user_id = ld.created_user AND mail_alert_id in ( SELECT max(mail_alert_id) FROM lead_status_mail_alerts GROUP BY lead_substatus_id ,leadid ) AND a.leadid not in ( SELECT leadid FROM lead_status_mail_alerts  WHERE lead_substatus_id=29)';
                
 
 		// echo $sql; die;
@@ -53,7 +52,8 @@ $message_content="Welcome to email templating";
 							'({alert_text})' => $alert_text, 
 							'({productname})' => $row["productname"], 
 							'({itemgroup})' => $row["itemgroup"], 
-							'({tempcustname})' => $row["tempcustname"], 
+							'({tempcustname})' => $row["tempcustname"],
+							'({createdby})' => $row["createdby"], 
 							'({view_leaddetails})' => $view_leaddetails, 
 							'({message_body})' => nl2br( stripslashes( $message_content ) )
 							);

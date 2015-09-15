@@ -2025,16 +2025,6 @@ class Leads_model extends CI_Model {
         // print_r($ld_src);
     }
 
-    function GetLeadSourceName($srcid) {
-        $this->db->select('leadsource');
-        $this->db->from('leadsource');
-        $this->db->where('leadsourceid', $srcid);
-        $result = $this->db->get();
-        $ld_src = $result->result_array();
-        return $ld_src[0]['leadsource'];
-        // print_r($ld_src);
-    }
-
     function GetLeadCredit($srcid) {
         $this->db->select('crd_name');
         $this->db->from('lead_credit_assesment');
@@ -2055,16 +2045,6 @@ class Leads_model extends CI_Model {
         // print_r($ld_status);
     }
 
-    public function GetAssigntoDetails($stsid) {
-        $this->db->select('duser,empcode,header_user_id,location_user,aliasloginname');
-        $this->db->from('vw_web_user_login');
-        $this->db->where('header_user_id',$stsid);
-        $result = $this->db->get();
-        $ld_status = $result->result_array();
-        return $ld_status;
-        // print_r($ld_status);
-    }
-
    
     public function GetLeadStatusName($toid) {
         $this->db->select('*');
@@ -2074,16 +2054,6 @@ class Leads_model extends CI_Model {
         $ld_status = $result->result_array();
         //print_r($ld_status); die;
         return $ld_status[0]['leadstatus'];
-         
-    }
-    public function GetSalesName($name) {
-        $this->db->select('n_value_displayname');
-        $this->db->from('lead_sale_type');
-        $this->db->where('n_value', $name);
-        $result = $this->db->get();
-        $ld_status = $result->result_array();
-        //print_r($ld_status); die;
-        return $ld_status[0]['n_value_displayname'];
          
     }
 
@@ -2168,24 +2138,6 @@ class Leads_model extends CI_Model {
         $productdetails = $result->result_array();
 
         return $productdetails[0];
-    }
-
-     public function get_leadpotentials($lead_id,$sales_type_flag) {
-        $sql = "SELECT lead_prod_potential_types.potential,leadproducts.quantity as requirement,
-        leaddetails.leadid,lead_prod_potential_types.product_type_id as id,
-        lead_sale_type.n_value_displayname as lead_sale_type, leadsource.leadsource as lead_source_name,
-        leaddetails.email_id
-        FROM leaddetails 
-        INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
-        INNER JOIN leadsource ON leaddetails.leadsource = leadsource.leadsourceid
-        INNER JOIN lead_prod_potential_types ON lead_prod_potential_types.leadid=leaddetails.leadid 
-        INNER JOIN lead_sale_type ON lead_sale_type.n_value_id = lead_prod_potential_types.product_type_id 
-        WHERE  leaddetails.leadid=".$lead_id." AND lead_sale_type.saletype_flag='".$sales_type_flag."'  ORDER BY lead_prod_potential_types.potential desc LIMIT 1";
-       // echo $sql;
-        $result = $this->db->query($sql);
-        $potendetails = $result->result_array();
-       // print_r($potendetails[0]);
-        return $potendetails[0];
     }
 
     public function CheckNewCustomer($tem_cust_id) {
@@ -3049,94 +3001,6 @@ SELECT
                     $accnt_yr = $result->result_array();
              
                 return $accnt_yr[0]['jc_code'];
-            }
-
-            function GetMaxValdc($table)
-            {
-                $sql ="select max(id) from ".$table;
-                $result = $this->db->query($sql);
-                //print_r($result->result_array());
-                $daily_hdr_id = $result->result_array();
-            //  print_r($daily_hdr_id);
-                //echo"max id is ".$daily_hdr_id[0]['max'];
-                return $daily_hdr_id[0]['max'];
-
-            }
-
-             function save_lead_dailydtl($dc_detail) {
-                $this->db->insert('dailyactivitydtl', $dc_detail);
-                return $this->db->insert_id();
-            }
-
-            function save_daily_hdr($dc_hdrdetails) {
-                
-            if($this->db->insert('dailyactivityhdr', $dc_hdrdetails))
-            {
-               // echo"inserted sucessfully";
-            }
-            else
-            {
-                echo"Error in insert"; die;
-            }
-            //return $this->db->insert_id();
-            return;
-            }
-
-            function check_dailyhdr_duplicates($hrd_currentdate,$user1)
-            {
-              
-
-                $sql ="select exename,id from dailyactivityhdr  where currentdate::Date ='".$hrd_currentdate."' AND user1 ='".$user1."'";
-                $result = $this->db->query($sql);
-                $result->num_rows();
-                $daily_hdr_id = $result->result_array();
-             
-                if($result->num_rows()==0)
-                {
-                    $daily_hdr_id['0']['noofrows']=$result->num_rows();
-                    $daily_hdr_id['0']['exename']="";
-                    $daily_hdr_id['0']['id']=0;    
-                }
-                else
-                {
-                    $daily_hdr_id['0']['noofrows']=$result->num_rows();
-          
-                }
-                
-
-             // echo"<pre>";print_r($daily_hdr_id);echo"</pre>";
-                //echo"max id is ".$daily_hdr_id[0]['max'];
-               // return $daily_hdr_id[0]['id'];
-               return $daily_hdr_id;
-
-            }
-
-            function check_executive_user($user1)
-            {
-              
-
-                $sql ="SELECT designation from vw_web_user_login_desg WHERE designation='Executive' AND upper(duser)='".strtoupper($user1)."'";
-                $result = $this->db->query($sql);
-                $result->num_rows();
-                $isExecutive = $result->result_array();
-             
-                if($result->num_rows()==0)
-                {
-                    $isExecutive['0']['noofrows']=$result->num_rows();
-                   
-                }
-                else
-                {
-                    $isExecutive['0']['noofrows']=$result->num_rows();
-          
-                }
-                
-
-             // echo"<pre>";print_r($daily_hdr_id);echo"</pre>";
-                //echo"max id is ".$daily_hdr_id[0]['max'];
-               // return $daily_hdr_id[0]['id'];
-               return $isExecutive;
-
             }
 
 
