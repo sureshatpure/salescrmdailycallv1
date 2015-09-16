@@ -49,7 +49,7 @@ $active_group = "forms";
 $active_record = TRUE;
 
 
-$db['forms']['hostname'] = '10.1.9.71'; // added comment for merging
+$db['forms']['hostname'] = '10.1.9.71'; 
 $db['forms']['username'] = 'puredb';
 $db['forms']['password'] = 'pure123';
 $db['forms']['database'] = 'softcodeformtest_lms';
