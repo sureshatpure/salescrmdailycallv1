@@ -158,6 +158,61 @@ class Leads_model extends CI_Model {
         }
         return $options_arr;
     }
+       public function getleadcustomers() {
+      
+        $options = array('#=>'=>'-Please Select Customer-');
+        $options_arr;
+        $options_arr[''] = '-Please Select Customer-';
+
+
+        // Format for passing into form_dropdown function
+
+        /*foreach ($options as $option) {
+            $options_arr[$option['id']] = $option['tempcustname'];
+        }*/
+        //print_r($options_arr); die;
+        return $options_arr;
+    }
+
+
+    public function get_collectors($reporting_user_id) 
+    {
+        if (@$this->session->userdata['reportingto'] == "")
+        {
+             $sql = "SELECT  a.collector FROM (
+                SELECT 
+                CASE WHEN (COALESCE(customermasterhdr.cust_account_id,0)=0) THEN 'NO COLLECTOR' ELSE customermasterhdr.collector END 
+                 AS collector
+                FROM customermasterhdr WHERE length(COALESCE(collector,''))>0
+                ) a GROUP BY  a.collector ORDER BY collector";
+        }
+        else
+        {
+            $sql="SELECT collector FROM customermasterhdr  WHERE cust_account_id is NOT NULL  and cust_account_id >0 AND  mc_code in (
+                SELECT  
+                mc_sub_id
+                FROM vw_web_user_login 
+                 JOIN market_circle_hdr on market_circle_hdr.gc_executive_code= vw_web_user_login.header_user_id AND vw_web_user_login.header_user_id in (".$reporting_user_id.") ) GROUP BY collector";
+        }
+       
+       // echo $sql; die;
+        $result = $this->db->query($sql);
+        //  print_r($result->result_array());
+        $options = $result->result_array();
+        $options_arr;
+       // $options_val=array('#'=>'-Please Select Collector-');
+
+        $options_arr['#'] = '-Please Select Collector-';
+
+        // Format for passing into form_dropdown function
+        foreach ($options as $option) {
+            $options_arr[$option['collector']] = $option['collector'];
+        }
+        //array_unshift($options_arr,$options_val);
+        return $options_arr;
+    }
+
+    
 
     public function get_country() {
         $options = $this->db->select('id, name')->get('country')->result();
@@ -613,6 +668,22 @@ class Leads_model extends CI_Model {
             }
         }
         return;
+    }
+
+    public function get_lead_customersadd($collector) {
+        $sql = "select * from  fn_lead_customer_group('".$collector."') ORDER BY tempcustname";
+        //echo $sql; die;
+        $result = $this->db->query($sql);
+        //  print_r($result->result_array());
+        $options = $result->result_array();
+        $options_arr;
+        $options_arr[''] = '-Please Select Customer-';
+
+        // Format for passing into form_dropdown function
+        foreach ($options as $option) {
+            $options_arr[$option['id']] = $option['tempcustname'];
+        }
+        return $options_arr;
     }
 
     function get_assigned_tobranch() {
@@ -1363,7 +1434,7 @@ class Leads_model extends CI_Model {
             INNER JOIN leadsubstatus ON leadsubstatus.lst_sub_id = leaddetails.ldsubstatus
             INNER JOIN "leadstatus" ON "leadstatus"."leadstatusid" = "leaddetails"."leadstatus"
             INNER JOIN "leadsource" ON "leadsource"."leadsourceid" = "leaddetails"."leadsource"
-            LEFT OUTER JOIN vw_web_user_login ON leaddetails.created_user = vw_web_user_login.header_user_id
+            INNER JOIN vw_web_user_login ON leaddetails.created_user = vw_web_user_login.header_user_id
             LEFT OUTER JOIN "vw_web_user_login" AS assignedfrom ON "leaddetails"."assignleadchk" = "assignedfrom"."header_user_id"
             INNER JOIN "view_tempcustomermaster" ON "leaddetails"."company" = "view_tempcustomermaster"."id"
             INNER JOIN leadproducts ON leadproducts.leadid = leaddetails.leadid

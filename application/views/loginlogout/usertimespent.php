@@ -516,6 +516,6 @@
 
 
 <!-- Added in the end since it should be after less file loaded -->
-
+<?php $this->load->view('include_idletimeout.php'); ?>
 </body>
 </html>

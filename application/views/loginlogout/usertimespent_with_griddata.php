@@ -430,7 +430,7 @@
                         {name: 'branch'},
                         {name: 'user_name'},
                         {name: 'month'},
-                        {name: 'time_spent', type: 'string'},
+                        {name: 'time_spent', type: 'datetime'},
                         {name: 'logout_time', type: 'datetime'},
                         {name: 'login_time', type: 'datetime'},
                         {name: 'date', type: 'datetime'},
@@ -453,23 +453,39 @@
                     width: '100%',
                     source: dataAdapter,
                     theme: theme,
-                    selectionmode: 'checkbox',
                     sortable: true,
                     pageable: true,
                     columnsresize: true,
                     sortable: true,
                     showfilterrow: true,
                     filterable: true,
-                
+                    showstatusbar: true,
+                    statusbarheight: 50,
+                    showaggregates: true,
+                    selectionmode: 'singlecell',
+ 
                     columns: [
-                        
-
                         {text: 'Emp Code', dataField: 'empcode', width: 70, hidden:true},
                         {text: 'Branch', dataField: 'branch', width: 100, cellsalign: 'left'},
                         {text: 'Username', dataField: 'user_name', width: 120},
                         {text: 'Login Time', dataField: 'login_time', cellsalign: 'left', width: 160, cellsformat: 'd', formatString: 'd'},
                         {text: 'Logout Time', dataField: 'logout_time', cellsalign: 'left', width: 160, cellsformat: 'd', formatString: 'd'},
-                        {text: 'Time Spent', dataField: 'time_spent', cellsalign: 'left', width: 95, cellsformat: 'd', formatString: 'd'},
+                        {text: 'Time Spent', dataField: 'time_spent', cellsalign: 'left', width: 95, cellsformat: 'd', formatString: 'd',aggregates: ['sum'],
+                            aggregatesrenderer: function (aggregates, column, element) {
+                                var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblue' style='float: left; width: 100%; height: 100%; '>";
+                                $.each(aggregates, function (key, value) {
+                                    //  var name = key == 'min' ? 'Min' : 'Max';
+                                    //  var color = key == 'max' ? 'green' : 'red';
+
+                                    var name = key == 'sum' ? 'Σ' : 'sum';
+                                    var color = key == 'sum' ? 'green' : 'red';
+                                    renderstring += '<div style="color: ' + color + '; position: relative; margin: 0px; text-align: center; overflow: hidden;">'+ value + '</div>';
+                                });
+                                renderstring += "</div>";
+                                return renderstring;
+                            }
+
+                        },
                         {text: 'Date', dataField: 'date', cellsalign: 'left', width: 95, cellsformat: 'd',formatString: 'd'},
                         {text: 'Month', dataField: 'month', width: 50},
                         {text: 'Accnt-Year', dataField: 'fin_yr', width: 85,cellsalign: 'center'},
@@ -480,6 +496,8 @@
                     autoheight: true
          
                 });
+        $('#jqxgrid').jqxGrid('renderaggregates');
+        
 
 
     });

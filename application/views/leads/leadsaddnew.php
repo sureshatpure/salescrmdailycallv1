@@ -71,6 +71,7 @@
         <!-- -->
         <script type="text/javascript">
             var lead_sub_onstatus_change;
+            var selected_customer;
             var global_leadstatus;
             var controller = 'leads';
             var base_url = '<?php echo site_url(); ?>';
@@ -673,8 +674,6 @@
                     var option = $('#leadstatus').val();
                     lead_sub_onstatus_change = $('#leadsubstatus').val();
 
-
-
                     global_leadstatus = option;
                     if (option == '#')
                     {
@@ -727,6 +726,29 @@
                 });
 
                 /**/
+                $('#collector').change(function ()
+                {
+                     $("#company > option").remove();
+                    var option = $('#collector').val();
+                 //   alert("collector change");
+                    $.ajax({
+                        type: "POST",
+                        url: "getleadcustomersadd/" + option,
+                        success: function (customers)
+                        {
+                            $.each(customers, function (id, value)
+                            {
+                                var opt = $('<option />');
+                                opt.val(id);
+                                opt.text(value);
+                                $('#company').append(opt);
+                            });
+                            selected_customer = $("#company option:selected").val();
+
+                        }
+
+                    });
+                });
                 $('#presentsource').change(function () {
 
 
@@ -931,8 +953,15 @@
                             <input id="recordId" value="21" type="hidden">
                             <div class="detailViewContainer">
                                 <div class="row-fluid detailViewTitle">
+
                                     <div class="span10">
-                                        <div class="row-fluid">
+                                        <div class="row-fluid">                                   <!--  -->
+                                     <?php 
+                                  
+                                     if ($this->session->flashdata('message') != "") { ?>
+                                        <div class="alert alert-message.success"><p style="width:600px; height:10px; text-align:center;font-size:18px;"><?php echo $this->session->flashdata('message'); ?></p></div>
+                                    <?php } ?>      
+                                   <!--  -->
                                             <div class="span14">
                                                 <div class="row-fluid">
                                                     <span class="span14"><img src="<?= base_url() ?>public/vdfiles/summary_Leads.png" class="summaryImg">
@@ -965,6 +994,7 @@
                                         </span>
                                     </div>
                                 </div>
+                           
                                 <div class="detailViewInfo row-fluid">
                                     <div class=" span11  details">
 
@@ -995,6 +1025,40 @@
                                                         'class' => 'mySelClass'
                                                     );
                                                     ?>
+                                                    <table class="table table-bordered blockContainer showInlineTable">
+                                                        <tbody>
+
+                                                            <tr>
+                                                                <th colspan="4" class="blockHeader buleboder-full">Select Collector</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="fieldLabel narrowWidthType" style="width:2%;">
+                                                                    <label class="muted pull-right marginRight10px">Collecter<font color="red"> *</font></label>
+                                                                </td>
+                                                                <td class="fieldValue narrowWidthType">
+                                                                    <div class="row-fluid">
+                                                                        <span class="span10">
+                                                                            <?php
+                                                                            $atts = array(
+                                                                                'width' => '750',
+                                                                                'height' => '350',
+                                                                                'scrollbars' => 'yes',
+                                                                                'status' => 'yes',
+                                                                                'resizable' => 'yes',
+                                                                                'screenx' => '0',
+                                                                                'screeny' => '0'
+                                                                            );
+
+                                                                            echo form_dropdown('collector', $optionscollector, '', 'id="collector" name="collector" class="dropdowncmp"');
+                                                                            echo form_error('collector');
+                                                                            ?> 
+                                                                        </span>
+
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
                                                     <table class="table table-bordered blockContainer showInlineTable">
                                                         <tbody>
 

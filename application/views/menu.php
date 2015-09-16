@@ -13,7 +13,7 @@
                                     <li>Marketing
                                         <ul style='width: 220px;'>
                                             <li><a href="<?= base_url() ?>leads">Leads</a></li>
-                                            <li><a href="<?= base_url() ?>dailyactivity">Dailyactivity</a></li>
+                                            <li><a href="<?= base_url() ?>dailycall">Daily Call</a></li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -23,6 +23,12 @@
                                     <li>Leads
                                         <ul style='width: 150px;'>
                                             <li><a href="<?= base_url() ?>excelreport">Branch Wise</a></li>
+
+                                        </ul>
+                                    </li>
+                                    <li>Users
+                                        <ul style='width: 150px;'>
+                                            <li><a href="<?= base_url() ?>loginlogout/">Timespent</a></li>
 
                                         </ul>
                                     </li>
