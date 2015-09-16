@@ -1434,7 +1434,7 @@ class Leads_model extends CI_Model {
             INNER JOIN leadsubstatus ON leadsubstatus.lst_sub_id = leaddetails.ldsubstatus
             INNER JOIN "leadstatus" ON "leadstatus"."leadstatusid" = "leaddetails"."leadstatus"
             INNER JOIN "leadsource" ON "leadsource"."leadsourceid" = "leaddetails"."leadsource"
-            INNER JOIN vw_web_user_login ON leaddetails.created_user = vw_web_user_login.header_user_id
+            LEFT OUTER JOIN vw_web_user_login ON leaddetails.created_user = vw_web_user_login.header_user_id
             LEFT OUTER JOIN "vw_web_user_login" AS assignedfrom ON "leaddetails"."assignleadchk" = "assignedfrom"."header_user_id"
             INNER JOIN "view_tempcustomermaster" ON "leaddetails"."company" = "view_tempcustomermaster"."id"
             INNER JOIN leadproducts ON leadproducts.leadid = leaddetails.leadid
