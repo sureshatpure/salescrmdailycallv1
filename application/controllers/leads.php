@@ -850,6 +850,7 @@ class Leads extends CI_Controller {
             $lead_customer_pontential = array();
             $lead_status_mailalert = array();
             $update_leadstatus_mailalert_revert = array();
+             $leadids = array();
             $k = 0;
             if($insert_dc_hdr==1)
             {
@@ -1313,6 +1314,7 @@ class Leads extends CI_Controller {
                 
                 array_push($leadids, $lead_id);
             }
+         
             //echo"<pre>";print_r($leadproducts);echo"</pre>";
             //$prdetid = $this->Leads_model->save_lead_products($proddata);
             //$prdetid = $this->Leads_model->save_lead_products_all($proddata);
@@ -1354,14 +1356,10 @@ class Leads extends CI_Controller {
                 redirect($url . 'dailycall');
             } else {
 
-
-                redirect('leads');
                //redirect('leads/add',$leaddata);
                redirect('leads/add');
               //  echo"<pre>";print_r($leaddata);echo"</pre>";
 
-
-	 	           redirect('leads');
 
             }
         }
