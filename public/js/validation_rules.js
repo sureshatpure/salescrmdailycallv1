@@ -202,7 +202,7 @@ $(document).ready(function ()
                 required: "Lead Source is required..",
             },
             uploaded_date: {
-                required: "Uploaded Date is required..",
+                required: "Actual Lead date is required..",
             },
             branch: {
                 required: "Please Select the Branch",
