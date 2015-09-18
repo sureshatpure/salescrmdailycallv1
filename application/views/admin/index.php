@@ -1,5 +1,6 @@
-<h1><?php echo lang('index_heading'); ?></h1>
-<div style="margin-left: 88%;"><a href="<?= base_url() ?>admin/logout">Logout</a></div>
+<div style="margin-left: 10%;"><h1><?php echo lang('index_heading'); ?></h1>
+<a href="<?= base_url() ?>admin/logout">Logout</a>
+ <a href="<?= base_url() ?>admin/manageusers">Manage Users</a></div>
 <p><?php echo lang('index_subheading'); ?></p>
 
 <div id="infoMessage"><?php echo $message; ?></div>

@@ -29,7 +29,7 @@ class dailyactivity_model extends CI_Model
 		@$get_assign_to_user_id=$this->session->userdata['get_assign_to_user_id'];
 
 			$jTableResult = array();
-			 $sql = "SELECT distinct d.id,d.currentdate :: date,d.creationdate :: date,d.execode,d.exename,d.branch from vw_web_daily_activity d   order by id desc";
+			 $sql = "SELECT distinct d.id,d.currentdate :: date,d.creationdate :: date,d.execode,d.exename,d.branch from vw_web_daily_activity d  order by id desc";
 			//$sql="SELECT distinct d.id,d.currentdate :: date ,d.execode,d.exename from vw_web_daily_activity d  where user_id=302 order by id desc";
 
 			$result = $this->db->query($sql);
@@ -210,8 +210,11 @@ class dailyactivity_model extends CI_Model
 
 
 				//$sql = "SELECT id FROM dailyactivitydtl where id ='".$this->session->userdata['loginname']."'";
-				$sql="select lower(dtl_fld) as datafield, lower(dlblch) as text,cellwidth  :: INTEGER*10 AS  width   from formdtl where formcode='SMKT140' and cellwidth>'0' order by seqno";
-				//$sql="select lower(dtl_fld) as datafield, lower(dlblch) as text,cellwidth  :: INTEGER*10 AS  width,case when COALESCE(cellwidth,'0') :: INTEGER =0 then  'false' else 'true'  end as hidden   from formdtl where formcode='SMKT140'   order by seqno";
+				//$sql="select lower(dtl_fld) as datafield, lower(dlblch) as text,cellwidth  :: INTEGER*10 AS  width   from formdtl where formcode='SMKT140' and cellwidth>'0' order by seqno";
+				$sql="select lower(dtl_fld) as datafield, lower(dlblch) as text,cellwidth  :: INTEGER*10 AS  width   from formdtl where formcode='SMKT140' and cellwidth>'0'  
+					UNION 
+					SELECT unnest(string_to_array('noofleads,result_type,leadid' , ','))  as datafield,  unnest(string_to_array('noofleads,result_type,leadid' , ',')), unnest(string_to_array('60,100,60' , ',')) ::integer*10";
+
 
 				$db_dc= $this->load->database('forms', TRUE);
 			//	$db2->query($sql);
@@ -305,7 +308,11 @@ class dailyactivity_model extends CI_Model
 				$jTableResult = array();
 
 
-				 $sql="SELECT id,custgroup,exename,branch,itemgroup,potentialqty,subactivity,modeofcontact,hour_s,minit,quantity,division,date,remarks,l1status,complaints, user_id,description,actionplanned,detailed_description from vw_web_daily_activity d where id ='".$header_id."'";
+				 /*$sql="SELECT id,custgroup,exename,branch,itemgroup,potentialqty,subactivity,modeofcontact,hour_s,minit,quantity,division,date,remarks,l1status,complaints, user_id,leadid,'leads/viewleaddetails/'||leadid as link,
+				 				CASE WHEN COALESCE (leadid,0) ='0'  THEN 'Value'  ELSE 'Select' END result_type 
+				 				from vw_web_daily_activity d where id ='".$header_id."'";*/
+				 $sql="SELECT id,custgroup,exename,branch,itemgroup,potentialqty,subactivity,modeofcontact,hour_s,minit,quantity,division,date,remarks,l1status,complaints, user_id,leadid
+				 				from vw_web_daily_activity d where id ='".$header_id."'";
 
 
 				$result = $this->db->query($sql);
@@ -337,13 +344,18 @@ class dailyactivity_model extends CI_Model
 					$row["date"] = $activitydetails[$i]["date"];
 					$row["remarks"] = $activitydetails[$i]["remarks"];
 					$row["l1status"] = $activitydetails[$i]["l1status"];
+					if($activitydetails[$i]["leadid"]==0)
+					{
+					$row["leadid"] = "No Leads";	
+					}
+					else
+					{
+						$row["leadid"] = $activitydetails[$i]["leadid"];
+					}
+					
+				//	$row["result_type"] = $activitydetails[$i]["result_type"];
 					$row["complaints"] = $activitydetails[$i]["complaints"];
-					$row["description"] = $activitydetails[$i]["description"];
-					$row["actionplanned"] = $activitydetails[$i]["actionplanned"];
-					$row["detailed_description"] = $activitydetails[$i]["detailed_description"];
-
-
-
+				//	$row["link"] = $activitydetails[$i]["link"];
 					$data[$i] = $row;
 					$i++;
 				}
@@ -413,13 +425,47 @@ class dailyactivity_model extends CI_Model
 				}
 				return $this->db->insert_batch('dailyactivitydtl', $dailydtls);
 			}
+			
+			function save_daily_details_up($dailydtls,$delid)
+			{
+				$this->db->db_debug = FALSE;
+				try {
+						$this->db->trans_start();
+							$this->db->where('id',$delid);
+			              	$this->db->delete('dailyactivitydtl');
+							$this->db->insert_batch('dailyactivitydtl', $dailydtls);
+						$this->db->trans_complete();
+						if ($this->db->trans_status() === FALSE)
+						{
+						   // echo"Error in DB";
+						    return FALSE;
+						}
+						else
+						{
+							//echo"Insert completed";
+							return TRUE;
+						}
+					}
+				catch (Exception $e) {
+					//echo"in Rollback condition";
+					//$this->db->trans_rollback();
+					  //log_message('error', sprintf('%s : %s : DB transaction failed. Error no: %s, Error msg:%s, Last query: %s', __CLASS__, __FUNCTION__, $e->getCode(), $e->getMessage(), print_r($this->main_db->last_query(), TRUE)));
+					}
+			$this->db->db_debug = TRUE; 
+			}
 
+	
 			function check_dailyhdr_duplicates($hrd_currentdate,$user1)
 			{
-				$sql =  $this->db->select('exename')->from('dailyactivityhdr')->where(array('currentdate' => $hrd_currentdate, 'user1' => $user1))->get();
-				//echo $sql->num_rows(); 	die;
-			 return $sql->num_rows();
+				$sql ="select exename,id from dailyactivityhdr  where currentdate::Date ='".$hrd_currentdate."' AND user1 ='".$user1."'";
+                $result = $this->db->query($sql);
+                return  $result->num_rows();
 			}
+
+			
+
+
+
 			function get_dailyhdr_update_id($hrd_currentdate,$user1)
 			{
 				$sql =  $this->db->select('id')->from('dailyactivityhdr')->where(array('currentdate' => $hrd_currentdate, 'user1' => $user1))->get();
@@ -455,33 +501,161 @@ class dailyactivity_model extends CI_Model
 
 			function get_potential_item_customer($item,$customer)
 			{
-				//echo " item ".$item."<br>"; 				echo " customer ".$customer."<br>";
-				$sql="select potential  from vw_potential  where customergroup='".$item."' AND itemgroup ='".$customer."'";
-				//echo  $sql;
+	
+	//			$customer = urldecode($customer);
+	//	        $item = urldecode($item);
+
+					$sql="SELECT 	leaddetails.leadid,leaddetails.leadid as id,sum(lead_prod_potential_types.potential)as potential
+						FROM leaddetails 
+
+					INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
+					INNER JOIN customermasterhdr ON leaddetails.company = customermasterhdr.id 
+					INNER JOIN view_tempitemmaster_grp ON view_tempitemmaster_grp.id=leadproducts.productid 
+					INNER JOIN lead_prod_potential_types ON lead_prod_potential_types.leadid=leaddetails.leadid 
+					WHERE trim(customermasterhdr.customergroup)='".$customer."' AND trim(view_tempitemmaster_grp.itemgroup)='".$item."' AND leaddetails.lead_close_status=0 and converted=0 
+					GROUP BY leaddetails.leadid";
+				//echo $sql."<br>"; 
+
+				$sql1="SELECT   business_plan_customer_group_id.header_id as custgroup_id,  business_yearly_gc_plan.potential_annual_qty as potential 
+				FROM  	business_yearly_gc_plan  
+				INNER JOIN business_plan_customer_group_id ON business_yearly_gc_plan.customer_group_id=business_plan_customer_group_id.header_id
+				INNER JOIN business_plan_item_group_id ON business_yearly_gc_plan.item_group_id=business_plan_item_group_id.header_id
+				WHERE 
+					business_plan_customer_group_id.customer_group ='".$customer."' 
+					AND business_plan_item_group_id.item_group='".$item."' 
+					AND business_yearly_gc_plan.potential_annual_qty >0";
+			//	echo $sql1."<br>"; 
+				$result = $this->db->query($sql);
+
+			/*	$sql1_old="SELECT leaddetails.leadid,leaddetails.leadid as id FROM leaddetails  
+					INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
+					INNER JOIN customermasterhdr ON leaddetails.company = customermasterhdr.id 
+					INNER JOIN view_tempitemmaster_grp ON view_tempitemmaster_grp.id=leadproducts.productid 
+					WHERE trim(customermasterhdr.customergroup)='".$customer."' AND trim(view_tempitemmaster_grp.itemgroup)='".$item."' AND leaddetails.lead_close_status=0 and converted=0";*/
+ 
+				$result1 = $this->db->query($sql1);
+				$no_of_leads= $result->num_rows();
+				
+				//echo"<pre>";print_r($result->result_array());echo"</pre>";
+				$resutl_arrary =$result->result_array();
+				//echo "pontential".$resutl_arrary['0']['potential']."<br>";
+				if($result->num_rows()==0)
+				{
+					$poten_val['0']['potential']=0;
+					$poten_val['0']['noofleads']=$no_of_leads;
+					$poten_val['0']['result_type']='Value';
+				}
+				else
+				{
+					//$poten_val = $result->result_array();
+					$poten_val['0']['potential']=$resutl_arrary['0']['potential'];
+					$poten_val['0']['noofleads']=$no_of_leads;
+					$poten_val['0']['result_type']='Select';
+
+				}
+			//	print_r($poten_val);
+				$arr =  json_encode($poten_val);
+				$arr =	 '{ "rows" :'.$arr.' }';
+				//print_r($arr);
+				return $arr;
+				
+			}
+
+			function get_leadids($custgrp,$prodgrp)
+			{
+					$custgrp = trim(urldecode($custgrp));
+			        $prodgrp = trim(urldecode($prodgrp));
+					$sql="SELECT leaddetails.leadid,leaddetails.leadid as id FROM leaddetails  
+					INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
+					INNER JOIN customermasterhdr ON leaddetails.company = customermasterhdr.id 
+					INNER JOIN view_tempitemmaster_grp ON view_tempitemmaster_grp.id=leadproducts.productid 
+					WHERE trim(customermasterhdr.customergroup)='".$custgrp."' AND trim(view_tempitemmaster_grp.itemgroup)='".$prodgrp."' AND leaddetails.lead_close_status=0 and converted=0";
+			//	echo $sql; die;
+				$result = $this->db->query($sql);
+			//	$arr =  json_encode($result->result_array());
+				$arr = "{\"leadid\":" .json_encode($result->result_array()). "}";
+				return $arr;
+			}
+			
+
+			//function get_activity($custgrp,$prodgrp)
+			function get_activity($leadid)
+			{
+					//$custgrp = trim(urldecode($custgrp));
+			        //$prodgrp = trim(urldecode($prodgrp));
+					/*$sql="SELECT leaddetails.leadid,leaddetails.leadid as id FROM leaddetails  
+					INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
+					INNER JOIN customermasterhdr ON leaddetails.company = customermasterhdr.id 
+					INNER JOIN view_tempitemmaster_grp ON view_tempitemmaster_grp.id=leadproducts.productid 
+					WHERE trim(customermasterhdr.customergroup)='".$custgrp."' AND trim(view_tempitemmaster_grp.itemgroup)='".$prodgrp."' AND leaddetails.lead_close_status=0 and converted=0";*/
+					$sql="SELECT leaddetails.leadid,lead_prod_potential_types.product_type_id as id,lead_sale_type.n_value_displayname as lead_sale_type FROM leaddetails 
+INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
+INNER JOIN customermasterhdr ON leaddetails.company = customermasterhdr.id 
+INNER JOIN view_tempitemmaster_grp ON view_tempitemmaster_grp.id=leadproducts.productid 
+INNER JOIN lead_prod_potential_types ON lead_prod_potential_types.leadid=leaddetails.leadid 
+INNER JOIN lead_sale_type ON lead_sale_type.n_value_id = lead_prod_potential_types.product_type_id
+WHERE  leaddetails.lead_close_status=0 and converted=0 AND leaddetails.leadid=".$leadid." and lead_prod_potential_types.potential >0";
+				//echo $sql; die;
+				$result = $this->db->query($sql);
+			//	$arr =  json_encode($result->result_array());
+				$arr = "{\"rows\":" .json_encode($result->result_array()). "}";
+				return $arr;
+			}
+
+			function get_lead_potential($leaid)
+			{
+	
+
+				/*$sql="SELECT sum(lead_prod_potential_types.potential) as potential,leadproducts.quantity as requirement 
+				  FROM leaddetails  
+						INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
+						INNER JOIN customermasterhdr ON leaddetails.company = customermasterhdr.id 
+						INNER JOIN view_tempitemmaster_grp ON view_tempitemmaster_grp.id=leadproducts.productid 
+						INNER JOIN lead_prod_potential_types ON lead_prod_potential_types.leadid=leaddetails.leadid
+						WHERE leaddetails.leadid=".$leaid." GROUP BY leadproducts.quantity ";*/
+
+						$sql="SELECT lead_prod_potential_types.potential,leadproducts.quantity as requirement,leaddetails.leadid,lead_prod_potential_types.product_type_id as id,lead_sale_type.n_value_displayname as lead_sale_type, leadsource.leadsource as lead_source_name,leaddetails.email_id
+							FROM leaddetails 
+							INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
+							INNER JOIN leadsource ON leaddetails.leadsource = leadsource.leadsourceid
+							INNER JOIN customermasterhdr ON leaddetails.company = customermasterhdr.id 
+							INNER JOIN view_tempitemmaster_grp ON view_tempitemmaster_grp.id=leadproducts.productid 
+							INNER JOIN lead_prod_potential_types ON lead_prod_potential_types.leadid=leaddetails.leadid 
+							INNER JOIN lead_sale_type ON lead_sale_type.n_value_id = lead_prod_potential_types.product_type_id
+							WHERE  leaddetails.lead_close_status=0 and converted=0 AND leaddetails.leadid=".$leaid." ORDER BY lead_prod_potential_types.potential desc LIMIT 1";
+				//echo $sql; die;
 				$result = $this->db->query($sql);
 				
 				if($result->num_rows()==0)
 				{
 					$poten_val['0']['potential']=0;
+					$poten_val['0']['requirement']=0;
+					$poten_val['0']['lead_sale_type']=0;
 				}
 				else
 				{
 					$poten_val = $result->result_array();
 				}
-/*	Array
-	(
-		[0] => Array
-			(
-			    [potential] => 100
-			)
 
-	)
-*/		
+				//print_r($poten_val);
 				$arr =  json_encode($poten_val);
 				$arr =	 '{ "rows" :'.$arr.' }';
 				return $arr;
 				
 			}
+
+   		function getnull_leadids()
+		{
+
+			$sql="SELECT 0 as leadid, 0 as id FROM leaddetails  LIMIT 1";
+			//echo $sql; die;
+			$result = $this->db->query($sql);
+		//	$arr =  json_encode($result->result_array());
+			$arr = "{\"leadid\":" .json_encode($result->result_array()). "}";
+			return $arr;
+		}
+
+		
 
 			
 
