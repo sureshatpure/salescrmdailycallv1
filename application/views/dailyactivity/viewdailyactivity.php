@@ -177,6 +177,24 @@
                             $("#customgroup").addClass('jqx-input-' + theme);
 
                         }
+                var url = "dailyactivity/getcollectors";
+                // prepare the data
+                var collectorsource =
+                {
+                    datatype: "json",
+                    datafields: [
+                        { name: 'collectorname' },
+                        { name: 'collectorname' }
+                    ],
+                    url: url,
+                    async: false
+                };
+                var collectordataAdapter = new $.jqx.dataAdapter(collectorsource);
+
+                   $("#collector").jqxDropDownList({
+                    selectedIndex: -1, source: collectordataAdapter,theme: 'energyblue',
+      placeHolder: "Select Collector", displayMember: "collectorname", valueMember: "collectorname", width: 200, height: 25
+                });
                         /* change column type dynamic start*/
                         var  Results ={
 
@@ -1138,12 +1156,16 @@
                                 
                         $("#jqxgrid_add").on("celldoubleclick", function (event)
                         {
+
+
                             var column = event.args.column;
                             var rowindex = event.args.rowindex;
                             jqxgrid_add_row_index = rowindex;
                             jqxgrid_n_row_index = rowindex;
                             var columnindex = event.args.columnindex;
                             var columnname = column.datafield;
+                            var collector_val = $("#collector").jqxDropDownList('getSelectedItem'); 
+
                             
                             if (columnname == 'itemgroup')
                             {
@@ -1190,29 +1212,86 @@
 
                             if (columnname == 'custgroup')
                             {
-                               // $('#addWindow').hide();
-                                $('#win_selectCustMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'Select Customer'});
-                                $('#win_selectCustMaster').jqxWindow('open');
-
-                                var x = ($(window).width() - $("#win_selectCustMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
-                                var y = ($(window).height() - $("#win_selectCustMaster").jqxWindow('height')) / 2 + $(window).scrollTop();
-                                $("#win_selectCustMaster").jqxWindow({ position: { x: x, y: y} });
-                                $('#win_selectCustMaster').jqxWindow({ zIndex: 99999}); 
-                                $('#addWindow').mouseup(function () 
+                                    if(collector_val==null)
                                     {
-                                       
-                                        if ($('#win_selectCustMaster').jqxWindow('isOpen')) 
-                                        {
-                                            $('#win_selectCustMaster').jqxWindow('bringToFront');
-                                        }
-                                        else
-                                        {
+                                        alert("Please select the collector first");
+                                    }
+                                    else
+                                    {
+                                        $("#jqxgrid_selectCustomMaster").jqxGrid('clear');
+                                         // Source for Customer Master grid start
+                                            var url = "dailyactivity/get_data_customermaster";
+                                            var rows = {};
+                                            jQuery.ajax({
+                                                dataType: "html",
+                                                url: url,
+                                                type: "POST",
+                                                async: false,
+                                                error: function (xhr, status) {
+                                                    //  alert("check "+status+" test");
+                                                },
+                                                success: function (result) {
+                                                    //  console.log(result);
+                                                    var obj = jQuery.parseJSON(result);
+                                                    rows = obj.rows;
+                                                    //   rows = obj[1].rows;
+                                                    //  commonCols=obj[0].columns;
+                                                }
+                                            });
+                                            var customer_source1 =
+                                                    {
+                                                        datatype: "json",
+                                                        datafields: [{name: 'customergroup', type: 'string'}],
+                                                        localdata: rows
+                                                    };
 
-                                            $('#win_selectCustMaster').jqxWindow('bringToFront');
-                                        }
-                                    
+                                            //  alert("columns "+columns.toSource());    
+                                            
+                                            var dataAdapterCustomerMaster = new $.jqx.dataAdapter(customer_source1);
 
-                                    });
+                                            $("#jqxgrid_selectCustomMaster").jqxGrid(
+                                                    {
+                                                        width: '100%',
+                                                        source: dataAdapterCustomerMaster,
+                                                        theme: theme,
+                                                        selectionmode: 'singlecell',
+                                                        sortable: true,
+                                                        pageable: true,
+                                                        columnsresize: true,
+                                                        sortable: true,
+                                                                showfilterrow: true,
+                                                        filterable: true,
+                                                        columns: [
+                                                            {text: 'Customer Group', dataField: 'customergroup', width: 500, height: 600},
+                                                        ]
+                                                    });
+
+                        // source for Customer Master grid end
+                                        // $('#addWindow').hide();
+                                        $('#win_selectCustMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'Select Customer'});
+                                        $('#win_selectCustMaster').jqxWindow('open');
+
+                                        var x = ($(window).width() - $("#win_selectCustMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
+                                        var y = ($(window).height() - $("#win_selectCustMaster").jqxWindow('height')) / 1.7 + $(window).scrollTop();
+                                        $("#win_selectCustMaster").jqxWindow({ position: { x: x, y: y} });
+                                        $('#win_selectCustMaster').jqxWindow({ zIndex: 99999}); 
+                                        $('#win_selectCustMaster').jqxWindow('bringToFront');
+                                        $('#addWindow').mouseup(function () 
+                                            {
+                                               
+                                                if ($('#win_selectCustMaster').jqxWindow('isOpen')) 
+                                                {
+                                                    $('#win_selectCustMaster').jqxWindow('bringToFront');
+                                                }
+                                                else
+                                                {
+
+                                                    $('#win_selectCustMaster').jqxWindow('bringToFront');
+                                                }
+                                            
+
+                                            });
+                                    }   
 
                             }
                         });
@@ -1228,7 +1307,7 @@
                             min_date=convertmindate(min_date);
                            // alert("min date after 1 "+min_date);
                         //if (value > todayDate.toISOString().substring(0, 10))
-                        $("#addcurrentdate").jqxDateTimeInput({width: '250px', height: '25px', theme: 'summer', formatString: 'dd/MM/yyyy',
+                        $("#addcurrentdate").jqxDateTimeInput({width: '110px', height: '25px', theme: 'summer', formatString: 'dd/MM/yyyy',
                              min: new Date(min_date) ,maxDate: new Date(), readonly:true});
                         $("#addcurrentdate").on('change', function (event)
                         {
@@ -1872,7 +1951,7 @@
                         //  return value from item master end
 
                         // Source for Customer Master grid start
-                        var url = "dailyactivity/get_data_customermaster";
+                    /*    var url = "dailyactivity/get_data_customermaster";
                         var rows = {};
                         jQuery.ajax({
                             dataType: "html",
@@ -1914,7 +1993,7 @@
                                     columns: [
                                         {text: 'Customer Group', dataField: 'customergroup', width: 500, height: 600},
                                     ]
-                                });
+                                });*/
 
                         // source for Customer Master grid end
 

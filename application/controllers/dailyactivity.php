@@ -368,10 +368,13 @@ class dailyactivity extends CI_Controller {
         print_r($data);
     }
 
-    function testing()
+     function getcollectors()
     {
-     $this->load->view('dailyactivity/test');
+        $data = array();
+        $data = $this->dailyactivity_model->get_getcollectors();
+        print_r($data);
     }
+  
 
     function checkentrydate($hrd_currentdate){
      $user1 = $this->session->userdata['loginname'];
@@ -399,6 +402,11 @@ class dailyactivity extends CI_Controller {
        function leadreassign()
       {
         $this->load->view('dailyactivity/tutorial2');
+      }
+
+      function testing()
+      {
+         $this->load->view('dailyactivity/test');
       }
 
    

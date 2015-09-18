@@ -655,6 +655,17 @@ WHERE  leaddetails.lead_close_status=0 and converted=0 AND leaddetails.leadid=".
 			return $arr;
 		}
 
+		function get_getcollectors()
+			{
+					
+				$sql="SELECT DISTINCT collector as collectorname from customermasterhdr WHERE  length(collector) > 0";
+				//echo $sql; die;
+				$result = $this->db->query($sql);
+			//	$arr =  json_encode($result->result_array());
+				$arr = "{\"rows\":" .json_encode($result->result_array()). "}";
+				return $arr;
+			}
+
 		
 
 			
