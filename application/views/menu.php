@@ -13,7 +13,7 @@
                                     <li>Marketing
                                         <ul style='width: 220px;'>
                                             <li><a href="<?= base_url() ?>leads">Leads</a></li>
-                                            <li><a href="<?= base_url() ?>dailycall">Daily Call</a></li>
+                                            <li><a href="<?= base_url() ?>dailyactivity">Dailyactivity</a></li>
                                         </ul>
                                     </li>
                                 </ul>

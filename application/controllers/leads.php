@@ -224,7 +224,7 @@ class Leads extends CI_Controller {
         $def_collector="CHENNAI - GC";
 
         //echo "last word is ".@$last_word; die;
-         // echo"Rep To ".$this->session->userdata['get_assign_to_user_id']; die;
+        //  echo"Rep To ".$this->session->userdata['reportingto'];
         $this->load->helper(array('form', 'url'));
         $data['optionslst'] = $this->Leads_model->get_leadstatus_add();
 
