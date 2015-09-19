@@ -994,6 +994,27 @@ class Leads_model extends CI_Model {
         return ($this->db->affected_rows() > 0);
     }
 
+    function potential_updated_table_collector($lead_branch) 
+    {
+       // echo"<pre> in model";print_r($lead_branch);echo"</pre>";
+         foreach ($lead_branch as $lead_branchs) {
+             $data = array(
+            'collector' => $lead_branchs['user_branch'],
+            'user1' => strtoupper($lead_branchs['user1']),
+            'user_code' => $lead_branchs['user_code'],
+            'id' => $lead_branchs['leadid']
+        );
+
+        $this->db->where('id', $data['id']);
+        $this->db->update('potential_updated_table', $data);
+
+
+         }
+       
+
+        return ($this->db->affected_rows() > 0);
+    }
+
     function GetNextSeqVal($seq) {
         $query = "select nextval('" . $seq . "')";
         $result = $this->db->query($query);
@@ -2046,7 +2067,7 @@ class Leads_model extends CI_Model {
     }
 
     public function GetAssigntoName($stsid) {
-        $this->db->select('location_user,aliasloginname,duser');
+        $this->db->select('location_user,aliasloginname,duser,header_user_id');
         $this->db->from('vw_web_user_login');
         $this->db->where('header_user_id', $stsid);
         $result = $this->db->get();
