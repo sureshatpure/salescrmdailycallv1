@@ -3335,6 +3335,7 @@ select  cast(customermasterhdr.id as varchar(50)), customermasterhdr.tempcustnam
        // echo"<pre>"; print_r($_POST);echo"</pre>"; 
         $login_user_id = $this->session->userdata['user_id'];
         $login_username = $this->session->userdata['username'];
+        $duser = $this->session->userdata['loginname'];
         $assignto_id = $_POST['assignto_id'];
 
         
@@ -3355,6 +3356,9 @@ select  cast(customermasterhdr.id as varchar(50)), customermasterhdr.tempcustnam
 
             $assign_to_array = $this->Leads_model->GetAssigntoName($assignto_id);
             $lead_assign_name = $assign_to_array['0']['location_user'] . "-" . $assign_to_array['0']['aliasloginname'];
+            $duser = $assign_to_array['0']['duser'];
+            $header_user_id = $assign_to_array['0']['header_user_id'];
+            
             /*[leadid] => 19890
             [branch] => COIMBATORE*/
 
@@ -3363,6 +3367,14 @@ select  cast(customermasterhdr.id as varchar(50)), customermasterhdr.tempcustnam
             $lead_update[$key]['user_branch'] = strtoupper($reassign_branch);
             $lead_update[$key]['last_updated_user'] = $login_user_id;
             $lead_update[$key]['last_modified'] = date('Y-m-d:H:i:s');
+
+            $lead_prod_poten_branch[$key]['leadid'] = $val['leadid'];
+            $lead_prod_poten_branch[$key]['user_branch'] = strtoupper($reassign_branch);
+            $lead_prod_poten_branch[$key]['user1'] = $duser;
+            $lead_prod_poten_branch[$key]['user_code'] =$header_user_id;
+/*              'user1' => strtoupper($customer_poten[0]['user1']),
+            'user_code' => $customer_poten[0]['user_code']*/
+
 
             
             $lead_log_details = array(
@@ -3398,10 +3410,15 @@ select  cast(customermasterhdr.id as varchar(50)), customermasterhdr.tempcustnam
 
              $sublogid = $this->Leads_model->create_lead_sublog($lead_sublog_details);
 
+            
+
          }
 /*         echo "<pre> lead_update "; print_r($lead_update); echo "</pre>";
          echo "<pre> lead_log  "; print_r($lead_log_details); echo "</pre>";
-         echo "<pre> lead_sublog"; print_r($lead_sublog_details); echo "</pre>";*/
+         echo "<pre> lead_sublog"; print_r($lead_sublog_details); echo "</pre>";
+         echo "<pre> lead_sublog"; print_r($lead_prod_poten_branch); echo "</pre>";*/
+      
+          $lead_pord_poten_id = $this->Leads_model->potential_updated_table_collector($lead_prod_poten_branch);
          $id = $this->Leads_model->update_lead_reassign($lead_update);
 
 
