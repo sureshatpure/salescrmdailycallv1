@@ -193,11 +193,11 @@
 
                    $("#collector").jqxDropDownList({
                     selectedIndex: -1, source: collectordataAdapter,theme: 'energyblue',
-      placeHolder: "Select Collector", displayMember: "collector", valueMember: "collector", width: 200, height: 25
+      placeHolder: "Select Collector", displayMember: "collector",autoDropDownHeight:true, valueMember: "collector", width: 200, height: 25
                 });
                    $("#collector_update").jqxDropDownList({
                     selectedIndex: -1, source: collectordataAdapter,theme: 'energyblue',
-      placeHolder: "Select Collector", displayMember: "collector", valueMember: "collector", width: 200, height: 25
+      placeHolder: "Select Collector", displayMember: "collector",autoDropDownHeight:true, valueMember: "collector", width: 200, height: 25
                 });
                         /* change column type dynamic start*/
                         var  Results ={
