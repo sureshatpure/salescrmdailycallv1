@@ -183,8 +183,8 @@
                 {
                     datatype: "json",
                     datafields: [
-                        { name: 'collectorname' },
-                        { name: 'collectorname' }
+                        { name: 'collector' },
+                        { name: 'collector' }
                     ],
                     url: url,
                     async: false
@@ -193,7 +193,11 @@
 
                    $("#collector").jqxDropDownList({
                     selectedIndex: -1, source: collectordataAdapter,theme: 'energyblue',
-      placeHolder: "Select Collector", displayMember: "collectorname", valueMember: "collectorname", width: 200, height: 25
+      placeHolder: "Select Collector", displayMember: "collector", valueMember: "collector", width: 200, height: 25
+                });
+                   $("#collector_update").jqxDropDownList({
+                    selectedIndex: -1, source: collectordataAdapter,theme: 'energyblue',
+      placeHolder: "Select Collector", displayMember: "collector", valueMember: "collector", width: 200, height: 25
                 });
                         /* change column type dynamic start*/
                         var  Results ={
@@ -1164,8 +1168,8 @@
                             jqxgrid_n_row_index = rowindex;
                             var columnindex = event.args.columnindex;
                             var columnname = column.datafield;
-                            var collector_val = $("#collector").jqxDropDownList('getSelectedItem'); 
-
+                            var collector = $("#collector").jqxDropDownList('getSelectedItem'); 
+                           // alert("collector_val"+collector.value);
                             
                             if (columnname == 'itemgroup')
                             {
@@ -1186,7 +1190,7 @@
                                     $("#win_selectItemMaster").jqxWindow({ position: { x: x, y: y} });
                                     $('#win_selectItemMaster').jqxWindow('open');
                                     $('#win_selectItemMaster').jqxWindow({ zIndex: 99999}); 
-                                    //$('#win_selectItemMaster').jqxWindow('bringToFront');
+                                    $('#win_selectItemMaster').jqxWindow('bringToFront');
                                     $('#addWindow').mouseup(function () 
                                     {
                                        // alert("columnname item "+columnname);
@@ -1212,7 +1216,7 @@
 
                             if (columnname == 'custgroup')
                             {
-                                    if(collector_val==null)
+                                    if(collector==null)
                                     {
                                         alert("Please select the collector first");
                                     }
@@ -1220,7 +1224,7 @@
                                     {
                                         $("#jqxgrid_selectCustomMaster").jqxGrid('clear');
                                          // Source for Customer Master grid start
-                                            var url = "dailyactivity/get_data_customermaster";
+                                            var url = "dailyactivity/get_data_customermaster_coll/"+collector.value;
                                             var rows = {};
                                             jQuery.ajax({
                                                 dataType: "html",
@@ -1750,6 +1754,7 @@
                             jqxgrid_add_row_index = rowindex;
                             var columnindex = event.args.columnindex;
                             var columnname = column.datafield;
+                            var collector = $("#collector_update").jqxDropDownList('getSelectedItem'); 
                             if (columnname == 'itemgroup')
                             {
                               //  $('#customWindow').hide();
@@ -1781,30 +1786,87 @@
 
                             if (columnname == 'custgroup')
                             {
-                                
-                                $('#win_selectCustMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'Select Customer'});
-                                $('#win_selectCustMaster').jqxWindow('open');
-                                var x = ($(window).width() - $("#win_selectCustMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
-                                var y = ($(window).height() - $("#win_selectCustMaster").jqxWindow('height')) / 2 + $(window).scrollTop();
-                                $("#win_selectCustMaster").jqxWindow({ position: { x: x, y: y} });
-                                $('#win_selectCustMaster').jqxWindow({ zIndex: 99999}); 
-                                $('#customWindow').mouseup(function () 
-                                    {
-                                       
-                                        if ($('#win_selectCustMaster').jqxWindow('isOpen')) 
+                                    if(collector==null)
                                         {
-                                           
-                                            $('#win_selectCustMaster').jqxWindow('bringToFront');
+                                            alert("Please select the collector first");
                                         }
                                         else
                                         {
+                                            $("#jqxgrid_selectCustomMaster").jqxGrid('clear');
+                                         // Source for Customer Master grid start
+                                            var url = "dailyactivity/get_data_customermaster_coll/"+collector.value;
+                                            var rows = {};
+                                            jQuery.ajax({
+                                                dataType: "html",
+                                                url: url,
+                                                type: "POST",
+                                                async: false,
+                                                error: function (xhr, status) {
+                                                    //  alert("check "+status+" test");
+                                                },
+                                                success: function (result) {
+                                                    //  console.log(result);
+                                                    var obj = jQuery.parseJSON(result);
+                                                    rows = obj.rows;
+                                                    //   rows = obj[1].rows;
+                                                    //  commonCols=obj[0].columns;
+                                                }
+                                            });
+                                            var customer_source1 =
+                                                    {
+                                                        datatype: "json",
+                                                        datafields: [{name: 'customergroup', type: 'string'}],
+                                                        localdata: rows
+                                                    };
 
+                                            //  alert("columns "+columns.toSource());    
                                             
-                                            $('#win_selectCustMaster').jqxWindow('bringToFront');
-                                        }
-                                    
+                                            var dataAdapterCustomerMaster = new $.jqx.dataAdapter(customer_source1);
 
-                                    });
+                                            $("#jqxgrid_selectCustomMaster").jqxGrid(
+                                                    {
+                                                        width: '100%',
+                                                        source: dataAdapterCustomerMaster,
+                                                        theme: theme,
+                                                        selectionmode: 'singlecell',
+                                                        sortable: true,
+                                                        pageable: true,
+                                                        columnsresize: true,
+                                                        sortable: true,
+                                                                showfilterrow: true,
+                                                        filterable: true,
+                                                        columns: [
+                                                            {text: 'Customer Group', dataField: 'customergroup', width: 500, height: 600},
+                                                        ]
+                                                    });
+
+                        // source for Customer Master grid end
+                                            $('#win_selectCustMaster').jqxWindow({theme: 'energyblue', autoOpen: false, width: 400, height: 500, resizable: true, title: 'Select Customer'});
+                                            $('#win_selectCustMaster').jqxWindow('open');
+                                            var x = ($(window).width() - $("#win_selectCustMaster").jqxWindow('width')) / 2 + $(window).scrollLeft();
+                                            var y = ($(window).height() - $("#win_selectCustMaster").jqxWindow('height')) / 2 + $(window).scrollTop();
+                                                $("#win_selectCustMaster").jqxWindow({ position: { x: x, y: y} });
+                                                $('#win_selectCustMaster').jqxWindow({ zIndex: 99999}); 
+                                                $('#win_selectCustMaster').jqxWindow('bringToFront');
+                                                $('#customWindow').mouseup(function () 
+                                                {
+
+                                                    if ($('#win_selectCustMaster').jqxWindow('isOpen')) 
+                                                    {
+
+                                                    $('#win_selectCustMaster').jqxWindow('bringToFront');
+                                                    }
+                                                    else
+                                                    {
+
+
+                                                    $('#win_selectCustMaster').jqxWindow('bringToFront');
+                                                    }
+
+                                            });
+                                        }
+                                
+                                
                             }
                         });
                         // view grid double click function end
@@ -2238,11 +2300,12 @@
                                     <div id="customWindowContent" style="float: left; width:1013px;">
                                         <div style="float: left; width:95%; padding-left: 7px;" >
                                             <label style="float: left;">Entry Date: </label><label style="float: left; padding-left: 40px;">Executive Name </label>&nbsp;<label style="float: left;  padding-left: 107px;">Branch </label>
-                                        </div>  
+                                        </div> 
 
                                         <div style=" float: left; width:66%; padding-left: 7px;">
                                             <input id='update_header_date'/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="username"/>&nbsp;&nbsp;&nbsp;<input type="text" id="branch"/>
                                         </div>
+                                        <div id='collector_update'></div> 
                                         <div id="jqxgrid_n" style="posistion:relative; float: left; width:100%;" ></div>
                                         <input id="update_add_row" type="hidden" value="Add New Row" />
                                         <input id="update_delete_row" type="hidden" value="Delete Selected Row" />
