@@ -160,7 +160,7 @@
                         datafields: [
                             {name: 'new_leads'},
                             {name: 'user_branch'},
-                            {name: 'prospect'},
+                            {name: 'prospects'},
                             {name: 'met_the_customer'},
                             {name: 'credit_sssessment'},
                             {name: 'sample_trails_formalities'},
@@ -216,7 +216,7 @@
 
 
                             },
-                            {text: '0-Prospect', dataField: 'prospect', width: 85, cellsalign: 'center', cellsformat: 'n2', aggregates: ['sum'],
+                            {text: '0-Prospect', dataField: 'prospects', width: 85, cellsalign: 'center', cellsformat: 'n2', aggregates: ['sum'],
                                 aggregatesrenderer: function (aggregates, column, element) {
                                     var renderstring = "<div  class='jqx-widget-content jqx-widget-content-energyblue' style='float: left; width: 100%; height: 100%; '>";
                                     $.each(aggregates, function (key, value) {

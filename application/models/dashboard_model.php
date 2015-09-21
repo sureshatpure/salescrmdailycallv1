@@ -3047,7 +3047,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 							$row = array();
 							$row["user_branch"] = $jTableResult['leaddetails'][$i]["user_branch"];
 							$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];
-							$row["prospect"] = $jTableResult['leaddetails'][$i]["prospects"];
+							$row["prospects"] = $jTableResult['leaddetails'][$i]["prospects"];
 							$row["met_the_customer"] = $jTableResult['leaddetails'][$i]["met_the_customer"];
 							$row["credit_sssessment"] = $jTableResult['leaddetails'][$i]["credit_sssessment"];
 							$row["sample_trails_formalities"] = $jTableResult['leaddetails'][$i]["sample_trails_formalities"];
