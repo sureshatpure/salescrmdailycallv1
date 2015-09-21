@@ -3380,7 +3380,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 			     	
 							
 				     }
-                                echo $sql; die;
+                        //        echo $sql; die;
 						$jTableResult = array();
 						//$sql='select  * from  vw_lead_aging_report';
 				    
