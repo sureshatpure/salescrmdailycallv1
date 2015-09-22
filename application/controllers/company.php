@@ -142,7 +142,7 @@ class Company extends CI_Controller {
     }
 
     function check_companyname($companyname) {
-        //echo"return value".$this->validate_username($companyname); die;
+        
         $companyname = trim($companyname); // strip any white space
         $response = array(); // our response
 
