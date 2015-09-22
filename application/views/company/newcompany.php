@@ -22,6 +22,9 @@
                     $(document).ready(function ()
                     {
                         $('#savecustomer').hide();
+                         $( "#savecustomer" ).click(function() {
+                              $("#newcompany").submit();
+                            });
                         $("#newcompany").validate({
                             errorElement: "span",
                             //set the rules for the fild names
@@ -301,9 +304,10 @@
                                 <td> </td>
                                 <td></td>
                                 <td>
-                                       <input class="submit" id="savecustomer" name="savecustomer" type="submit" value="Submit" />
+                                       <input class="submit" id="savecustomer" name="savecustomer" type="button" value="Submit" />
                                        <input type="hidden" id="hdn_userid" name="hdn_userid" value="<?php echo $this->session->userdata['user_id']; ?>"/>  
                                        <input type="hidden" id="hdn_customer_id" name="hdn_customer_id">
+                                       <input type="hidden" id="savecustomer" name="savecustomer"  value="savecustomer" />
                                 </td>
                             </tr>
                         </table>

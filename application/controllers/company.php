@@ -112,7 +112,7 @@ class Company extends CI_Controller {
             if ($id != "") {
                 $data['body'] = "Company Added Sucessfully";
                 $this->load->view('company/sucess_view', $data);
-                //echo"done";
+               // echo"done";
             } else {
                 $data['body'] = "Please Try Again";
                 $this->load->view('company/retry_view', $data);
