@@ -122,12 +122,11 @@ $sql="SELECT view_tempcustomermaster.tempcustname from view_tempcustomermaster w
 
 		if ($query->num_rows()==0)
 		{
-     return false;
-
+	      return false;
 		}
 		else
 		{
-	  return true;
+		  return true;
 		}
 			
 	}
