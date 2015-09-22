@@ -192,6 +192,21 @@ class Company extends CI_Controller {
         }
     }
 
+    public function getautocompany()
+        {
+            
+            $type = $_POST['type'];
+            $name = $_POST['name_startsWith'];
+            $sql = "SELECT  id,tempcustname FROM view_tempcustomermaster WHERE UPPER(tempcustname) LIKE '%".strtoupper($name)."%'";
+            $result = pg_query($sql);
+            $data = array();
+            while ($row = pg_fetch_array($result)) {
+                $name = $row['id'].'|'.$row['tempcustname'];
+                array_push($data, $name);
+            }
+            echo json_encode($data);
+        }
+
 }
 
 ?>

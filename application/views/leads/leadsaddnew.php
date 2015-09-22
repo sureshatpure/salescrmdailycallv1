@@ -1011,7 +1011,7 @@
                                                                             <?php
                                                                             $atts = array(
                                                                                 'width' => '750',
-                                                                                'height' => '350',
+                                                                                'height' => '550',
                                                                                 'scrollbars' => 'yes',
                                                                                 'status' => 'yes',
                                                                                 'resizable' => 'yes',
