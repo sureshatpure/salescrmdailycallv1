@@ -1724,7 +1724,7 @@ function get_leaddetails_aging_additional_withbranchdatefilter($branch,$from_dat
 						{
 					 $sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -1734,7 +1734,7 @@ function get_leaddetails_aging_additional_withbranchdatefilter($branch,$from_dat
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 						      WHERE
 						      			user_branch='".$branch."'  AND 	createddate::DATE  between '".$from_date."'::DATE  and '".$to_date."'::DATE
 							GROUP BY
@@ -1747,7 +1747,7 @@ function get_leaddetails_aging_additional_withbranchdatefilter($branch,$from_dat
 
  							$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -1757,7 +1757,7 @@ function get_leaddetails_aging_additional_withbranchdatefilter($branch,$from_dat
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									assign_to_id IN   (".$get_assign_to_user_id.")  AND user_branch='".$branch."'  AND 	createddate::DATE  between '".$from_date."'::DATE  and '".$to_date."'::DATE
 							GROUP BY
@@ -1782,7 +1782,7 @@ function get_leaddetails_aging_additional_withbranchdatefilter($branch,$from_dat
 								
 							$row = array();
 							$row["user_branch"] = $jTableResult['leaddetails'][$i]["user_branch"];
-							$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];
+							/*$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];*/
 							$row["prospects"] = $jTableResult['leaddetails'][$i]["prospects"];
 							$row["met_the_customer"] = $jTableResult['leaddetails'][$i]["met_the_customer"];
 							$row["credit_sssessment"] = $jTableResult['leaddetails'][$i]["credit_sssessment"];
@@ -1790,7 +1790,7 @@ function get_leaddetails_aging_additional_withbranchdatefilter($branch,$from_dat
 							$row["enquiry_offer_negotiation"] = $jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"];
 							$row["managing_and_implementation"] = $jTableResult['leaddetails'][$i]["managing_and_implementation"];
 							$row["expanding_and_build_relationship"] = $jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];
-							$row["total"] = $jTableResult['leaddetails'][$i]["new_leads"] + $jTableResult['leaddetails'][$i]["prospects"]+ $jTableResult['leaddetails'][$i]["met_the_customer"]+$jTableResult['leaddetails'][$i]["credit_sssessment"]+$jTableResult['leaddetails'][$i]["sample_trails_formalities"]+$jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"]+$jTableResult['leaddetails'][$i]["managing_and_implementation"]+$jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];		
+							$row["total"] = $jTableResult['leaddetails'][$i]["prospects"]+ $jTableResult['leaddetails'][$i]["met_the_customer"]+$jTableResult['leaddetails'][$i]["credit_sssessment"]+$jTableResult['leaddetails'][$i]["sample_trails_formalities"]+$jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"]+$jTableResult['leaddetails'][$i]["managing_and_implementation"]+$jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];		
 							
 					
 
@@ -1810,7 +1810,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 						{
 						 $sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -1819,7 +1819,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(managing_and_implementation) as managing_and_implementation,
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 
 							 WHERE
 						      			user_branch='".$branch."'  AND 	createddate::DATE  between '".$from_date."'::DATE  and '".$to_date."'::DATE
@@ -1832,7 +1832,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 							{
 						$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -1842,7 +1842,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									assign_to_id IN   (".$get_assign_to_user_id.")  AND  user_branch='".$branch."'  AND 	createddate::DATE  between '".$from_date."'::DATE  and '".$to_date."'::DATE
 							GROUP BY
@@ -1866,7 +1866,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 				{    
 					$row = array();
 					$row["user_branch"] = $jTableResult['leaddetails'][$i]["user_branch"];
-					$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];
+					/*$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];*/
 					$row["prospects"] = $jTableResult['leaddetails'][$i]["prospects"];
 					$row["met_the_customer"] = $jTableResult['leaddetails'][$i]["met_the_customer"];
 					$row["credit_sssessment"] = $jTableResult['leaddetails'][$i]["credit_sssessment"];
@@ -2989,7 +2989,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 						{
 					 $sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -2999,7 +2999,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							GROUP BY
 								user_branch
 							ORDER BY
@@ -3010,7 +3010,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 
  							$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -3020,7 +3020,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									assign_to_id IN   (".$get_assign_to_user_id.") 
 							GROUP BY
@@ -3046,7 +3046,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 								
 							$row = array();
 							$row["user_branch"] = $jTableResult['leaddetails'][$i]["user_branch"];
-							$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];
+							/*$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];*/
 							$row["prospects"] = $jTableResult['leaddetails'][$i]["prospects"];
 							$row["met_the_customer"] = $jTableResult['leaddetails'][$i]["met_the_customer"];
 							$row["credit_sssessment"] = $jTableResult['leaddetails'][$i]["credit_sssessment"];
@@ -3054,7 +3054,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 							$row["enquiry_offer_negotiation"] = $jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"];
 							$row["managing_and_implementation"] = $jTableResult['leaddetails'][$i]["managing_and_implementation"];
 							$row["expanding_and_build_relationship"] = $jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];
-							$row["total"]= $jTableResult['leaddetails'][$i]["new_leads"]+ $jTableResult['leaddetails'][$i]["prospects"]+$jTableResult['leaddetails'][$i]["met_the_customer"]+ $jTableResult['leaddetails'][$i]["credit_sssessment"]+ $jTableResult['leaddetails'][$i]["sample_trails_formalities"]+ $jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"]+ $jTableResult['leaddetails'][$i]["managing_and_implementation"]+$jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];
+							$row["total"]= $jTableResult['leaddetails'][$i]["prospects"]+$jTableResult['leaddetails'][$i]["met_the_customer"]+ $jTableResult['leaddetails'][$i]["credit_sssessment"]+ $jTableResult['leaddetails'][$i]["sample_trails_formalities"]+ $jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"]+ $jTableResult['leaddetails'][$i]["managing_and_implementation"]+$jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];
 									
 
 							$data[$i] = $row;
@@ -3073,7 +3073,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 						{
 						 $sql='SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -3083,7 +3083,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							GROUP BY
 								user_branch
 							ORDER BY
@@ -3093,7 +3093,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 							{
 						$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -3103,7 +3103,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									assign_to_id IN   (".$get_assign_to_user_id.") 
 							GROUP BY
@@ -3127,7 +3127,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 				{    
 					$row = array();
 					$row["user_branch"] = $jTableResult['leaddetails'][$i]["user_branch"];
-					$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];
+					/*$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];*/
 					$row["prospects"] = $jTableResult['leaddetails'][$i]["prospects"];
 					$row["met_the_customer"] = $jTableResult['leaddetails'][$i]["met_the_customer"];
 					$row["credit_sssessment"] = $jTableResult['leaddetails'][$i]["credit_sssessment"];
@@ -3159,7 +3159,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 					
 							$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -3169,7 +3169,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									user_branch ='".$branch."'
 
@@ -3184,7 +3184,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 
 							$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -3194,7 +3194,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									assign_to_id IN   (".$get_assign_to_user_id.")  AND user_branch ='".$branch."'
 							GROUP BY
@@ -3219,7 +3219,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 						{    
 							$row = array();
 							$row["user_branch"] = $jTableResult['leaddetails'][$i]["user_branch"];
-							$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];
+							/*$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];*/
 							$row["prospects"] = $jTableResult['leaddetails'][$i]["prospects"];
 							$row["met_the_customer"] = $jTableResult['leaddetails'][$i]["met_the_customer"];
 							$row["credit_sssessment"] = $jTableResult['leaddetails'][$i]["credit_sssessment"];
@@ -3227,7 +3227,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 							$row["enquiry_offer_negotiation"] = $jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"];
 							$row["managing_and_implementation"] = $jTableResult['leaddetails'][$i]["managing_and_implementation"];
 							$row["expanding_and_build_relationship"] = $jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];
-							$row["total"] =  $jTableResult['leaddetails'][$i]["new_leads"] +	$jTableResult['leaddetails'][$i]["prospects"]+$jTableResult['leaddetails'][$i]["met_the_customer"]+ $jTableResult['leaddetails'][$i]["credit_sssessment"]+ $jTableResult['leaddetails'][$i]["sample_trails_formalities"]+$jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"]+$jTableResult['leaddetails'][$i]["managing_and_implementation"]+$jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];
+							$row["total"] = $jTableResult['leaddetails'][$i]["prospects"]+$jTableResult['leaddetails'][$i]["met_the_customer"]+ $jTableResult['leaddetails'][$i]["credit_sssessment"]+ $jTableResult['leaddetails'][$i]["sample_trails_formalities"]+$jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"]+$jTableResult['leaddetails'][$i]["managing_and_implementation"]+$jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];
 					
 
 							$data[$i] = $row;
@@ -3247,7 +3247,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 						
 							$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -3257,7 +3257,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									user_branch ='".$branch."'
 
@@ -3270,7 +3270,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 							{
 						$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -3280,7 +3280,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									assign_to_id IN   (".$get_assign_to_user_id.")  AND user_branch ='".$branch."'
 							GROUP BY
@@ -3304,7 +3304,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 				{    
 					$row = array();
 					$row["user_branch"] = $jTableResult['leaddetails'][$i]["user_branch"];
-					$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];
+					/*$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];*/
 					$row["prospects"] = $jTableResult['leaddetails'][$i]["prospects"];
 					$row["met_the_customer"] = $jTableResult['leaddetails'][$i]["met_the_customer"];
 					$row["credit_sssessment"] = $jTableResult['leaddetails'][$i]["credit_sssessment"];
@@ -3335,7 +3335,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 					
 							$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -3345,7 +3345,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									 createddate  between '".$from_date."'::DATE  and '".$to_date."'::DATE
 
@@ -3360,7 +3360,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 
 							$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -3370,7 +3370,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									assign_to_id IN   (".$get_assign_to_user_id.")  AND createddate::DATE  between '".$from_date."'::DATE  and '".$to_date."'::DATE
 							GROUP BY
@@ -3395,7 +3395,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 						{    
 							$row = array();
 							$row["user_branch"] = $jTableResult['leaddetails'][$i]["user_branch"];
-							$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];
+							/*$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];*/
 							$row["prospects"] = $jTableResult['leaddetails'][$i]["prospects"];
 							$row["met_the_customer"] = $jTableResult['leaddetails'][$i]["met_the_customer"];
 							$row["credit_sssessment"] = $jTableResult['leaddetails'][$i]["credit_sssessment"];
@@ -3403,7 +3403,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 							$row["enquiry_offer_negotiation"] = $jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"];
 							$row["managing_and_implementation"] = $jTableResult['leaddetails'][$i]["managing_and_implementation"];
 							$row["expanding_and_build_relationship"] = $jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];
-							$row["total"] =  $jTableResult['leaddetails'][$i]["new_leads"] +	$jTableResult['leaddetails'][$i]["prospects"]+$jTableResult['leaddetails'][$i]["met_the_customer"]+ $jTableResult['leaddetails'][$i]["credit_sssessment"]+ $jTableResult['leaddetails'][$i]["sample_trails_formalities"]+$jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"]+$jTableResult['leaddetails'][$i]["managing_and_implementation"]+$jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];
+							$row["total"] =  $jTableResult['leaddetails'][$i]["prospects"]+$jTableResult['leaddetails'][$i]["met_the_customer"]+ $jTableResult['leaddetails'][$i]["credit_sssessment"]+ $jTableResult['leaddetails'][$i]["sample_trails_formalities"]+$jTableResult['leaddetails'][$i]["enquiry_offer_negotiation"]+$jTableResult['leaddetails'][$i]["managing_and_implementation"]+$jTableResult['leaddetails'][$i]["expanding_and_build_relationship"];
 							
 					
 
@@ -3424,7 +3424,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 						
 							$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -3434,7 +3434,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									 createddate  between '".$from_date."'::DATE  and '".$to_date."'::DATE
 
@@ -3447,7 +3447,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 							{
 						$sql="SELECT  
 									user_branch,
-									sum(new_leads) as new_leads,
+									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
 									sum(credit_sssessment) as credit_sssessment,
@@ -3457,7 +3457,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
 							FROM 
-									vw_lead_aging_additional_report
+									vw_lead_aging_additional_report_nnl
 							WHERE
 									assign_to_id IN   (".$get_assign_to_user_id.")  AND createddate::DATE  between '".$from_date."'::DATE  and '".$to_date."'::DATE
 							GROUP BY
@@ -3481,7 +3481,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 				{    
 					$row = array();
 					$row["user_branch"] = $jTableResult['leaddetails'][$i]["user_branch"];
-					$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];
+					/*$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];*/
 					$row["prospects"] = $jTableResult['leaddetails'][$i]["prospects"];
 					$row["met_the_customer"] = $jTableResult['leaddetails'][$i]["met_the_customer"];
 					$row["credit_sssessment"] = $jTableResult['leaddetails'][$i]["credit_sssessment"];
