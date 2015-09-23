@@ -91,7 +91,7 @@
                                     clearTimeout(this.timer);
                                 validateCompanyname.removeClass('error').html('<img src="../public/images/ajax-loader.gif" height="16" width="16" /> checking availability...');
 
-                                this.timer = setTimeout(function () {
+                                    this.timer = setTimeout(function () {
                                     $.ajax({
                                         url: '../company/check_customername',
                                         data: 'action=check_companyname&company_name=' + companyname.value,
@@ -146,7 +146,7 @@
                                             });
                                     },
                                     autoFocus: true,            
-                                    minLength: 1,
+                                    minLength: 2,
                                     select: function( event, ui ) {
                                         $('#myButton').show();
                                         var names = ui.item.data.split("|");
