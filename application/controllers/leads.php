@@ -222,7 +222,7 @@ class Leads extends CI_Controller {
         } else {
             $last_word = "";
         }
-
+        $out_array=explode(",",$this->session->userdata['get_assign_to_user_id']);
         //echo "last word is ".@$last_word; die;
         //  echo"Rep To ".$this->session->userdata['reportingto'];
         $this->load->helper(array('form', 'url'));
@@ -253,8 +253,21 @@ class Leads extends CI_Controller {
             $data['optionsasto'] = $this->Leads_model->get_assignto_users_order($this->session->userdata['reportingto']);
             $data['optionslocuser'] = $this->Leads_model->get_locationuser_add_order();
         }
+            
+
+            
+       /*  if($this->session->userdata['reportingto']!="" && count($out_array)==1 )
+            {
+              $data['selectedUser']=next($data['optionsasto']);
+            }
+            else
+            {
+             $data['selectedUser']=current($data['optionsasto']);
+            }*/
+
         $data['reffer_page'] = $last_word;
         $this->load->view('leads/leadsaddnew', $data);
+
         // 	$this->load->view('leads/leads',$data);
     }
     public function addold() {
