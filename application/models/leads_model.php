@@ -1714,7 +1714,7 @@ class Leads_model extends CI_Model {
 
         $sql .= " ORDER BY leadid DESC";
      
-       echo "sql is ".$sql."<br>"; die;
+       //echo "sql is ".$sql."<br>"; die;
         $result = $this->db->query($sql);
         $productdetails = $result->result_array();
         $all_leads_count = count($productdetails); 
