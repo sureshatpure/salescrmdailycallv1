@@ -68,6 +68,10 @@
                 <script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxdropdownlist.js"></script>
                 <script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxcombobox.js"></script>
 
+                <script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxgrid.pager.js"></script>
+                <script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxdata.export.js"></script> 
+                <script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxgrid.export.js"></script>
+
 
                 <!-- sorting and filtering - end -->
                 <!-- paging - start -->
@@ -82,7 +86,7 @@
                     {
                         // alert("action mode in _createElements  "+actionmode);
                         // code start for view formdetail window
-                        $('#customWindow').jqxWindow({theme: 'energyblue', showCollapseButton: true, autoOpen: false, width: 1013, height: 400, resizable: true, title: 'View Daily Call Activity&nbsp;&nbsp;<input id="update_add_row"  class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" type="button" class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" value="Add New Row" />&nbsp;&nbsp;<input id="update_delete_row" type="button" class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" value="Delete Selected Row" />&nbsp;&nbsp;<input id="update_data"  class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue"  type="button" value="Update" />',
+                        $('#customWindow').jqxWindow({theme: 'energyblue', showCollapseButton: true, autoOpen: false, width: 1013, height: 400, resizable: true, title: 'View Daily Call Activity&nbsp;&nbsp;<input id="update_add_row"  class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" type="button" class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" value="Add New Row" />&nbsp;&nbsp;<input id="update_delete_row" type="button" class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" value="Delete Selected Row" />&nbsp;&nbsp;<input id="update_data"  class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue"  type="button" value="Update" />&nbsp;&nbsp;<input id="excelExport"  class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" type="button" class="jqx-rc-all jqx-rc-all-energyblue jqx-button jqx-button-energyblue jqx-widget jqx-widget-energyblue jqx-fill-state-normal jqx-fill-state-normal-energyblue" title="Currently you cannot export all the data,instead filter the data and try to use Export to Excel option"   alt="Currently you cannot export all the data,instead filter the data and try to use Export to Excel option" value="Export to Excel"/>',
                             initContent: function () {
                                 $('#jqxgrid_n').jqxGrid({disabled: false});
                             }
@@ -177,6 +181,14 @@
                             $("#customgroup").addClass('jqx-input-' + theme);
 
                         }
+                         $("#excelExport").jqxButton({
+                                theme: 'energyblue'
+                            });
+
+                            $("#excelExport").click(function () {
+                               $("#jqxgrid_n").jqxGrid('exportdata', 'xls', 'dailyactivity');
+                              //   dashboard/savefile');
+                            });
                         /* change column type dynamic start*/
                         var  Results ={
 
@@ -808,7 +820,7 @@
                                                                 {text: 'UID', datafield: 'id', width: 150, cellsalign: 'left', hidden: true},
                                                                 {text: 'Customer Group', datafield: 'custgroup', width: 150, editable: false},
                                                                 {text: 'Product Group', datafield: 'itemgroup', width: 150, cellsalign: 'left', editable: false},
-                                                                {text: 'Lead id', datafield: 'leadid', displayfield: 'leadid', width: 127, cellsalign: 'center', cellbeginedit: Resultsupdate.initResultsEditor, initeditor: Resultsupdate.resultsEditor, cellsrenderer: Resultsupdate.renderUnits,promptText:'Select Leadid',cellvaluechanging: function (row, datafield, columntype, oldvalue, newvalue) 
+                                                                {text: 'Lead id', datafield: 'leadid',cellsformat:'n', displayfield: 'leadid', width: 127, cellsalign: 'center', cellbeginedit: Resultsupdate.initResultsEditor, initeditor: Resultsupdate.resultsEditor, cellsrenderer: Resultsupdate.renderUnits,promptText:'Select Leadid',cellvaluechanging: function (row, datafield, columntype, oldvalue, newvalue) 
                                                                         {
                                                                            // alert("oldvalue "+oldvalue); alert("newvalue "+newvalue);
                                                                               if (newvalue == 0) {
@@ -824,7 +836,7 @@
                                                                 
                                                                 {text: 'Potential', datafield: 'potentialqty', width: 75, cellsalign: 'left', editable: false},
 
-                                                                {text: 'Required Quantity', datafield: 'quantity', width: 75, cellsalign: 'left',
+                                                                {text: 'Required Quantity',datafield: 'quantity', width: 75, cellsalign: 'left',
                                                                         cellbeginedit: function (row, datafield, columntype) {
                                                                                     var rowdata = $("#jqxgrid_n").jqxGrid('getrowdata', row);
                                                                                     var leadid = rowdata.leadid;
@@ -1623,6 +1635,7 @@
 
 
                                 griddata = $('#jqxgrid_n').jqxGrid('getrowdata', i);
+                                alert("quantity "+griddata.quantity);
                                 rowval["hdn_hdr_id"] = hdr_id;
                                 rowval["leadid"] = griddata.leadid;
                                 rowval["currentdate"] = currentdate;
