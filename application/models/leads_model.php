@@ -1706,7 +1706,7 @@ class Leads_model extends CI_Model {
             INNER JOIN jc_calendar_dtl ON get_acc_yr(leaddetails.createddate::DATE) = jc_calendar_dtl.acc_yr  
             WHERE leaddetails.leadid IN (
             SELECT  leadid from leaddetails WHERE created_user IN ('.$user_list_ids.')
-            OR  assignleadchk in ('.$user_list_ids.')) AND leaddetails.converted=0';   
+            OR  assignleadchk in ('.$user_list_ids.')) ';   
         if(count($whereParts)) {
              $sql .= " AND " . implode('AND ', $whereParts);
            //  $sql .= "WHERE" . implode('AND ', $whereParts);
@@ -1714,7 +1714,7 @@ class Leads_model extends CI_Model {
 
         $sql .= " ORDER BY leadid DESC";
      
-       //echo "sql is ".$sql."<br>"; die;
+       echo "sql is ".$sql."<br>"; die;
         $result = $this->db->query($sql);
         $productdetails = $result->result_array();
         $all_leads_count = count($productdetails); 
