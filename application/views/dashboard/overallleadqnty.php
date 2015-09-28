@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="<?= base_url() ?>public/jqwidgets/styles/jqx.base.css" type="text/css" />
 <link rel="stylesheet" href="<?= base_url() ?>public/jqwidgets/styles/jqx.energyblue.css" type="text/css" />
 <link rel="stylesheet" href="<?= base_url() ?>public/jqwidgets/styles/jqx.black.css" type="text/css" />
+
 <style type="text/css">
 
             #header {
@@ -75,6 +76,7 @@
 <script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxdropdownlist.js"></script>
 
 <!-- sorting and filtering - end -->
+
 <!-- paging - start -->
 <script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxgrid.pager.js"></script>
 <!-- paging - end -->
@@ -83,7 +85,9 @@
 <script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxdata.js"></script>
 <script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxchart.js"></script>
 <!-- charts - end -->
-
+<script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxgrid.pager.js"></script>
+<script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxdata.export.js"></script> 
+<script type="text/javascript" src="<?= base_url() ?>public/jqwidgets/jqxgrid.export.js"></script>
 <!-- End of jqwidgets -->
 <!-- end of Menu includes -->
 <script type="text/javascript">
@@ -391,13 +395,20 @@
                                         {
                                             return '<span style="margin: 6px; float:'+ columnproperties.cellsalign +';color: #0000ff;">' + value + '</span>';
                                         }
+                                        return '<div style="margin: 3px 0 0 3px;">'+value+'</div>';
                                         
 
                                 }
 
-            var dataAdapter = new $.jqx.dataAdapter(source);
-
-
+   
+             $("#excelExport").click(function () {
+                   $("#jqxgrid").jqxGrid('exportdata', 'xls', 'view_lead_overall_qnty');
+                  //   dashboard/savefile');
+                });
+             $("#excelExport").jqxButton({
+                 theme: 'energyblue'
+                 });
+         var dataAdapter = new $.jqx.dataAdapter(source);
 
             $("#jqxgrid").jqxGrid(
                     {
@@ -412,12 +423,17 @@
                         sortable: true,
                         showstatusbar: true,
                         statusbarheight: 50,
+                         columnsheight: 45,
                         columns: [
-                            {text: 'id', dataField: 'id', width: 50, hidden: true, filterable: false},
-                            {text: 'Branches', dataField: 'user_branch', width: 110, hidden: false, filterable: false,cellsrenderer:cellsrenderer},
-                            {text: '0-Prospect', dataField: 'prospects', width: 85, cellsalign: 'center',cellsrenderer:cellsrenderer, cellsformat: 'f2', aggregates: ['sum'],
+                            {text: 'Branches', dataField: 'user_branch', width: 125, hidden: false, filterable: false,renderer: function (defaultText, alignment, height) {
+                                        return '<div style="margin: 3px 0 0 3px;">Branches<br><b><font color="black">WEIGHTAGE %</font></b></div>';
+                                    }},
+                            {text: '0-Prospect', dataField: 'prospects', width: 85, cellsalign: 'center',
+                                    renderer: function (defaultText, alignment, height) {
+                                        return '<div style="margin: 3px 0 0 3px;">0-Prospect<br><b><font color="black">10 %</font></b></div>';
+                                    }, cellsformat: 'f2', aggregates: ['sum'],
                                 aggregatesrenderer: function (aggregates, column, element) {
-                                    var renderstring = "<div  class='jqx-widget-content jqx-widget-content-energyblue' style='float: left; width: 100%; height: 100%; '>";
+                                    var renderstring = "<div  class='jqx-widget-content jqx-widget-content-energyblack' style='float: left; width: 100%; height: 100%; '>";
                                     $.each(aggregates, function (key, value) {
                                         //  var name = key == 'min' ? 'Min' : 'Max';
                                         //  var color = key == 'max' ? 'green' : 'red';
@@ -429,9 +445,11 @@
                                     return renderstring;
                                 }
                             },
-                            {text: '1-Met The Customer', dataField: 'met_the_customer', width: 85, cellsalign: 'center',cellsrenderer:cellsrenderer, cellsformat: 'f2', aggregates: ['sum'],
+                            {text: '1-Met The Customer', dataField: 'met_the_customer', width: 85, cellsalign: 'center',renderer: function (defaultText, alignment, height) {
+                                        return '<div style="margin: 3px 0 0 3px;">1-Met The Customer<br><b><font color="black">20 %</font></b></div>';
+                                    }, cellsformat: 'f2', aggregates: ['sum'],
                                 aggregatesrenderer: function (aggregates, column, element) {
-                                    var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblue' style='float: left; width: 100%; height: 100%; '>";
+                                    var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblack' style='float: left; width: 100%; height: 100%; '>";
                                     $.each(aggregates, function (key, value) {
                                         //  var name = key == 'min' ? 'Min' : 'Max';
                                         //  var color = key == 'max' ? 'green' : 'red';
@@ -443,9 +461,11 @@
                                     return renderstring;
                                 }
                             },
-                            {text: 'Credit Assesment', dataField: 'credit_sssessment', width: 85, cellsalign: 'center',cellsrenderer:cellsrenderer, cellsformat: 'f2', aggregates: ['sum'],
+                            {text: 'Credit Assesment', dataField: 'credit_sssessment', width: 85, cellsalign: 'center',renderer: function (defaultText, alignment, height) {
+                                        return '<div style="margin: 3px 0 0 3px;">Credit Assesment<br><b><font color="black">30 %</font></b></div>';
+                                    }, cellsformat: 'f2', aggregates: ['sum'],
                                 aggregatesrenderer: function (aggregates, column, element) {
-                                    var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblue' style='float: left; width: 100%; height: 100%; '>";
+                                    var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblack' style='float: left; width: 100%; height: 100%; '>";
                                     $.each(aggregates, function (key, value) {
                                         //  var name = key == 'min' ? 'Min' : 'Max';
                                         //  var color = key == 'max' ? 'green' : 'red';
@@ -457,9 +477,11 @@
                                     return renderstring;
                                 }
                             },
-                            {text: 'Sample,Trails & Formalities', dataField: 'sample_trails_formalities', width: 85,cellsrenderer:cellsrenderer, cellsalign: 'center', cellsformat: 'f2', aggregates: ['sum'],
+                            {text: 'Sample,Trails & Formalities', dataField: 'sample_trails_formalities', width: 85,renderer: function (defaultText, alignment, height) {
+                                        return '<div style="margin: 3px 0 0 3px;">Sample,Trails & Formalities<br><b><font color="black">50 %</font></b></div>';
+                                    }, cellsalign: 'center', cellsformat: 'f2', aggregates: ['sum'],
                                 aggregatesrenderer: function (aggregates, column, element) {
-                                    var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblue' style='float: left; width: 100%; height: 100%; '>";
+                                    var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblack' style='float: left; width: 100%; height: 100%; '>";
                                     $.each(aggregates, function (key, value) {
                                         //  var name = key == 'min' ? 'Min' : 'Max';
                                         //  var color = key == 'max' ? 'green' : 'red';
@@ -474,9 +496,11 @@
 
 
                             },
-                            {text: 'Enquiry Offer Negotiation', dataField: 'enquiry_offer_negotiation', width: 85,cellsrenderer:cellsrenderer, cellsalign: 'center', cellsformat: 'f2', aggregates: ['sum'],
+                            {text: 'Enquiry Offer Negotiation', dataField: 'enquiry_offer_negotiation', width: 85,renderer: function (defaultText, alignment, height) {
+                                        return '<div style="margin: 3px 0 0 3px;">Enquiry Offer Negotiation<br><b><font color="black">70 %</font></b></div>';
+                                    }, cellsalign: 'center', cellsformat: 'f2', aggregates: ['sum'],
                                 aggregatesrenderer: function (aggregates, column, element) {
-                                    var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblue' style='float: left; width: 100%; height: 100%; '>";
+                                    var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblack' style='float: left; width: 100%; height: 100%; '>";
                                     $.each(aggregates, function (key, value) {
                                         //  var name = key == 'min' ? 'Min' : 'Max';
                                         //  var color = key == 'max' ? 'green' : 'red';
@@ -488,9 +512,11 @@
                                     return renderstring;
                                 }
                             },
-                            {text: 'Managing And Implementation', dataField: 'managing_and_implementation', width: 85,cellsrenderer:cellsrenderer, cellsalign: 'center', cellsformat: 'f2', aggregates: ['sum'],
+                            {text: 'Managing And Implementation', dataField: 'managing_and_implementation', width: 85,renderer: function (defaultText, alignment, height) {
+                                        return '<div style="margin: 3px 0 0 3px;">Managing And Implementation<br><b><font color="black">80 %</font></b></div>';
+                                    }, cellsalign: 'center', cellsformat: 'f2', aggregates: ['sum'],
                                 aggregatesrenderer: function (aggregates, column, element) {
-                                    var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblue' style='float: left; width: 100%; height: 100%; '>";
+                                    var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblack' style='float: left; width: 100%; height: 100%; '>";
                                     $.each(aggregates, function (key, value) {
                                         //  var name = key == 'min' ? 'Min' : 'Max';
                                         //  var color = key == 'max' ? 'green' : 'red';
@@ -502,7 +528,9 @@
                                     return renderstring;
                                 }
                             },
-                            {text: 'Expanding And Building Relation', dataField: 'expanding_and_build_relationship', width: 85,cellsrenderer:cellsrenderer, cellsalign: 'center', cellsformat: 'f2', aggregates: ['sum'],
+                            {text: 'Expanding And Building Relation', dataField: 'expanding_and_build_relationship', width: 85,renderer: function (defaultText, alignment, height) {
+                                        return '<div style="margin: 3px 0 0 3px;">Expanding And Building Relation<br><b><font color="black">100 %</font></b></div>';
+                                    }, cellsalign: 'center', cellsformat: 'f2', aggregates: ['sum'],
                                 aggregatesrenderer: function (aggregates, column, element) {
                                     var renderstring = "<div class='jqx-widget-content jqx-widget-content-energyblue' style='float: left; width: 100%; height: 100%; '>";
                                     $.each(aggregates, function (key, value) {
@@ -641,6 +669,7 @@ $('#jqxgrid').jqxGrid('renderaggregates');
                         <div id="sub-main">
                             <div id="sub-left">
                                         <div id='jqxWidget'>
+                                        <input style='margin-top: 10px;margin-left:733px;' title="Currently you cannot export all the data,instead filter the data and try to use Export to Excel option"   alt="Currently you cannot export all the data,instead filter the data and try to use Export to Excel option" type="button" value="Export to Excel" id='excelExport' />
                                             <div id="jqxgrid"></div>
                                         </div>
                             </div>

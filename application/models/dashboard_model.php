@@ -6123,56 +6123,43 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 
 						if ($reportingto=='')
 						{
-					 $sql="SELECT * FROM ( 
-							SELECT 0 as id,'WEIGHTAGE' as user_branch ,'10' as prospects,'20' as met_the_customer,'30' as credit_sssessment,'50' as sample_trails_formalities,'70' as enquiry_offer_negotiation,'80' as managing_and_implementation,'100' as expanding_and_build_relationship
+					 $sql="	SELECT
+										user_branch,
+									sum(prospect) as prospects,
+									sum(met_the_customer) as met_the_customer,
+									sum(credit_sssessment) as credit_sssessment,
+									sum(sample_trails_formalities) as sample_trails_formalities,
+									sum(enquiry_offer_negotiation) as enquiry_offer_negotiation,
+									sum(managing_and_implementation) as managing_and_implementation,
+									sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
-							UNION 
-							SELECT 1 as id,
-																user_branch,
-																
-																sum(prospect) as prospects,
-																sum(met_the_customer) as met_the_customer,
-																sum(credit_sssessment) as credit_sssessment,
-																sum(sample_trails_formalities) as sample_trails_formalities,
-																sum(enquiry_offer_negotiation) as enquiry_offer_negotiation,
-																sum(managing_and_implementation) as managing_and_implementation,
-																sum(expanding_and_build_relationship) as expanding_and_build_relationship
-
-														FROM 
-																vw_lead_toal_quantity_report
-														GROUP BY
-															user_branch
-														ORDER BY
-															user_branch
-							)a 
-							  ORDER BY id,user_branch ";
+							FROM 
+									vw_lead_toal_quantity_report
+							GROUP BY
+								user_branch
+							ORDER BY
+								user_branch";
 				   }
 			else	
 				    {
 
- 							$sql="SELECT * FROM ( 
-									SELECT 0 as id,'WEIGHTAGE' as user_branch ,'10' as prospects,'20' as met_the_customer,'30' as credit_sssessment,'50' as sample_trails_formalities,'70' as enquiry_offer_negotiation,'80' as managing_and_implementation,'100' as expanding_and_build_relationship
+ 							$sql="SELECT 
+										user_branch,
+										
+										sum(prospect) as prospects,
+										sum(met_the_customer) as met_the_customer,
+										sum(credit_sssessment) as credit_sssessment,
+										sum(sample_trails_formalities) as sample_trails_formalities,
+										sum(enquiry_offer_negotiation) as enquiry_offer_negotiation,
+										sum(managing_and_implementation) as managing_and_implementation,
+										sum(expanding_and_build_relationship) as expanding_and_build_relationship
 
-									UNION 
-									SELECT 1 as id,
-																		user_branch,
-																		
-																		sum(prospect) as prospects,
-																		sum(met_the_customer) as met_the_customer,
-																		sum(credit_sssessment) as credit_sssessment,
-																		sum(sample_trails_formalities) as sample_trails_formalities,
-																		sum(enquiry_offer_negotiation) as enquiry_offer_negotiation,
-																		sum(managing_and_implementation) as managing_and_implementation,
-																		sum(expanding_and_build_relationship) as expanding_and_build_relationship
-
-																FROM 
-																		vw_lead_toal_quantity_report
-																GROUP BY
-																	user_branch
-																ORDER BY
-																	user_branch
-									)a 
-									  ORDER BY id,user_branch ";
+								FROM 
+										vw_lead_toal_quantity_report
+								GROUP BY
+									user_branch
+								ORDER BY
+									user_branch";
 			     				
 				     }
                              
@@ -6192,7 +6179,6 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 								
 							$row = array();
 							$row["user_branch"] = $jTableResult['leaddetails'][$i]["user_branch"];
-							$row["id"] = $jTableResult['leaddetails'][$i]["id"];
 							$row["prospects"] = $jTableResult['leaddetails'][$i]["prospects"];
 							$row["met_the_customer"] = $jTableResult['leaddetails'][$i]["met_the_customer"];
 							$row["credit_sssessment"] = $jTableResult['leaddetails'][$i]["credit_sssessment"];
@@ -6232,12 +6218,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 						{
 							if($branch=="All")
 							{
- 								$sql="SELECT * FROM ( 
-											SELECT 0 as id,'WEIGHTAGE' as user_branch ,'10' as prospects,'20' as met_the_customer,'30' as credit_sssessment,'50' as sample_trails_formalities,'70' as enquiry_offer_negotiation,'80' as managing_and_implementation,'100' as expanding_and_build_relationship
-
-											UNION 
-
-			 								SELECT 1 as id,  
+ 								$sql="	SELECT 
 												user_branch,
 												sum(prospect) as prospects,
 												sum(met_the_customer) as met_the_customer,
@@ -6255,17 +6236,12 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 										GROUP BY
 											user_branch
 										ORDER BY
-											user_branch )a ORDER BY id,user_branch";
+											user_branch ";
 							}
 							else
 							{
-								 $sql="SELECT * FROM ( 
-										SELECT 0 as id,'WEIGHTAGE' as user_branch ,'10' as prospects,'20' as met_the_customer,'30' as credit_sssessment,'50' as sample_trails_formalities,'70' as enquiry_offer_negotiation,'80' as managing_and_implementation,'100' as expanding_and_build_relationship
-
-										UNION 
-
-		 								SELECT 1 as id,
-									user_branch,
+								 $sql="SELECT 
+								 	user_branch,
 									
 									sum(prospect) as prospects,
 									sum(met_the_customer) as met_the_customer,
@@ -6283,7 +6259,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 							GROUP BY
 								user_branch
 							ORDER BY
-								user_branch)a ORDER BY id,user_branch";
+								user_branch";
 							}
 						
 				   }
@@ -6292,12 +6268,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 
  							if($branch=="All")
 							{
- 								$sql="SELECT * FROM ( 
-											SELECT 0 as id,'WEIGHTAGE' as user_branch ,'10' as prospects,'20' as met_the_customer,'30' as credit_sssessment,'50' as sample_trails_formalities,'70' as enquiry_offer_negotiation,'80' as managing_and_implementation,'100' as expanding_and_build_relationship
-
-											UNION 
-
-			 								SELECT 1 as id,  
+ 								$sql="SELECT  
 												user_branch,
 												sum(prospect) as prospects,
 												sum(met_the_customer) as met_the_customer,
@@ -6315,16 +6286,11 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 										GROUP BY
 											user_branch
 										ORDER BY
-											user_branch )a ORDER BY id,user_branch";
+											user_branch ";
 							}
 							else
 							{
-								 $sql="SELECT * FROM ( 
-									SELECT 0 as id,'WEIGHTAGE' as user_branch ,'10' as prospects,'20' as met_the_customer,'30' as credit_sssessment,'50' as sample_trails_formalities,'70' as enquiry_offer_negotiation,'80' as managing_and_implementation,'100' as expanding_and_build_relationship
-
-									UNION 
-
-	 								SELECT 1 as id,  
+								 $sql="SELECT 
 									user_branch,
 									
 									sum(prospect) as prospects,
@@ -6343,7 +6309,7 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 							GROUP BY
 								user_branch
 							ORDER BY
-								user_branch)a ORDER BY id,user_branch";
+								user_branch";
 							}
 			     				
 				     }
@@ -6363,7 +6329,6 @@ function get_leaddetails_aging_additional_chart_withbranchdatefilter($branch,$fr
 						{    
 								
 							$row = array();
-							$row["id"] = $jTableResult['leaddetails'][$i]["id"];
 							$row["user_branch"] = $jTableResult['leaddetails'][$i]["user_branch"];
 							/*$row["new_leads"] = $jTableResult['leaddetails'][$i]["new_leads"];*/
 							$row["prospects"] = $jTableResult['leaddetails'][$i]["prospects"];
