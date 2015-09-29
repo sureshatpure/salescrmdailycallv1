@@ -655,6 +655,43 @@ WHERE  leaddetails.lead_close_status=0 and converted=0 AND leaddetails.leadid=".
 			return $arr;
 		}
 
+		/*function get_getcollectors()
+			{
+					
+				$sql="SELECT DISTINCT collector as collectorname from customermasterhdr WHERE  length(collector) > 0";
+				//echo $sql; die;
+				$result = $this->db->query($sql);
+			//	$arr =  json_encode($result->result_array());
+				$arr = "{\"rows\":" .json_encode($result->result_array()). "}";
+				return $arr;
+			}*/
+
+	public function get_collectors($reporting_user_id) 
+    {
+        if (@$this->session->userdata['reportingto'] == "")
+        {
+             $sql = "SELECT  a.collector FROM (
+                SELECT 
+                CASE WHEN (COALESCE(customermasterhdr.cust_account_id,0)=0) THEN 'NO COLLECTOR' ELSE customermasterhdr.collector END 
+                 AS collector
+                FROM customermasterhdr WHERE length(COALESCE(collector,''))>0
+                ) a GROUP BY  a.collector ORDER BY collector";
+        }
+        else
+        {
+            $sql="SELECT collector FROM customermasterhdr  WHERE cust_account_id is NOT NULL  and cust_account_id >0 AND  mc_code in (
+                SELECT  
+                mc_sub_id
+                FROM vw_web_user_login 
+                 JOIN market_circle_hdr on market_circle_hdr.gc_executive_code= vw_web_user_login.header_user_id AND vw_web_user_login.header_user_id in (".$reporting_user_id.") ) GROUP BY collector";
+        }
+       
+       // echo $sql; die;
+        $result = $this->db->query($sql);
+        $arr = "{\"rows\":" .json_encode($result->result_array()). "}";
+        return $arr;
+    }
+
 		
 
 			

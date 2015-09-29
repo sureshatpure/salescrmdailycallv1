@@ -49,6 +49,7 @@ $active_group = "forms";
 $active_record = TRUE;
 /*
 $db['forms']['hostname'] = '10.1.0.21';
+
 $db['forms']['username'] = 'puredb';
 $db['forms']['password'] = 'pure123';
 $db['forms']['database'] = 'softcodeformtest';

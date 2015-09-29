@@ -116,6 +116,18 @@ class dailyactivity extends CI_Controller {
         echo $viewdata;
     }
 
+     function get_data_customermaster_coll($collector) {
+
+        //$sql='SELECT  distinct on (view_tempcustomermaster.tempcustname) view_tempcustomermaster.id,view_tempcustomermaster.tempcustname FROM     view_tempcustomermaster ORDER BY  tempcustname ASC';
+        $collector = urldecode($collector);
+        $sql = "SELECT distinct  replace(customergroup,'''','')   as customergroup FROM customermasterhdr WHERE collector ='".$collector."' order by customergroup";
+      // echo $sql;
+        $activitydata['datacustomermaster'] = $this->dailyactivity_model->get_customers($sql);
+        $viewdata = $activitydata['datacustomermaster'];
+        header('Content-Type: application/x-json; charset=utf-8');
+        echo $viewdata;
+    }
+
     function get_potentialquantity() {
         $item = urldecode($this->uri->segment(4));
         $customer = urldecode($this->uri->segment(3));
@@ -368,10 +380,14 @@ class dailyactivity extends CI_Controller {
         print_r($data);
     }
 
-    function testing()
+     function getcollectors()
     {
-     $this->load->view('dailyactivity/test');
+       // $data['optionscollector'] = $this->Leads_model->get_collectors($this->session->userdata['get_assign_to_user_id']);
+        $data = array();
+        $data = $this->dailyactivity_model->get_collectors($this->session->userdata['get_assign_to_user_id']);
+        print_r($data);
     }
+  
 
     function checkentrydate($hrd_currentdate){
      $user1 = $this->session->userdata['loginname'];
@@ -399,6 +415,11 @@ class dailyactivity extends CI_Controller {
        function leadreassign()
       {
         $this->load->view('dailyactivity/tutorial2');
+      }
+
+      function testing()
+      {
+         $this->load->view('dailyactivity/test');
       }
 
    
