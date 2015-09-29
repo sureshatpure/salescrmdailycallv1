@@ -98,6 +98,23 @@
                 validateProductName.html("<font color=red>Please select  the Product</font>");
                 var data = {};
                 
+                /*$("#uploaded_date").jqxDateTimeInput({width: '170px', height: '25px',formatString: 'MM/dd/yyyy',
+                                                        maxDate: new Date()});*/
+
+                var todayDate = new Date();
+                var max_date=   todayDate.toISOString().substring(0, 10); //todayDate 2015-08-18
+                var min_date =  todayDate.setDate(todayDate.getDate() - 8);
+                min_date =convert(min_date);
+                min_date=convertmindate(min_date);
+
+
+               // $("#uploaded_date").jqxDateTimeInput({width: '170px', height: '25px',formatString: 'dd/MM/yyyy',min: new Date(min_date) ,maxDate: new Date(), readonly:true,value: null});
+
+                $("#uploaded_date").jqxDateTimeInput({width: '170px', height: '25px',formatString: 'dd/MM/yyyy',
+                                                        min: new Date(min_date) ,maxDate: new Date(), readonly:true});
+
+
+
 
                 $("#content_appiontment_date").jqxDateTimeInput({width: '170px', height: '25px'});
                 $('#content_appiontment_date').val(null);
@@ -829,15 +846,24 @@
                     }
                 });
                 /*END */
-
+                    function convert(currentdate)
+                    {
+                        var date = new Date(currentdate), mnth = ("0" + (date.getMonth() + 1)).slice(-2), day = ("0" + date.getDate()).slice(-2);
+                        return [date.getFullYear(), mnth, day].join("-");
+                        //alert([ date.getFullYear(), mnth, day ].join("-"));
+                    }
+                    function convertmindate(currentdate)
+                    {
+                       //  alert("currentdate date passed "+currentdate); //25/08/2015
+                        var entrydate = currentdate.split("-"); //lead_date ["25", "08", "2015"] 
+                        //alert("lead_date "+entrydate.toSource());
+                     //   return [entrydate[2], entrydate[1], entrydate[0]].join("-");
+                     return entrydate;
+                    }
 
 
             });
-            $(document).ready(function () {
-                var theme = "";
-                // Create a jqxDateTimeInput
-                $("#uploaded_date").jqxDateTimeInput({width: '170px', height: '25px'});
-            });
+
         </script>
 <!-- sorting and filtering and export excel - end -->
 <!-- paging - start -->
@@ -1245,13 +1271,13 @@
                                                                     </div>
                                                                 </td>
                                                                 <td class="fieldLabel narrowWidthType">
-                                                                    <label class="muted pull-right marginRight10px">Uploaded Date <font color="red"> *</font><br></label>
+                                                                    <label class="muted pull-right marginRight10px">Actual Lead date<font color="red"> *</font><br></label>
                                                                 </td>
-                                                                <td class="fieldValue narrowWidthType"><font size="1" color="red">This field is mandatory!</font>
+                                                                <td class="fieldValue narrowWidthType"><font size="1" color="red"></font>
                                                                     <div id="uploaded_date" class="row-fluid">
                                                                         <span class="span10">
-                                                                            <input type="text" name="uploaded_date" id="uploaded_date"  value="">
-
+                                                                            <input type="text" name="uploaded_date" id="uploaded_date"  value="" title="You can select dates for the past 1 week only">
+                                                                            <?php echo form_error('uploaded_date');?>
 
                                                                         </span>
                                                                     </div>
@@ -1312,14 +1338,11 @@
 
                                                             <tr>
                                                                 <td class="fieldLabel narrowWidthType">
-
+                                                                <label class="muted pull-right marginRight10px"> </label>
                                                                 </td>
                                                                 <td class="fieldValue narrowWidthType">
-                                                                    <div class="row-fluid">
-                                                                        <span class="span10">
+                                                                
 
-                                                                        </span>
-                                                                    </div>
                                                                 </td>
                                                                 <td class="fieldLabel narrowWidthType">
                                                                     <label class="muted pull-right marginRight10px">Assigned To<font color="red"> *</font></label>
