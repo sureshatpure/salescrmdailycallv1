@@ -129,8 +129,8 @@ class dailyactivity extends CI_Controller {
     }
 
     function get_potentialquantity() {
-        $item = urldecode($this->uri->segment(4));
-        $customer = urldecode($this->uri->segment(3));
+        $item = html_entity_decode($this->uri->segment(4));
+        $customer = html_entity_decode($this->uri->segment(3));
         $activitydata['potential_quantity'] = $this->dailyactivity_model->get_potential_item_customer($item, $customer);
         $viewdata = $activitydata['potential_quantity'];
         echo $viewdata;
@@ -369,6 +369,9 @@ class dailyactivity extends CI_Controller {
 
     function getleadids($customergroup,$prodgroup)
     {
+
+        $customergroup=html_entity_decode($customergroup);
+        $prodgroup=html_entity_decode($prodgroup);
         $data = array();
         $data = $this->dailyactivity_model->get_leadids($customergroup,$prodgroup);
         print_r($data);

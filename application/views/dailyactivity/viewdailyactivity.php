@@ -299,7 +299,7 @@ $("#excelExport").jqxButton({
                                                         ],
                                                 id: 'id',
                                                 root: "leadid",
-                                                url: base_url + "dailyactivity/getleadids/"+ escape(cust_grp) + "/" + escape(prod_grp),
+                                                url: base_url + "dailyactivity/getleadids/"+encodeURIComponent(cust_grp)+"/"+encodeURIComponent(prod_grp),
                                                 cache: false,
                                                 async: false
                                                
@@ -443,7 +443,7 @@ $("#excelExport").jqxButton({
                             if(cust_grp!="" && prod_grp!="")
                             {
                                 //return true;
-                                    var url = "dailyactivity/get_potentialquantity/" + escape(cust_grp) + "/" + escape(prod_grp);
+                                    var url = "dailyactivity/get_potentialquantity/"+encodeURIComponent(cust_grp)+"/"+encodeURIComponent(prod_grp);
                                         $.ajax({
                                             dataType: "html",
                                             url: url,
@@ -556,7 +556,7 @@ $("#excelExport").jqxButton({
                                                         ],
                                                 id: 'id',
                                                 root: "leadid",
-                                                url: base_url + "dailyactivity/getleadids/"+ escape(cust_grp) + "/" + escape(prod_grp),
+                                                url: base_url + "dailyactivity/getleadids/"+encodeURIComponent(cust_grp)+"/"+encodeURIComponent(prod_grp),
                                                 cache: false,
                                                 async: false
                                             };
@@ -1969,7 +1969,7 @@ $("#excelExport").jqxButton({
 
                             }
 
-                            var url = "dailyactivity/get_potentialquantity/" + escape(gl_customername) + "/" + escape(gl_productname);
+                            var url = "dailyactivity/get_potentialquantity/"+encodeURIComponent(gl_customername)+"/"+encodeURIComponent(gl_productname);
                             $.ajax({
                                 dataType: "html",
                                 url: url,

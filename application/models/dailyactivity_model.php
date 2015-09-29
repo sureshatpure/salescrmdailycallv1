@@ -501,9 +501,8 @@ class dailyactivity_model extends CI_Model
 
 			function get_potential_item_customer($item,$customer)
 			{
-	
-	//			$customer = urldecode($customer);
-	//	        $item = urldecode($item);
+					$customer = urldecode($customer);
+					$item = urldecode($item);
 
 					$sql="SELECT 	leaddetails.leadid,leaddetails.leadid as id,sum(lead_prod_potential_types.potential)as potential
 						FROM leaddetails 
@@ -514,7 +513,6 @@ class dailyactivity_model extends CI_Model
 					INNER JOIN lead_prod_potential_types ON lead_prod_potential_types.leadid=leaddetails.leadid 
 					WHERE trim(customermasterhdr.customergroup)='".$customer."' AND trim(view_tempitemmaster_grp.itemgroup)='".$item."' AND leaddetails.lead_close_status=0 and converted=0 
 					GROUP BY leaddetails.leadid";
-				//echo $sql."<br>"; 
 
 				$sql1="SELECT   business_plan_customer_group_id.header_id as custgroup_id,  business_yearly_gc_plan.potential_annual_qty as potential 
 				FROM  	business_yearly_gc_plan  
@@ -524,7 +522,6 @@ class dailyactivity_model extends CI_Model
 					business_plan_customer_group_id.customer_group ='".$customer."' 
 					AND business_plan_item_group_id.item_group='".$item."' 
 					AND business_yearly_gc_plan.potential_annual_qty >0";
-			//	echo $sql1."<br>"; 
 				$result = $this->db->query($sql);
 
 			/*	$sql1_old="SELECT leaddetails.leadid,leaddetails.leadid as id FROM leaddetails  
@@ -565,12 +562,12 @@ class dailyactivity_model extends CI_Model
 			{
 					$custgrp = trim(urldecode($custgrp));
 			        $prodgrp = trim(urldecode($prodgrp));
+
 					$sql="SELECT leaddetails.leadid,leaddetails.leadid as id FROM leaddetails  
 					INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
 					INNER JOIN customermasterhdr ON leaddetails.company = customermasterhdr.id 
 					INNER JOIN view_tempitemmaster_grp ON view_tempitemmaster_grp.id=leadproducts.productid 
 					WHERE trim(customermasterhdr.customergroup)='".$custgrp."' AND trim(view_tempitemmaster_grp.itemgroup)='".$prodgrp."' AND leaddetails.lead_close_status=0 and converted=0";
-			//	echo $sql; die;
 				$result = $this->db->query($sql);
 			//	$arr =  json_encode($result->result_array());
 				$arr = "{\"leadid\":" .json_encode($result->result_array()). "}";
