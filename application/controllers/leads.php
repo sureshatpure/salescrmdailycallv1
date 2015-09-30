@@ -39,7 +39,6 @@ class Leads extends CI_Controller {
         } elseif (!$this->admin_auth->is_admin()) {
 
             $user = $this->admin_auth->user()->row();
-            	
             $out_array=explode(",",$this->session->userdata['get_assign_to_user_id']);
                 
             if($this->session->userdata['reportingto']!="" && count($out_array)==1 )
@@ -222,7 +221,11 @@ class Leads extends CI_Controller {
         } else {
             $last_word = "";
         }
+
         $def_collector="CHENNAI - GC";
+
+
+        $out_array=explode(",",$this->session->userdata['get_assign_to_user_id']);
 
         //echo "last word is ".@$last_word; die;
          // echo"Rep To ".$this->session->userdata['get_assign_to_user_id']; die;
@@ -261,9 +264,25 @@ class Leads extends CI_Controller {
             $data['optionsasto'] = $this->Leads_model->get_assignto_users_order($this->session->userdata['reportingto']);
             $data['optionslocuser'] = $this->Leads_model->get_locationuser_add_order();
         }
+
       //  print_r($data); die;
+
+            
+
+            
+       /*  if($this->session->userdata['reportingto']!="" && count($out_array)==1 )
+            {
+              $data['selectedUser']=next($data['optionsasto']);
+            }
+            else
+            {
+             $data['selectedUser']=current($data['optionsasto']);
+            }*/
+
+
         $data['reffer_page'] = $last_word;
         $this->load->view('leads/leadsaddnew', $data);
+
         // 	$this->load->view('leads/leads',$data);
     }
     public function addold() {
@@ -504,6 +523,7 @@ class Leads extends CI_Controller {
         $leaddata['state'] = $customer_address['statename'];
         $leaddata['city'] = $customer_address['cityname'];
         $leaddata['address'] = trim($customer_address['address']);
+        //$leaddata['address'] = str_replace("'","\'",trim($customer_address['address']));
         $leaddata['postalcode'] = $customer_address['postalcode'];
         $leaddata['mobile_no'] = $customer_address['mobile_no'];
         $leaddata['fax'] = $customer_address['fax'];
@@ -622,6 +642,7 @@ class Leads extends CI_Controller {
     function savelead() {
 
 
+        $insert_dc_hdr=0;
         $dte = $this->input->post('uploaded_date');
         $reffer_page = $this->input->post('hdn_refferer');  //dailycall
 
@@ -633,6 +654,14 @@ class Leads extends CI_Controller {
         $substatus_id = explode("-", $this->input->post('leadsubstatus'));
         $dt_appiontment = $this->input->post('content_appiontment_date');
         $samle_reject_count=0;
+        
+        $dt_vistit = $this->input->post('uploaded_date');
+        $dtappv = new DateTime();
+        $date_visit = $dtappv->createFromFormat('d/m/Y', $dt_vistit);
+        $date_v = $date_visit->format('Y-m-d');
+        $date_visit_time = $date_v . " " . $time;
+        //$to_date= date("Y-m-d"); 
+  
 
         $reason_no_appointment = $this->input->post('not_able_to_get_appointment');
         $sample_rejected_reason = $this->input->post('sample_rejected_reason');
@@ -655,11 +684,35 @@ class Leads extends CI_Controller {
             $sales_type_flag="I";
         }
 
-         
+     
 
         $hdn_grid_row_data = json_decode($_POST['hdn_grid_row_data'], TRUE);
-/*        echo"<pre>";print_r($_POST);echo"</pre>";
-        echo"<pre>";print_r($hdn_grid_row_data);echo"</pre>"; */
+        /*echo"<pre>";print_r($_POST);echo"</pre>";
+        echo"<pre>";print_r($hdn_grid_row_data);echo"</pre>"; 
+        
+        $potential_arry = array();
+        foreach ($hdn_grid_row_data as $key => $val)
+        {
+            array_push($potential_arry, $val);
+        }
+        $potential_out = array_slice($potential_arry[0], 2, 9);
+        foreach ($potential_out as $key => $val)
+        {
+             echo "key ".$key."<br>";
+            echo "val ".$val."<br>";
+        }
+         echo"<pre> potential_out";print_r($potential_out);echo"</pre>";
+        $maxPot = max($potential_out);
+        $saletype = array_search(max($potential_out), $potential_out);
+        $sale_type_name =$this->Leads_model->GetSalesName($saletype);
+          echo "sales type name ".$sale_type_name."<br>";
+          echo "sales pontential ".$maxPot."<br>";
+          
+        echo"<pre>"; print_r($this->session->userdata);echo"</pre>"; 
+        echo"date_v ".$date_v."<br>";
+        echo"date_visit_time ".$date_visit_time."<br>";
+
+        die;*/
         $customFieldPoten = array();
         $leaddata = array();
 
@@ -667,18 +720,32 @@ class Leads extends CI_Controller {
         if ($this->input->post('saveleads') || $this->input->post('hdn_saveleads')) {
             $login_user_id = $this->session->userdata['user_id'];
             $login_username = $this->session->userdata['username'];
-
-
             $duser = $this->session->userdata['loginname'];
+            $empcode =$this->session->userdata['empcode'];
+            
+            $assign_to_dc = $this->Leads_model->GetAssigntoDetails($this->input->post('assignedto'));
+
+            $login_user_id_dc = $assign_to_dc['0']['header_user_id'];
+            $login_username_dc = $assign_to_dc['0']['aliasloginname'];
+            $duser_dc = $assign_to_dc['0']['duser'];
+            $empcode_dc =$assign_to_dc['0']['empcode'];
+
+            
+            $account_yr = $this->Leads_model->get_current_accnt_yr($dates);
+      
+
             $lead_status_name = $this->Leads_model->GetLeadStatusName($this->input->post('leadstatus'));
             $lead_sub_status_name = $this->Leads_model->GetLeadSubStatusName($substatus_id[0]);
+          
             $assign_to_array = $this->Leads_model->GetAssigntoName($this->input->post('assignedto'));
             $lead_assign_name = $assign_to_array['0']['location_user'] . "-" . $assign_to_array['0']['aliasloginname'];
             $duser = $assign_to_array['0']['duser'];
+          
             $cust_account_id = $this->Leads_model->CheckNewCustomer($this->input->post('company'));
             $lead_seq1 = $this->Leads_model->GetMaxVal('leaddetails', 'leadid');
             $lead_seq1 = $lead_seq1 + 1;
             $lead_src = $this->Leads_model->GetLeadSourceVal($this->input->post('leadsource'));
+            $lead_src_name = $this->Leads_model->GetLeadSourceName($this->input->post('leadsource'));
             $lead_crd = $this->Leads_model->GetLeadCredit($this->input->post('credit_assesment'));
             $lead_no = 'LEAD-' . $lead_src;
             $customer_id = $this->Leads_model->GetTempCustId($this->input->post('company'));
@@ -760,6 +827,43 @@ class Leads extends CI_Controller {
                 );
             }
 
+                      $user1 = $this->session->userdata['loginname'];
+                      // check if the user is a executive or not - added by jsuresh 3rd Sept 2015
+                      $isExecutive = $this->Leads_model->check_executive_user($duser_dc);
+                      if($isExecutive['0']['noofrows']>0)
+                      {
+                        
+                        $check_duplicates = $this->Leads_model->check_dailyhdr_duplicates($date_v, $duser_dc);
+                        if($check_duplicates['0']['noofrows']>0)
+                        {
+                         // get the header id and do set update flag=1
+                            $daily_hdr_id=$check_duplicates['0']['id'];
+                            $insert_dc_hdr=0;
+                        }
+                        else
+                        {
+                        // insert 
+                        $daily_hdr_id = $this->Leads_model->GetMaxValdc('dailyactivityhdr');
+                        $daily_hdr_id = $daily_hdr_id + 1;
+                        $insert_dc_hdr=1;
+                        $dc_act_hdr = array('id' => $daily_hdr_id,
+                                    'currentdate' =>$date_visit_time,
+                                    'execode' => $empcode_dc,
+                                    'user1' => $duser_dc,
+                                    'exename' => $login_username_dc,
+                                    'companycode' => 'PPC',
+                                    'accperiod' => $account_yr,
+                                    'creationuser' => $login_username_dc,
+                                    'creationdate' => date('Y-m-d:H:i:s'),
+                                    'header_user_code' => $login_user_id_dc
+                                );
+                        }
+                      }
+                      
+
+            
+                    
+
             $proddata = array();
             $potential_updated = array();
             $lead_prod_poten_type = array();
@@ -767,11 +871,16 @@ class Leads extends CI_Controller {
             $lead_status_mailalert = array();
             $update_leadstatus_mailalert_revert = array();
             $k = 0;
-
+            if($insert_dc_hdr==1)
+            {
+             $dchdr_id = $this->Leads_model->save_daily_hdr($dc_act_hdr);   
+            }
+            
             foreach ($hdn_grid_row_data as $key => $val) {
 
                 if ($hdn_grid_row_data[$key]['product_id'] != "") {
                     $lead_id = $this->Leads_model->save_lead($leaddetails);
+                    
                     if ($lead_id > 0) {
 
                         $leadaddress = array('leadaddressid' => $lead_id,
@@ -786,6 +895,8 @@ class Leads extends CI_Controller {
                             'created_date' => date('Y-m-d:H:i:s'),
                             'created_user' => $login_user_id
                         );
+
+                       
                     
 
 
@@ -1030,10 +1141,10 @@ class Leads extends CI_Controller {
                         );
                         $proddata[$key]['leadid'] = $lead_id;
                         $proddata[$key]['productid'] = $hdn_grid_row_data[$key]['product_id'];
-                        //echo"<pre>leadproducts ";print_r($leadproducts);echo"</pre>";	 						
-                        $prdetid = $this->Leads_model->save_lead_products_all($leadproducts);
-
-                        if ($hdn_grid_row_data[$key]['product_id'] != '') {
+                        //echo"<pre>leadproducts ";print_r($leadproducts);echo"</pre>";	 
+                         $prdetid = $this->Leads_model->save_lead_products_all($leadproducts);
+                       
+                        if ($hdn_grid_row_data[$key]['product_id']!= '') {
                             /* start for inserting other prodtype in lead_prod_potential_types */
 
                             $product_sale_type = $this->Leads_model->get_leadproduct_saletype();
@@ -1082,6 +1193,35 @@ class Leads extends CI_Controller {
                             $lead_pord_poten_id = $this->Leads_model->save_leadcustomer_potential_update($lead_customer_pontential);
 
                             /* end for inserting other business in Potential update table */
+
+                            if($isExecutive['0']['noofrows']>0)
+                            {
+                             /* save dailycall details start */
+
+                                $product_sale_type = $this->Leads_model->get_leadpotentials($lead_id,$sales_type_flag);
+                                //echo"<pre> product_sale_type";print_r($product_sale_type);  echo"</pre>";
+                                $daily_dtl = array('id' => $daily_hdr_id,
+                                 'date' => $date_visit_time,
+                                 'itemgroup' => $itemgroup_name,
+                                 'custgroup' => $customergroup,
+                                 'potentialqty' => $product_sale_type['potential'],
+                                 'subactivity' => 'LEADS',
+                                 'hour_s' => 0,
+                                 'minit' => 0,
+                                 'modeofcontact' => $product_sale_type['email_id'],
+                                 'quantity' => $hdn_grid_row_data[$key]['requirment'],
+                                 'division' => $product_sale_type['lead_sale_type'],
+                                 'creationdate' => date('Y-m-d:H:i:s'),
+                                 'creationuser' => $login_username_dc,
+                                 'leadid' => $lead_id
+                                );
+                               //echo"<pre> daily_dtl";print_r($daily_dtl);echo"</pre>";
+                              
+                               $prdetid = $this->Leads_model->save_lead_dailydtl($daily_dtl); 
+                          
+                           
+                          /* save dailycall details end */
+                            }
                         }
                     }
 
@@ -1233,11 +1373,9 @@ class Leads extends CI_Controller {
             if ($reffer_page == "dailycall") {
                 redirect($url . 'dailycall');
             } else {
-
-                redirect('leads');
-               //redirect('leads/add',$leaddata);
                redirect('leads/add');
-              //  echo"<pre>";print_r($leaddata);echo"</pre>";
+              
+
 
             }
         }
@@ -3362,6 +3500,7 @@ select  cast(customermasterhdr.id as varchar(50)), customermasterhdr.tempcustnam
        // echo"<pre>"; print_r($_POST);echo"</pre>"; 
         $login_user_id = $this->session->userdata['user_id'];
         $login_username = $this->session->userdata['username'];
+        $duser = $this->session->userdata['loginname'];
         $assignto_id = $_POST['assignto_id'];
 
         
@@ -3382,6 +3521,9 @@ select  cast(customermasterhdr.id as varchar(50)), customermasterhdr.tempcustnam
 
             $assign_to_array = $this->Leads_model->GetAssigntoName($assignto_id);
             $lead_assign_name = $assign_to_array['0']['location_user'] . "-" . $assign_to_array['0']['aliasloginname'];
+            $duser = $assign_to_array['0']['duser'];
+            $header_user_id = $assign_to_array['0']['header_user_id'];
+            
             /*[leadid] => 19890
             [branch] => COIMBATORE*/
 
@@ -3390,6 +3532,14 @@ select  cast(customermasterhdr.id as varchar(50)), customermasterhdr.tempcustnam
             $lead_update[$key]['user_branch'] = strtoupper($reassign_branch);
             $lead_update[$key]['last_updated_user'] = $login_user_id;
             $lead_update[$key]['last_modified'] = date('Y-m-d:H:i:s');
+
+            $lead_prod_poten_branch[$key]['leadid'] = $val['leadid'];
+            $lead_prod_poten_branch[$key]['user_branch'] = strtoupper($reassign_branch);
+            $lead_prod_poten_branch[$key]['user1'] = $duser;
+            $lead_prod_poten_branch[$key]['user_code'] =$header_user_id;
+/*              'user1' => strtoupper($customer_poten[0]['user1']),
+            'user_code' => $customer_poten[0]['user_code']*/
+
 
             
             $lead_log_details = array(
@@ -3425,10 +3575,15 @@ select  cast(customermasterhdr.id as varchar(50)), customermasterhdr.tempcustnam
 
              $sublogid = $this->Leads_model->create_lead_sublog($lead_sublog_details);
 
+            
+
          }
 /*         echo "<pre> lead_update "; print_r($lead_update); echo "</pre>";
          echo "<pre> lead_log  "; print_r($lead_log_details); echo "</pre>";
-         echo "<pre> lead_sublog"; print_r($lead_sublog_details); echo "</pre>";*/
+         echo "<pre> lead_sublog"; print_r($lead_sublog_details); echo "</pre>";
+         echo "<pre> lead_sublog"; print_r($lead_prod_poten_branch); echo "</pre>";*/
+      
+          $lead_pord_poten_id = $this->Leads_model->potential_updated_table_collector($lead_prod_poten_branch);
          $id = $this->Leads_model->update_lead_reassign($lead_update);
 
 
@@ -3503,7 +3658,44 @@ select  cast(customermasterhdr.id as varchar(50)), customermasterhdr.tempcustnam
                                 echo $product_sale_type[$k]."<br>";
                     }
         }
-        
+
+        function getpten()
+        {
+               echo $id = urldecode($this->uri->segment(3));
+               echo $flag = urldecode($this->uri->segment(4));
+              $product_sale_type = $this->Leads_model->get_leadpotentials($id,$flag);
+              echo"count of array is ".count($product_sale_type)."<br>";
+              echo"<pre>";print_r($product_sale_type); echo"</pre>";
+              echo $product_sale_type['potential']."<br>";
+              echo $product_sale_type['lead_sale_type']."<br>";
+              
+        }
+
+        function getdchdr()
+        {
+               echo $date = urldecode($this->uri->segment(3));
+               echo $user1 =  $this->session->userdata['loginname'];
+              $product_sale_type = $this->Leads_model->check_dailyhdr_duplicates($date,$user1);
+             // echo"count of array is ".count($product_sale_type)."<br>";
+              echo"<pre>";print_r($product_sale_type); echo"</pre>";
+              echo $product_sale_type['0']['exename']."<br>";
+              echo $product_sale_type['0']['id']."<br>";
+              echo $product_sale_type['0']['noofrows']."<br>";
+
+              
+              
+        }
+        function checkuser()
+        {
+           
+            echo $user1 = strtoupper($this->uri->segment(3));
+            //$user1='HYDSAL19';
+            //$user1='CheSal71';      
+            $isExecutive = $this->Leads_model->check_executive_user($user1);
+              //echo"<pre>";print_r($isExecutive); echo"</pre>";
+              echo "noof rows ".$isExecutive['0']['noofrows'];
+
+        }
 
 }
 

@@ -6,7 +6,12 @@
         <meta charset="utf-8">
             <title>Leads - Add New Customer</title>
             <link href="<?= base_url() ?>public/css/styles.css" rel="stylesheet" type="text/css">
-                <script src="<?= base_url() ?>public/js/jquery.min.js"></script>
+            <script type="text/javascript" src="<?= base_url() ?>public/jquery/jquery-1.11.1.min.js"></script>
+            <script type="text/javascript" src="<?= base_url() ?>public/jquery/jqBootstrapValidation.js"></script>
+        
+                <link rel="stylesheet" href="<?= base_url() ?>public/css/jquery-ui.min.css" type="text/css"/>
+                <script type="text/javascript" src="<?= base_url() ?>public/jquery/jquery-ui.min.js"></script>
+                <script type="text/javascript" src="<?= base_url() ?>public/jquery/bootstrap.min.js"></script>
                 <script src="<?= base_url() ?>public/js/jquery.validate.min.js"></script>
 
                 <script src="<?= base_url() ?>public/js/additional-methods.js"></script>
@@ -17,6 +22,9 @@
                     $(document).ready(function ()
                     {
                         $('#savecustomer').hide();
+                         $( "#savecustomer" ).click(function() {
+                              $("#newcompany").submit();
+                            });
                         $("#newcompany").validate({
                             errorElement: "span",
                             //set the rules for the fild names
@@ -76,14 +84,14 @@
                         });
 
                         var validateCompanyname = $('#validateCompanyname');
-                        $('#companyname').keyup(function () {
+                        $('#companyname').change(function () {
                             var companyname = this;
                             if (this.value != this.lastValue) {
                                 if (this.timer)
                                     clearTimeout(this.timer);
                                 validateCompanyname.removeClass('error').html('<img src="../public/images/ajax-loader.gif" height="16" width="16" /> checking availability...');
 
-                                this.timer = setTimeout(function () {
+                                    this.timer = setTimeout(function () {
                                     $.ajax({
                                         url: '../company/check_customername',
                                         data: 'action=check_companyname&company_name=' + companyname.value,
@@ -113,6 +121,41 @@
                                 this.lastValue = this.value;
                             }
                         });
+                        $('#companyname').autocomplete({
+                                    source: function( request, response ) {
+                                        $.ajax({
+                                            url : '../company/getautocompany',
+                                            dataType: "json",
+                                            method: 'post',
+                                            data: {
+                                                name_startsWith: request.term,
+                                                type: 'customerName'
+                                            },
+                                            success: function( data ) {
+                                                response( $.map( data, function( item ) {
+                                                    var code = item.split("|");
+                                                        //$('#hdn_customer_id').val(code[0]);
+                                                         $('#hdn_customer_id').val(code[0]);
+                                                        return {
+                                                            label: code[1],
+                                                            value: code[1],
+                                                            data : item
+                                                        }
+                                                    }));
+                                                }
+                                            });
+                                    },
+                                    autoFocus: true,            
+                                    minLength: 2,
+                                    select: function( event, ui ) {
+                                        $('#myButton').show();
+                                        var names = ui.item.data.split("|");
+                                        $(this).val(names[1]);
+                                       // alert(" in autocomplete "+names[0]);
+                                     //   getClientAddress(names[0]);
+                                    }       
+                                              
+                                });
 
 
                     });
@@ -136,11 +179,13 @@
                                 <td><label for="companyname">Customer Name<font color="red"> *</font></label></td>
                                 <td>:</td>
                                 <td>
-                                    <input type="text" name="companyname" id="companyname" value="" size="25" /> 
+                                    
+                                     <input type="text" placeholder="Customer Name" id="companyname" name="companyname" class="form-control ui-autocomplete-input" value="" autocomplete="off">
                                     <span id="validateCompanyname">
                                     </span>
                                     <?php echo form_error('companyname'); ?> 
                                 </td>
+
                             </tr>
                             <tr>
                                 <td><label for="contact_name">Contact Person Name</label></td>
@@ -259,8 +304,10 @@
                                 <td> </td>
                                 <td></td>
                                 <td>
-                                       <input class="submit" id="savecustomer" name="savecustomer" type="submit" value="Submit" />
+                                       <input class="submit" id="savecustomer" name="savecustomer" type="button" value="Submit" />
                                        <input type="hidden" id="hdn_userid" name="hdn_userid" value="<?php echo $this->session->userdata['user_id']; ?>"/>  
+                                       <input type="hidden" id="hdn_customer_id" name="hdn_customer_id">
+                                       <input type="hidden" id="savecustomer" name="savecustomer"  value="savecustomer" />
                                 </td>
                             </tr>
                         </table>

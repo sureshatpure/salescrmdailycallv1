@@ -705,6 +705,14 @@ class Dashboard extends CI_Controller {
         header('Content-Type: application/x-json; charset=utf-8');
         echo $jc_headers;
     }
+      function getjchdrforweek($fin_year) {
+        $jc_headers = $this->dashboard_model->get_jchdr_forweek($fin_year);
+        //  $substatus = $this->Leads_model->get_assigned_tobranch();
+        header('Content-Type: application/x-json; charset=utf-8');
+        echo $jc_headers;
+    }
+
+
       function getjcperiodfromdate($jc_code,$fin_year) {
         $this->dashboard_model->jc_code = urldecode($jc_code);
         $this->dashboard_model->fin_year = urldecode($fin_year);
@@ -713,7 +721,7 @@ class Dashboard extends CI_Controller {
         header('Content-Type: application/x-json; charset=utf-8');
         echo $get_jcperiods;
     }
-          function getjcperiodtodate($jc_code,$fin_year) {
+        function getjcperiodtodate($jc_code,$fin_year) {
         $this->dashboard_model->jc_code = urldecode($jc_code);
         $this->dashboard_model->fin_year = urldecode($fin_year);
         $get_jcperiods = $this->dashboard_model->get_jcperiodtodate();
@@ -1924,6 +1932,190 @@ class Dashboard extends CI_Controller {
     }
 
     /* Persu codings end */
+
+
+     public function overallleadqnty() {
+       // $from_date='2015-01-01';
+        $from_date='2015-04-01';
+        $to_date= date("Y-m-d");  
+        $branch="All";
+        $jc_from="1";
+        $jc_to="13";
+        $jc_week="1";
+        
+        $account_yr = $this->Leads_model->get_current_accnt_yr($to_date); 
+       
+        if (!$this->admin_auth->logged_in()) {
+            //redirect them to the login page
+            redirect('admin/login', 'refresh');
+        } elseif (!$this->admin_auth->is_admin()) {
+           // echo"<pre>";print_r($this->session->userdata);echo"</pre>";
+
+            $user = $this->admin_auth->user()->row();
+            $allgroups = $this->admin_auth->groups()->result();
+            $usergroups = $this->admin_auth->group($this->session->userdata['user_id']);
+            $leaddata = array();
+
+            $leaddata['permission'] = $usergroups->_cache_user_in_group[$this->session->userdata['user_id']];
+            $leaddata['branch'] = 'All';
+            $leaddata['from_date'] = '2015-04-01';
+            $leaddata['account_yr'] = $account_yr;
+            $leaddata['to_date'] = $to_date;
+            $jc_to = $this->Leads_model->get_current_jc($to_date,$account_yr);
+            $leaddata['jc_to'] = $jc_to;
+            $leaddata['jc_week'] = $jc_week;
+            $leaddata['jc_from'] = $jc_from;
+            $leaddata['account_yr'] = $account_yr;
+            if ($this->session->userdata['reportingto'] == "") {
+                $leaddata['data'] = $this->dashboard_model->get_lead_quantity_dashboard();
+                $leaddata['leadcount'] = $this->dashboard_model->get_all_leads_count();
+                $leaddata['lead_ub_count'] = $this->dashboard_model->get_lead_user_branch_count($branch, @$user_id);
+             
+            } else {
+                $leaddata['data'] = $this->dashboard_model->get_lead_quantity_dashboard();
+                     $leaddata['leadcount'] = $this->dashboard_model->get_all_leads_count();
+                $leaddata['lead_ub_count'] = $this->dashboard_model->get_lead_user_branch_count($branch, @$user_id);
+             
+            }
+            if ($branch == "") {
+                $leaddata['maxvalue'] = $leaddata['leadcount'];
+                $leaddata['branch'] = $branch;
+
+    
+            } else {
+                $leaddata['maxvalue'] = $leaddata['lead_ub_count'];
+                $leaddata['branch'] = $branch;
+
+            }
+          
+
+
+            
+
+            // echo"<pre>";print_r($leaddata);echo"</pre>"; die;
+            $data = array();
+            $i = 0;
+            $datagroup = array();
+            foreach ($leaddata['permission'] as $key => $val) {
+                $row = array();
+
+                $row["groupid"] = $key;
+                $row["groupname"] = $val;
+                $datagroup[$i] = $row;
+                $i++;
+            }
+
+            $arr = json_encode($datagroup);
+
+            $leaddata['grpperm'] = $arr;
+
+           $this->load->view('dashboard/overallleadqnty', $leaddata); 
+        }else {
+            redirect('admin/index', 'refresh');
+            //$this->load->view('leads/viewleads',$leaddata);   
+        }
+    }
+
+    function lead_quantity_withfilter()
+    {
+         $branch = $this->uri->segment(3);
+         $account_yr = $this->uri->segment(4);
+         $jc_code = $this->uri->segment(5);
+         $jc_week = $this->uri->segment(6);
+
+        // $account_yr = $this->Leads_model->get_current_accnt_yr($to_date); 
+       
+        if (!$this->admin_auth->logged_in()) {
+            //redirect them to the login page
+            redirect('admin/login', 'refresh');
+        } elseif (!$this->admin_auth->is_admin()) {
+           // echo"<pre>";print_r($this->session->userdata);echo"</pre>";
+
+            $user = $this->admin_auth->user()->row();
+            $allgroups = $this->admin_auth->groups()->result();
+            $usergroups = $this->admin_auth->group($this->session->userdata['user_id']);
+            $leaddata = array();
+
+            $leaddata['permission'] = $usergroups->_cache_user_in_group[$this->session->userdata['user_id']];
+            $leaddata['branch'] = $branch;
+            $leaddata['from_date'] = '2015-04-01';
+            $leaddata['account_yr'] = $account_yr;
+            $leaddata['to_date'] = @$to_date;
+          //  $jc_to = $this->Leads_model->get_current_jc($to_date,$account_yr);
+            $leaddata['jc_to'] = $jc_code;
+            $leaddata['jc_week'] = $jc_week;
+            $leaddata['jc_from'] = $jc_code;
+            $leaddata['account_yr'] = $account_yr;
+            if ($this->session->userdata['reportingto'] == "") {
+                $leaddata['data'] = $this->dashboard_model->get_lead_quantity_dashboard_withbranch($branch,$account_yr,$jc_code,$jc_week);
+                $leaddata['leadcount'] = $this->dashboard_model->get_all_leads_count();
+                $leaddata['lead_ub_count'] = $this->dashboard_model->get_lead_user_branch_count($branch, @$user_id);
+             
+            } else {
+                $leaddata['data'] = $this->dashboard_model->get_lead_quantity_dashboard_withbranch($branch,$account_yr,$jc_code,$jc_week);
+                $leaddata['leadcount'] = $this->dashboard_model->get_all_leads_count();
+                $leaddata['lead_ub_count'] = $this->dashboard_model->get_lead_user_branch_count($branch, @$user_id);
+             
+            }
+            if ($branch == "") {
+                $leaddata['maxvalue'] = $leaddata['leadcount'];
+                $leaddata['branch'] = $branch;
+
+    
+            } else {
+                $leaddata['maxvalue'] = $leaddata['lead_ub_count'];
+                $leaddata['branch'] = $branch;
+
+            }
+          
+
+
+            
+
+            // echo"<pre>";print_r($leaddata);echo"</pre>"; die;
+            $data = array();
+            $i = 0;
+            $datagroup = array();
+            foreach ($leaddata['permission'] as $key => $val) {
+                $row = array();
+
+                $row["groupid"] = $key;
+                $row["groupname"] = $val;
+                $datagroup[$i] = $row;
+                $i++;
+            }
+
+            $arr = json_encode($datagroup);
+
+            $leaddata['grpperm'] = $arr;
+
+           $this->load->view('dashboard/overallleadqnty', $leaddata); 
+        }else {
+            redirect('admin/index', 'refresh');
+            //$this->load->view('leads/viewleads',$leaddata);   
+        }
+    }
+
+    function getjcweek_hdr($fin_year,$jc_code) {
+        $jc_headers = $this->dashboard_model->get_jcweek_hdr($fin_year,$jc_code);
+        //  $substatus = $this->Leads_model->get_assigned_tobranch();
+        header('Content-Type: application/x-json; charset=utf-8');
+        echo $jc_headers;
+    }
+
+    function getjcweekdates($yr,$jc,$weekid)
+    {
+        $this->dashboard_model->fin_year = urldecode($yr);
+        $this->dashboard_model->jc_code = urldecode($jc);
+        $this->dashboard_model->jc_week = urldecode($weekid);
+        
+        $get_jcperiods = $this->dashboard_model->get_jcweek_periods();
+        header('Content-Type: application/x-json; charset=utf-8');
+        echo $get_jcperiods;
+
+    }
+
+   
 
 
 }

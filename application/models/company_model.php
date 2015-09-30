@@ -14,7 +14,7 @@ class Company_model extends CI_Model
 
 	function save_company($companydata)
 		{
-	 // print_r($companydata);
+	  
 		$this->db->insert('customermasterhdr', $companydata);
 		//print_r($this->db); die;
        		//return $this->db->insert_id();	

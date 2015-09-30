@@ -43,6 +43,13 @@
                                         </ul>
 
                                     </li>
+                                    <li>Leads Quantity
+                                        <ul style='width: 200px;'>
+                                            <li><a href="<?= base_url() ?>dashboard/overallleadqnty">Quantity OverAll</a></li>
+                                            
+                                        </ul>
+
+                                    </li>
                                 </ul>
                             </li>
                              <li>Video Tutorials

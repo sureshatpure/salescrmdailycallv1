@@ -161,6 +161,7 @@ class Admin_auth_model extends CI_Model
 		$this->load->helper('cookie');
 		$this->load->helper('date');
 		$this->lang->load('admin_auth');
+		$db2 = $this->load->database('forms', TRUE);
 
 		//initialize db tables data
 		$this->tables  = $this->config->item('tables', 'admin_auth');
@@ -518,6 +519,7 @@ public function hash_password_db($id, $password, $use_sha1_override=FALSE)
 	 **/
 	public function deactivate($id = NULL)
 	{
+		$db2 = $this->load->database('forms', TRUE);
 		$this->trigger_events('deactivate');
 
 		if (!isset($id))
@@ -535,9 +537,16 @@ public function hash_password_db($id, $password, $use_sha1_override=FALSE)
 		);
 
 		$this->trigger_events('extra_where');
-		$this->db->update($this->tables['users'], $data, array('id' => $id));
+		//$this->db->update($this->tables['users'], $data, array('id' => $id));
+		$db2 = $this->load->database('forms', TRUE);
+//		$this->db2->update('dusermaster', $data, array('header_user_id' => $id));
 
-		$return = $this->db->affected_rows() == 1;
+		$sql = "update dusermaster set active= 0 where header_user_id =" . $id;
+        $result = $db2->query($sql);
+        //echo "resutl ".$result."<br>"; print_r($result); die;
+
+		//$return = $this->db2->affected_rows() == 1;
+		$return = $result;
 		if ($return)
 			$this->set_message('deactivate_successful');
 		else

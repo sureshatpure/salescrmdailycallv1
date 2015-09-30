@@ -47,20 +47,24 @@
 
 $active_group = "forms";
 $active_record = TRUE;
+/*
+$db['forms']['hostname'] = '10.1.0.21';
 
+<<<<<<< HEAD
 /*
 $db['forms']['hostname'] = '10.1.0.21';
 $db['forms']['username'] = 'puredb';
 $db['forms']['password'] = 'pure123';
 $db['forms']['database'] = 'softcodeformstest';
 $db['forms']['dbdriver'] = 'postgre';
-*/
 
-$db['forms']['hostname'] = '10.1.2.40';
-$db['forms']['username'] = 'postgres';
-$db['forms']['password'] = 'postgres123';
-$db['forms']['database'] = 'softcodeformstest';
+*/
+$db['forms']['hostname'] = '10.1.9.71';
+$db['forms']['username'] = 'puredb';
+$db['forms']['password'] = 'pure123';
+$db['forms']['database'] = 'softcodeformtest_lms';
 $db['forms']['dbdriver'] = 'postgre';
+
 
 $db['forms']['dbprefix'] = '';
 $db['forms']['pconnect'] = TRUE;
@@ -84,15 +88,13 @@ $db['default']['username'] = 'puredb';
 $db['default']['password'] = 'pure123';
 $db['default']['database'] = 'softcodetest';
 $db['default']['dbdriver'] = 'postgre';
+
 */
-
-$db['default']['hostname'] = '10.1.2.40';
-$db['default']['username'] = 'postgres';
-$db['default']['password'] = 'postgres123';
-$db['default']['database'] = 'softcodetest';
+$db['default']['hostname'] = '10.1.9.71';
+$db['default']['username'] = 'puredb';
+$db['default']['password'] = 'pure123';
+$db['default']['database'] = 'softcodetest_lms';
 $db['default']['dbdriver'] = 'postgre';
-
-
 
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
