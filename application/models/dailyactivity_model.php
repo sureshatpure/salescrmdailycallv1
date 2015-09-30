@@ -514,15 +514,18 @@ class dailyactivity_model extends CI_Model
 					WHERE trim(customermasterhdr.customergroup)='".$customer."' AND trim(view_tempitemmaster_grp.itemgroup)='".$item."' AND leaddetails.lead_close_status=0 and converted=0 
 					GROUP BY leaddetails.leadid";
 
-				$sql1="SELECT   business_plan_customer_group_id.header_id as custgroup_id,  business_yearly_gc_plan.potential_annual_qty as potential 
+				$sql1="SELECT   business_plan_customer_group_id.header_id as custgroup_id,  sum(business_yearly_gc_plan.potential_annual_qty)  as potential 
 				FROM  	business_yearly_gc_plan  
 				INNER JOIN business_plan_customer_group_id ON business_yearly_gc_plan.customer_group_id=business_plan_customer_group_id.header_id
 				INNER JOIN business_plan_item_group_id ON business_yearly_gc_plan.item_group_id=business_plan_item_group_id.header_id
 				WHERE 
 					business_plan_customer_group_id.customer_group ='".$customer."' 
-					AND business_plan_item_group_id.item_group='".$item."' 
-					AND business_yearly_gc_plan.potential_annual_qty >0";
+					AND business_plan_item_group_id.item_group='".$item."'
+					GROUP BY custgroup_id";
+
 				$result = $this->db->query($sql);
+
+				//echo $sql1;
 
 			/*	$sql1_old="SELECT leaddetails.leadid,leaddetails.leadid as id FROM leaddetails  
 					INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
@@ -531,14 +534,15 @@ class dailyactivity_model extends CI_Model
 					WHERE trim(customermasterhdr.customergroup)='".$customer."' AND trim(view_tempitemmaster_grp.itemgroup)='".$item."' AND leaddetails.lead_close_status=0 and converted=0";*/
  
 				$result1 = $this->db->query($sql1);
+				$result_bp = $result1->result_array();
 				$no_of_leads= $result->num_rows();
 				
-				//echo"<pre>";print_r($result->result_array());echo"</pre>";
+				//echo"<pre> bp";print_r($result1->result_array());echo"</pre>";
 				$resutl_arrary =$result->result_array();
 				//echo "pontential".$resutl_arrary['0']['potential']."<br>";
 				if($result->num_rows()==0)
 				{
-					$poten_val['0']['potential']=0;
+					$poten_val['0']['potential']=$result_bp['0']['potential'];
 					$poten_val['0']['noofleads']=$no_of_leads;
 					$poten_val['0']['result_type']='Value';
 				}

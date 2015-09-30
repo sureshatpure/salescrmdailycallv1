@@ -464,12 +464,12 @@ $("#excelExport").jqxButton({
                                                 if(noofleads>0)
                                                 {
                                                  this.columntype = 'dropdownlist';  
-                                                 $("#jqxgrid_n").jqxGrid('setcellvalue', row, "potentialqty", potential_quantity); 
                                                 }
                                                 else
                                                 {
                                                      this.columntype = 'textbox';
                                                 }
+                                               $("#jqxgrid_n").jqxGrid('setcellvalue', row, "potentialqty", potential_quantity);
                                                 
                                             }
                                         });
@@ -2006,11 +2006,11 @@ $("#excelExport").jqxButton({
                                 if(noofleads>0)
                                 {
                             
-                                 $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "potentialqty", potential_quantity);
                                  $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "subactivity", "LEADS");
                                  
                                 }
-                               
+
+                                $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "potentialqty", potential_quantity);
                                 $("#jqxgrid_n").jqxGrid('setcellvalue', jqxgrid_n_row_index, "result_type", resulttype);
 
 
