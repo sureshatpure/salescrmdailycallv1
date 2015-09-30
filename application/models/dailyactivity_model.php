@@ -525,7 +525,7 @@ class dailyactivity_model extends CI_Model
 
 				$result = $this->db->query($sql);
 
-				//echo $sql1;
+				
 
 			/*	$sql1_old="SELECT leaddetails.leadid,leaddetails.leadid as id FROM leaddetails  
 					INNER JOIN leadproducts ON leaddetails.leadid = leadproducts.leadid 
@@ -537,19 +537,20 @@ class dailyactivity_model extends CI_Model
 				$result_bp = $result1->result_array();
 				$no_of_leads= $result->num_rows();
 				
-				//echo"<pre> bp";print_r($result1->result_array());echo"</pre>";
+				
 				$resutl_arrary =$result->result_array();
-				//echo "pontential".$resutl_arrary['0']['potential']."<br>";
+
 				if($result->num_rows()==0)
 				{
-					$poten_val['0']['potential']=$result_bp['0']['potential'];
+					
+					$poten_val['0']['potential']=isset($result_bp['0']['potential']) ? $result_bp['0']['potential']:'0';
 					$poten_val['0']['noofleads']=$no_of_leads;
 					$poten_val['0']['result_type']='Value';
 				}
 				else
 				{
 					//$poten_val = $result->result_array();
-					$poten_val['0']['potential']=$resutl_arrary['0']['potential'];
+					$poten_val['0']['potential']=isset($result_bp['0']['potential']) ? $resutl_arrary['0']['potential']:'0';
 					$poten_val['0']['noofleads']=$no_of_leads;
 					$poten_val['0']['result_type']='Select';
 
