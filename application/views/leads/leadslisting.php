@@ -542,7 +542,7 @@
                                 success: function (response) {
                                     alert("Re-Assigned to User sucessfully ");
                                     $('#popupWindow').hide();
-                                    window.location.href = base_url + "leads";
+                                    window.location.href = base_url + "leads/index_search";
                                 },
                                 error: function (result) {
                                     alert(result.responseText);

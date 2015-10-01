@@ -221,7 +221,9 @@ class Leads extends CI_Controller {
         } else {
             $last_word = "";
         }
-        $out_array=explode(",",$this->session->userdata['get_assign_to_user_id']);
+        $def_collector="CHENNAI - GC";
+
+
         //echo "last word is ".@$last_word; die;
         //  echo"Rep To ".$this->session->userdata['reportingto'];
         $this->load->helper(array('form', 'url'));
@@ -230,7 +232,14 @@ class Leads extends CI_Controller {
 
         $data['optionscrd'] = $this->Leads_model->get_leadcredit_assment();
         $data['optionslsr'] = $this->Leads_model->get_leadsource();
-        $data['optionscmp'] = $this->Leads_model->get_all_company();
+        //$data['optionscollector'] = $this->Leads_model->get_collectors();
+        $data['optionscollector'] = $this->Leads_model->get_collectors($this->session->userdata['get_assign_to_user_id']);
+        
+        //$data['optionscmp'] = $this->Leads_model->get_all_company();
+       // $data['optionscmp'] = $this->Leads_model->getleadcustomers($def_collector);
+        $data['optionscmp'] = $this->Leads_model->getleadcustomers();
+        
+        
         $data['optionscnt'] = $this->Leads_model->get_country();
         $data['optionsinds'] = $this->Leads_model->get_industry();
 
@@ -252,17 +261,6 @@ class Leads extends CI_Controller {
             $data['optionsasto'] = $this->Leads_model->get_assignto_users_order($this->session->userdata['reportingto']);
             $data['optionslocuser'] = $this->Leads_model->get_locationuser_add_order();
         }
-            
-
-            
-       /*  if($this->session->userdata['reportingto']!="" && count($out_array)==1 )
-            {
-              $data['selectedUser']=next($data['optionsasto']);
-            }
-            else
-            {
-             $data['selectedUser']=current($data['optionsasto']);
-            }*/
 
         $data['reffer_page'] = $last_word;
         $this->load->view('leads/leadsaddnew', $data);
@@ -588,6 +586,14 @@ class Leads extends CI_Controller {
         header('Content-Type: application/x-json; charset=utf-8');
         echo json_encode($substatus);
     }
+    function getleadcustomersadd($collector) {
+
+        $this->Leads_model->collector = $collector;
+
+        $customers = $this->Leads_model->get_lead_customersadd($collector);
+        header('Content-Type: application/x-json; charset=utf-8');
+        echo json_encode($customers);
+    }
 
     function getassignedtobranch($brach_sel) {
 
@@ -690,6 +696,7 @@ class Leads extends CI_Controller {
 
         die;*/
         $customFieldPoten = array();
+        $leaddata = array();
 
 
         if ($this->input->post('saveleads') || $this->input->post('hdn_saveleads')) {
@@ -845,6 +852,7 @@ class Leads extends CI_Controller {
             $lead_customer_pontential = array();
             $lead_status_mailalert = array();
             $update_leadstatus_mailalert_revert = array();
+             $leadids = array();
             $k = 0;
             if($insert_dc_hdr==1)
             {
@@ -1304,7 +1312,11 @@ class Leads extends CI_Controller {
 
                     $temp_itemmaster_id = $this->Leads_model->update_tempitemmaster_leadid($lead_id, $proddata, $login_user_id);
                 } // end of customFieldName //
+              //  echo"lead_id ".$lead_id."<br>";
+                
+                array_push($leadids, $lead_id);
             }
+         
             //echo"<pre>";print_r($leadproducts);echo"</pre>";
             //$prdetid = $this->Leads_model->save_lead_products($proddata);
             //$prdetid = $this->Leads_model->save_lead_products_all($proddata);
@@ -1335,16 +1347,22 @@ class Leads extends CI_Controller {
             }
             //$temp_custmaster_id = $this->Leads_model->update_tempcustmaster_leadid($lead_id,$this->input->post('company'),$login_user_id);
 
+          //  $leaddata['leadids']=$leadids;
+            $leads=implode(",", $leadids);
 
 
-
-            $this->session->set_flashdata('message', "Lead Created Successfully");
+            $this->session->set_flashdata('message', "Lead Created Successfully with follwing leadid(s)- ".$leads);
             //echo "ref page ".$reffer_page; 		echo $url =base_url();
 
             if ($reffer_page == "dailycall") {
                 redirect($url . 'dailycall');
             } else {
-	 	           redirect('leads');
+
+               //redirect('leads/add',$leaddata);
+               redirect('leads/add');
+              //  echo"<pre>";print_r($leaddata);echo"</pre>";
+
+
             }
         }
     }

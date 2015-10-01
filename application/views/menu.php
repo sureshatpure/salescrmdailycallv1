@@ -26,6 +26,12 @@
 
                                         </ul>
                                     </li>
+                                    <li>Users
+                                        <ul style='width: 150px;'>
+                                            <li><a href="<?= base_url() ?>loginlogout/">Timespent</a></li>
+
+                                        </ul>
+                                    </li>
                                 </ul>
                             </li>
                             <li>Dashboard

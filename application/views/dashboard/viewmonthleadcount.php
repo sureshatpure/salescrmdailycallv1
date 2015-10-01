@@ -1366,7 +1366,7 @@
              return false;
              
              }*/
-             else if(parseInt(jccode_from) > parseInt(jccode_to))
+             if(parseInt(jccode_from) > parseInt(jccode_to))
              {
                 alert("Please slect the \"To JC Period\" greater than \"From JC Period\" ");
                 return false;
