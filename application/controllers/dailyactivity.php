@@ -420,9 +420,9 @@ class dailyactivity extends CI_Controller {
         $this->load->view('dailyactivity/tutorial2');
       }
 
-      function testing()
+      function newfeatures()
       {
-         $this->load->view('dailyactivity/test');
+         $this->load->view('dailyactivity/newfeatures');
       }
 
    
