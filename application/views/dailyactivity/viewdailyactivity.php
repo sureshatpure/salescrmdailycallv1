@@ -439,6 +439,7 @@ $("#excelExport").jqxButton({
                             var rowdata = $("#jqxgrid_n").jqxGrid('getrowdata', row);
                             var cust_grp = rowdata.custgroup;
                             var prod_grp = rowdata.itemgroup;
+                            var curr_poten = rowdata.potentialqty;
                            
                             if(cust_grp!="" && prod_grp!="")
                             {
@@ -461,15 +462,21 @@ $("#excelExport").jqxButton({
                                                 noofleads =rows[0].noofleads;
                                                 g_noofleads=noofleads;
                                                 resulttype =rows[0].result_type;
+
                                                 if(noofleads>0)
                                                 {
-                                                 this.columntype = 'dropdownlist';  
+                                                 this.columntype = 'dropdownlist'; 
+                                                 $("#jqxgrid_n").jqxGrid('setcellvalue', row, "potentialqty", potential_quantity); 
                                                 }
                                                 else
                                                 {
                                                      this.columntype = 'textbox';
+                                                     potential_quantity =(potential_quantity >0) ? potential_quantity :curr_poten;
+                                                    $("#jqxgrid_n").jqxGrid('setcellvalue', row, "potentialqty", potential_quantity);
                                                 }
-                                               $("#jqxgrid_n").jqxGrid('setcellvalue', row, "potentialqty", potential_quantity);
+
+                                                
+ 
                                                 
                                             }
                                         });
