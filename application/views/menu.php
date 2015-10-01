@@ -61,6 +61,13 @@
                                         </ul>
 
                                     </li>
+                                    <li>New Version
+                                        <ul style='width: 200px;'>
+                                            <li><a href="<?= base_url() ?>dailyactivity/newfeatures">Add/Re-assign/dailyact</a></li>
+                                            
+                                        </ul>
+
+                                    </li>
                                 </ul>
                             </li>
 
