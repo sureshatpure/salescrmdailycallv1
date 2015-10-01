@@ -449,7 +449,8 @@ class Excelreportbranch extends CI_Controller {
             header('Cache-Control: max-age=0');*/
            // $objWriter->save('php://output');
            // $url = base_url();
-            $objWriter->save("/data/html/salescrm/public/".$branch);
+          //  $objWriter->save("/data/html/salescrm/public/".$branch);
+            $objWriter->save("/var/wwww/html/salescrmdailycallv1/public/".$branch);
             echo $branch;
             exit();
         } else {
@@ -533,7 +534,8 @@ class Excelreportbranch extends CI_Controller {
             header('Cache-Control: max-age=0');*/
            // $objWriter->save('php://output');
            // $url = base_url();
-            $objWriter->save("/data/html/salescrm/public/".$branch);
+            $objWriter->save("/var/www/html/salescrmdailycallv1/public/".$branch);
+            //$objWriter->save("/data/html/salescrm/public/".$branch);
             echo $branch;
             exit();
         } else {
@@ -546,8 +548,8 @@ class Excelreportbranch extends CI_Controller {
             $filename = $this->uri->segment(3);
             $filename=$filename;
         //echo "filename".$filename;
-            //$data = file_get_contents("/var/www/html/salescrm/public/".$filename.".csv");
-            $data = file_get_contents("/data/html/salescrm/public/".$filename);
+            $data = file_get_contents("/var/www/html/salescrmdailycallv1/public/".$filename.".csv");
+            //$data = file_get_contents("/data/html/salescrm/public/".$filename);
         force_download($filename,$data);
     }
 
