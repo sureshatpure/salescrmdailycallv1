@@ -84,7 +84,7 @@
                         });
 
                         var validateCompanyname = $('#validateCompanyname');
-                        $('#companyname').change(function () {
+                        /*$('#companyname').change(function () {
                             var companyname = this;
                             if (this.value != this.lastValue) {
                                 if (this.timer)
@@ -120,7 +120,7 @@
 
                                 this.lastValue = this.value;
                             }
-                        });
+                        });*/
                         $('#companyname').autocomplete({
                                     source: function( request, response ) {
                                         $.ajax({
@@ -143,6 +143,7 @@
                                                         }
                                                     }));
                                                 }
+
                                             });
                                     },
                                     autoFocus: true,            
@@ -153,7 +154,21 @@
                                         $(this).val(names[1]);
                                        // alert(" in autocomplete "+names[0]);
                                      //   getClientAddress(names[0]);
-                                    }       
+                                    },
+                                    change:function(event, ui ){
+                                            if(ui.item)
+                                            {
+
+                                                $('#validateCompanyname').empty().append("<font color='red'>customer already exists</font>");
+                                                $('#savecustomer').hide();                                               
+                                            }
+                                            else
+                                            {
+                                               $('#validateCompanyname').empty().append("<font color='green'>Yes.! You can add this customer</font>");  
+                                               $('#savecustomer').show();
+                                            }
+
+                                         }       
                                               
                                 });
 
